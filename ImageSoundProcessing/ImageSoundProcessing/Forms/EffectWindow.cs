@@ -80,13 +80,29 @@ namespace ImageSoundProcessing.Forms
                         }
                     case "Negative":
                         {
+                            Bitmap resultBitmap = Effect.Negative(_bitmap);
+                            Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.Show();
+                            Close();
+                            break;
+                        }
+                    case "GrayMode":
+                        {
+                            Bitmap resultBitmap = Effect.GrayMode(_bitmap);
+                            Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.Show();
+                            Close();
+                            break;
+                        } 
+                    case "ArtmeticMiddleFilter":
+                        {
                             string textValue = Interaction.InputBox("Enter value", "Factor", "", 100, 100);
                             if (!textValue.Equals(""))
                             {
                                 int parseResult;
                                 if (int.TryParse(textValue, out parseResult))
                                 {
-                                    Bitmap resultBitmap = Effect.Negative(_bitmap, parseResult);
+                                    Bitmap resultBitmap = Effect.ArtmeticMiddleFilter(_bitmap, parseResult);
                                     Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
                                     form.Show();
                                     Close();
@@ -110,6 +126,11 @@ namespace ImageSoundProcessing.Forms
                 MessageBox.Show("Please choose effect", "Nothing chosen !",
                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void effectsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
