@@ -35,6 +35,7 @@
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Negative");
             System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("GrayMode");
             System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("ArtmeticMiddleFilter");
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("MedianFilter");
             this.effectsList = new System.Windows.Forms.ListView();
             this.effectHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chooseEffectButton = new System.Windows.Forms.Button();
@@ -58,7 +59,8 @@
             listViewItem2,
             listViewItem3,
             listViewItem4,
-            listViewItem5});
+            listViewItem5,
+            listViewItem6});
             this.effectsList.Location = new System.Drawing.Point(9, 10);
             this.effectsList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.effectsList.MultiSelect = false;

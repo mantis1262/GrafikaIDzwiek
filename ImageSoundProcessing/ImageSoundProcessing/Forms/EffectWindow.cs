@@ -115,6 +115,28 @@ namespace ImageSoundProcessing.Forms
                             }
                             break;
                         }
+                    case "MedianFilter":
+                        {
+
+                            string textValue = Interaction.InputBox("Enter value", "Factor", "", 100, 100);
+                            if (!textValue.Equals(""))
+                            {
+                                int parseResult;
+                                if (int.TryParse(textValue, out parseResult))
+                                {
+                                    Bitmap resultBitmap = Effect.ArtmeticMiddleFilter(_bitmap, parseResult);
+                                    Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                                    form.Show();
+                                    Close();
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Please enter correct value", "Incorrect value !",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+                            break;
+                        }
                     default:
                         {
                             break;

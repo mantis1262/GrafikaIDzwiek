@@ -137,6 +137,49 @@ namespace ImageSoundProcessing.Helpers
 
             return result;
         }
+        public static Bitmap MedianFilter(Bitmap original, int MaskSize)
+        {
+            Bitmap result = new Bitmap(original.Width, original.Height);
+            int midIndex;
+            if (MaskSize % 2 == 0) midIndex = (MaskSize + 1) / 2;
+            else midIndex = MaskSize / 2;
+
+            for (int i = 0; i < original.Width; i++)
+                for (int j = 0; j < original.Height; j++)
+                {
+                    int x, y;
+                    List<int> R = new List<int>();
+                    List<int> G = new List<int>();
+                    List<int> B = new List<int>();
+
+                    for (int n = -midIndex; n <= midIndex; n++)
+                    {
+                        x = i + n;
+                        if (x < 0) x = 0;
+                        if (x >= original.Width) x = original.Width - 1;
+
+                        for (int m = -midIndex; m <= midIndex; m++)
+                        {
+                            y = j + m;
+                            if (y < 0) y = 0;
+                            if (y >= original.Height) y = original.Height - 1;
+
+                            R.Add(original.GetPixel(x, y).R);
+                            G.Add(original.GetPixel(x, y).G);
+                            B.Add(original.GetPixel(x, y).B);
+
+                        }
+                    }
+                    int midleListIndex = (MaskSize * MaskSize) / 2;
+
+                    R.Sort();
+                    G.Sort();
+                    B.Sort();
+                    result.SetPixel(i, j, Color.FromArgb(original.GetPixel(i, j).A, R[midleListIndex], G[midleListIndex], B[midleListIndex]));
+                }
+
+                return result;
+        }
 
     }
 }
