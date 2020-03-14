@@ -38,50 +38,31 @@ namespace ImageSoundProcessing.Forms
                 {
                     case "Brightness":
                         {
-                            string textValue = Interaction.InputBox("Enter value", "Factor", "", 100, 100);
-                            if (!textValue.Equals(""))
-                            {
-                                int parseResult;
-                                if (int.TryParse(textValue, out parseResult))
-                                {
-                                    Bitmap resultBitmap = Effect.Brightness(_bitmap, parseResult);
-                                    Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
-                                    form.Show();
-                                    Close();
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Please enter correct value", "Incorrect value !",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
+                            Bitmap resultBitmap = new Bitmap(_bitmap);
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.SetType("brightness");
+                            form.SetControlProperties("slider", -255, 255);
+                            form.SetControlProperties("sliderLabel", 0);
+                            form.Show();
+                            Close();
                             break;
                         }
                     case "Contrast":
                         {
-                            string textValue = Interaction.InputBox("Enter value", "Factor", "", 100, 100);
-                            if (!textValue.Equals(""))
-                            {
-                                int parseResult;
-                                if (int.TryParse(textValue, out parseResult))
-                                {
-                                    Bitmap resultBitmap = Effect.Contrast(_bitmap, parseResult);
-                                    Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
-                                    form.Show();
-                                    Close();
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Please enter correct value", "Incorrect value !",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
+                            Bitmap resultBitmap = new Bitmap(_bitmap);
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.SetType("contrast");
+                            form.SetControlProperties("slider", -255, 255);
+                            form.SetControlProperties("sliderLabel", 0);
+                            form.Show();
+                            Close();
                             break;
                         }
                     case "Negative":
                         {
                             Bitmap resultBitmap = Effect.Negative(_bitmap);
-                            Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.SetType("negative");
                             form.Show();
                             Close();
                             break;
@@ -89,52 +70,34 @@ namespace ImageSoundProcessing.Forms
                     case "GrayMode":
                         {
                             Bitmap resultBitmap = Effect.GrayMode(_bitmap);
-                            Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.SetType("grayMode");
                             form.Show();
                             Close();
                             break;
-                        } 
-                    case "ArtmeticMiddleFilter":
+                        }
+                    case "AritmeticMiddleFilter":
                         {
-                            string textValue = Interaction.InputBox("Enter value", "Factor", "", 100, 100);
-                            if (!textValue.Equals(""))
-                            {
-                                int parseResult;
-                                if (int.TryParse(textValue, out parseResult))
-                                {
-                                    Bitmap resultBitmap = Effect.ArtmeticMiddleFilter(_bitmap, parseResult);
-                                    Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
-                                    form.Show();
-                                    Close();
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Please enter correct value", "Incorrect value !",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
+                            int minMaskSize = 9, maxMaskSize = 81;
+                            Bitmap resultBitmap = new Bitmap(Effect.AritmeticMiddleFilter(_bitmap, minMaskSize));
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.SetType("aritmeticMiddleFilter");
+                            form.SetControlProperties("slider", minMaskSize, maxMaskSize);
+                            form.SetControlProperties("sliderLabel", minMaskSize);
+                            form.Show();
+                            Close();
                             break;
                         }
                     case "MedianFilter":
                         {
-
-                            string textValue = Interaction.InputBox("Enter value", "Factor", "", 100, 100);
-                            if (!textValue.Equals(""))
-                            {
-                                int parseResult;
-                                if (int.TryParse(textValue, out parseResult))
-                                {
-                                    Bitmap resultBitmap = Effect.ArtmeticMiddleFilter(_bitmap, parseResult);
-                                    Form form = FormFactory.CreateProcessedImageForm(resultBitmap);
-                                    form.Show();
-                                    Close();
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Please enter correct value", "Incorrect value !",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
+                            int minMaskSize = 9, maxMaskSize = 81;
+                            Bitmap resultBitmap = new Bitmap(Effect.MedianFilter(_bitmap, minMaskSize));
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.SetType("medianFilter");
+                            form.SetControlProperties("slider", minMaskSize, maxMaskSize);
+                            form.SetControlProperties("sliderLabel", minMaskSize);
+                            form.Show();
+                            Close();
                             break;
                         }
                     default:
