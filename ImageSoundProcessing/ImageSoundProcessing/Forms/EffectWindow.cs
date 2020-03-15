@@ -79,11 +79,11 @@ namespace ImageSoundProcessing.Forms
                     case "AritmeticMiddleFilter":
                         {
                             int minMaskSize = 9, maxMaskSize = 81;
-                            Bitmap resultBitmap = new Bitmap(Effect.AritmeticMiddleFilter(_bitmap, minMaskSize));
+                            Bitmap resultBitmap = new Bitmap(_bitmap);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.SetType("aritmeticMiddleFilter");
-                            form.SetControlProperties("slider", minMaskSize, maxMaskSize);
-                            form.SetControlProperties("sliderLabel", minMaskSize);
+                            form.SetControlProperties("maskButton");
+                            form.SetControlProperties("maskLabel", 0);
                             form.Show();
                             Close();
                             break;
@@ -91,19 +91,16 @@ namespace ImageSoundProcessing.Forms
                     case "MedianFilter":
                         {
                             int minMaskSize = 9, maxMaskSize = 81;
-                            Bitmap resultBitmap = new Bitmap(Effect.MedianFilter(_bitmap, minMaskSize));
+                            Bitmap resultBitmap = new Bitmap(_bitmap);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.SetType("medianFilter");
-                            form.SetControlProperties("slider", minMaskSize, maxMaskSize);
-                            form.SetControlProperties("sliderLabel", minMaskSize);
+                            form.SetControlProperties("maskButton");
+                            form.SetControlProperties("maskLabel", 0);
                             form.Show();
                             Close();
                             break;
                         }
-                    default:
-                        {
-                            break;
-                        }
+                    default: break;
                 }
             }
             else

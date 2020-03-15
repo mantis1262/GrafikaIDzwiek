@@ -32,6 +32,8 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.factorSlider = new System.Windows.Forms.TrackBar();
             this.factorLabel = new System.Windows.Forms.Label();
+            this.maskButton = new System.Windows.Forms.Button();
+            this.maskLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.processedImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.factorSlider)).BeginInit();
             this.SuspendLayout();
@@ -79,12 +81,40 @@
             this.factorLabel.Text = "0";
             this.factorLabel.Visible = false;
             // 
+            // maskButton
+            // 
+            this.maskButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.maskButton.Location = new System.Drawing.Point(193, 12);
+            this.maskButton.Name = "maskButton";
+            this.maskButton.Size = new System.Drawing.Size(160, 44);
+            this.maskButton.TabIndex = 4;
+            this.maskButton.Text = "Mask:              ";
+            this.maskButton.UseVisualStyleBackColor = true;
+            this.maskButton.Visible = false;
+            this.maskButton.Click += new System.EventHandler(this.MaskButton_Click);
+            // 
+            // maskLabel
+            // 
+            this.maskLabel.AutoSize = true;
+            this.maskLabel.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.maskLabel.Enabled = false;
+            this.maskLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.maskLabel.Location = new System.Drawing.Point(269, 22);
+            this.maskLabel.Name = "maskLabel";
+            this.maskLabel.Size = new System.Drawing.Size(23, 25);
+            this.maskLabel.TabIndex = 5;
+            this.maskLabel.Text = "0";
+            this.maskLabel.Visible = false;
+            this.maskLabel.Click += new System.EventHandler(this.MaskLabel_Click);
+            // 
             // ProcessedImageWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1262, 977);
+            this.Controls.Add(this.maskLabel);
+            this.Controls.Add(this.maskButton);
             this.Controls.Add(this.factorLabel);
             this.Controls.Add(this.factorSlider);
             this.Controls.Add(this.saveButton);
@@ -105,5 +135,7 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.TrackBar factorSlider;
         private System.Windows.Forms.Label factorLabel;
+        private System.Windows.Forms.Button maskButton;
+        private System.Windows.Forms.Label maskLabel;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ImageSoundProcessing.Helpers;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,6 +56,20 @@ namespace ImageSoundProcessing
                         factorLabel.Text = args[0].ToString();
                         break;
                     }
+                case "maskButton":
+                    {
+                        maskButton.Visible = true;
+                        break;
+                    }
+                case "maskLabel":
+                    {
+                        maskLabel.Visible = true;
+                        if (args[0] == 0)
+                        {
+                            maskLabel.Text = "None";
+                        }
+                        break;
+                    }
                 default: break;
             }
         }
@@ -106,6 +121,67 @@ namespace ImageSoundProcessing
             {
                 SetProcessedBitmap(bitmap);
             }
+        }
+
+        private void MaskButton_Click(object sender, EventArgs e)
+        {
+            string previousMaskLabelText = maskLabel.Text;
+            maskLabel.Text = "...";
+            string textValue = Interaction.InputBox("Enter value", "Mask size", "", 400, 400);
+            if (!textValue.Equals(""))
+            {
+                int parseResult;
+                if (int.TryParse(textValue, out parseResult))
+                {
+                    if (parseResult == 0)
+                    {
+                        maskLabel.Text = "None";
+                        SetProcessedBitmap(_originalBitmap);
+                    }
+                    else
+                    {
+                        double result = Math.Sqrt(parseResult);
+                        bool isSquare = result % 1 == 0;
+
+                        if (parseResult > 1 && isSquare)
+                        {
+                            switch (_type)
+                            {
+                                case "aritmeticMiddleFilter":
+                                    {
+                                        Bitmap resultBitmap = Effect.AritmeticMiddleFilter(_originalBitmap, parseResult);
+                                        SetProcessedBitmap(resultBitmap);
+                                        break;
+                                    }
+                                case "medianFilter":
+                                    {
+                                        Bitmap resultBitmap = Effect.MedianFilter(_originalBitmap, parseResult);
+                                        SetProcessedBitmap(resultBitmap);
+                                        break;
+                                    }
+                                default: break;
+                            }
+
+                            maskLabel.Text = parseResult.ToString();
+                        }
+                        else
+                        {
+                            maskLabel.Text = previousMaskLabelText;
+                            MessageBox.Show("Only perfect squares higher than 1 are allowed", "Incorrect value !", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                maskLabel.Text = previousMaskLabelText;
+                MessageBox.Show("Please enter the value", "Incorrect value !", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void MaskLabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
