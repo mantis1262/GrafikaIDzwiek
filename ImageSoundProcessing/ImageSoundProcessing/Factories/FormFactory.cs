@@ -11,14 +11,15 @@ namespace ImageSoundProcessing
 {
     public static class FormFactory
     {
-        public static Form CreateProcessedImageForm(Bitmap bitmap)
+        public static ProcessedImageWindow CreateProcessedImageForm(Bitmap bitmap)
         {
             ProcessedImageWindow form = new ProcessedImageWindow();
-            form.SetBitmap(bitmap);
+            form.SetOriginalBitmap(bitmap);
+            form.SetProcessedBitmap(bitmap);
             return form;
         }
 
-        public static Form CreateEffectForm(Bitmap bitmap)
+        public static EffectWindow CreateEffectForm(Bitmap bitmap)
         {
             EffectWindow form = new EffectWindow();
             form.ImageBitmap = bitmap;

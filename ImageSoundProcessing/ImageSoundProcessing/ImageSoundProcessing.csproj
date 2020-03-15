@@ -67,6 +67,7 @@
       <DependentUpon>ProcessedImageWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Effect.cs" />
+    <Compile Include="Helpers\LockBitmap.cs" />
     <Compile Include="Helpers\Path.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
