@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -230,7 +231,7 @@ namespace ImageSoundProcessing.Helpers
             return processedBmp;
         }
 
-        public static int[][] Histogram(Bitmap original, int canal)
+        public static int[][] Histogram(Bitmap original)
         {
 
             LockBitmap originalBitmapLock = new LockBitmap(original);
@@ -253,6 +254,68 @@ namespace ImageSoundProcessing.Helpers
             }
             originalBitmapLock.UnlockBits();
             return value;
+        }
+
+        public static Bitmap ModifiHistogram(Bitmap original, int min, int max)
+        {
+            Bitmap processedBmp = new Bitmap(original.Width, original.Height);
+            int[][] H = Histogram(original);
+            LockBitmap originalBitmapLock = new LockBitmap(original);
+            LockBitmap processedBitmapLock = new LockBitmap(processedBmp);
+            originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
+            processedBitmapLock.LockBits(ImageLockMode.WriteOnly);
+            int N = processedBmp.Height * processedBmp.Width;
+            if (H[0].SequenceEqual(H[1]) && H[0].SequenceEqual(H[2]))
+            {
+                int[] newH = new int[256];
+                for (int i = 0; i < 256; i++)
+                {
+                    double temp = 0;
+                    for (int j = 0; j <= i; j++)
+                    {
+                        temp += H[0][j];
+                    }
+                    newH[i] = (int)((min * Math.Pow(((max * 1.0) / min), (temp / N))));
+                }
+                for (int i = 0; i < originalBitmapLock.Width; i++)
+                {
+                    for (int j = 0; j < originalBitmapLock.Height; j++)
+                    {
+                        Color color = Color.FromArgb(newH[originalBitmapLock.GetPixel(i, j).R], newH[originalBitmapLock.GetPixel(i, j).R], newH[originalBitmapLock.GetPixel(i, j).R]);
+                        processedBitmapLock.SetPixel(i, j, color);
+                    }
+                }
+            }
+            else
+            {
+                int[] newHR = new int[256];
+                int[] newHG = new int[256];
+                int[] newHB = new int[256];
+                for (int i = 0; i < 256; i++)
+                {
+                    double[] temp = new double[3];
+                    for (int j = 0; j <= i; j++)
+                    {
+                        temp[0] += H[0][j];
+                        temp[1] += H[1][j];
+                        temp[2] += H[2][j];
+                    }
+                    newHR[i] = (int)((min * Math.Pow(((max * 1.0) / min), (temp[0] / N))));
+                    newHG[i] = (int)((min * Math.Pow(((max * 1.0) / min), (temp[1] / N))));
+                    newHB[i] = (int)((min * Math.Pow(((max * 1.0) / min), (temp[2] / N))));
+                }
+                for (int i = 0; i < originalBitmapLock.Width; i++)
+                {
+                    for (int j = 0; j < originalBitmapLock.Height; j++)
+                    {
+                        Color color = Color.FromArgb(newHR[originalBitmapLock.GetPixel(i, j).R], newHG[originalBitmapLock.GetPixel(i, j).R], newHB[originalBitmapLock.GetPixel(i, j).R]);
+                        processedBitmapLock.SetPixel(i, j, color);
+                    }
+                }
+            }
+            originalBitmapLock.UnlockBits();
+            processedBitmapLock.UnlockBits();
+            return processedBmp;
         }
 
     }

@@ -115,6 +115,11 @@ namespace ImageSoundProcessing
                         bitmap = Effect.MedianFilter(_originalBitmap, factorSlider.Value);
                         break;
                     }
+                case "modifyHistogram":
+                    {
+                        bitmap = Effect.ModifiHistogram(_originalBitmap, 0,255);
+                        break;
+                    }
                 default: break;
             }
             if (bitmap != null)

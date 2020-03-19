@@ -37,6 +37,7 @@
             System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("AritmeticMiddleFilter");
             System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("MedianFilter");
             System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Histogram");
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("ModifyHistogram");
             this.effectsList = new System.Windows.Forms.ListView();
             this.effectHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chooseEffectButton = new System.Windows.Forms.Button();
@@ -62,12 +63,13 @@
             listViewItem4,
             listViewItem5,
             listViewItem6,
-            listViewItem7});
+            listViewItem7,
+            listViewItem8});
             this.effectsList.Location = new System.Drawing.Point(9, 10);
             this.effectsList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.effectsList.MultiSelect = false;
             this.effectsList.Name = "effectsList";
-            this.effectsList.Size = new System.Drawing.Size(156, 195);
+            this.effectsList.Size = new System.Drawing.Size(186, 250);
             this.effectsList.TabIndex = 0;
             this.effectsList.UseCompatibleStateImageBehavior = false;
             this.effectsList.View = System.Windows.Forms.View.Details;
@@ -80,7 +82,7 @@
             // chooseEffectButton
             // 
             this.chooseEffectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.chooseEffectButton.Location = new System.Drawing.Point(46, 219);
+            this.chooseEffectButton.Location = new System.Drawing.Point(68, 278);
             this.chooseEffectButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chooseEffectButton.Name = "chooseEffectButton";
             this.chooseEffectButton.Size = new System.Drawing.Size(81, 35);
@@ -93,7 +95,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(170, 263);
+            this.ClientSize = new System.Drawing.Size(206, 324);
             this.Controls.Add(this.chooseEffectButton);
             this.Controls.Add(this.effectsList);
             this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
