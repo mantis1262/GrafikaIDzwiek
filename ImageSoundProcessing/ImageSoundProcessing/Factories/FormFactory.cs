@@ -25,5 +25,15 @@ namespace ImageSoundProcessing
             form.ImageBitmap = bitmap;
             return form;
         }
+
+        public static CharWindow CreateCharForm(int[] value)
+        {
+            CharWindow form = new CharWindow();
+            form.Histogram.Series.Clear();
+            form.Histogram.Series.Add("Value");
+            for (int i = 0; i < 256; i++)
+                form.Histogram.Series["Value"].Points.AddXY(i,value[i]);
+            return form;
+        }
     }
 }

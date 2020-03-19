@@ -230,5 +230,30 @@ namespace ImageSoundProcessing.Helpers
             return processedBmp;
         }
 
+        public static int[][] Histogram(Bitmap original, int canal)
+        {
+
+            LockBitmap originalBitmapLock = new LockBitmap(original);
+            originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
+            int[][] value = new int[3][]
+            {
+                new int[256],
+                new int[256],
+                new int[256]
+            };           
+
+            for (int i = 0; i < originalBitmapLock.Width; i++)
+            {
+                for (int j = 0; j < originalBitmapLock.Height; j++)
+                {
+                   value[0][originalBitmapLock.GetPixel(i, j).R]++;
+                   value[1][originalBitmapLock.GetPixel(i, j).G]++;
+                   value[2][originalBitmapLock.GetPixel(i, j).B]++;
+                }
+            }
+            originalBitmapLock.UnlockBits();
+            return value;
+        }
+
     }
 }
