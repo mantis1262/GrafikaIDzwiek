@@ -39,15 +39,15 @@ namespace ImageSoundProcessing
             processedImage.Image = _processedBitmap;
         }
 
-        public void SetControlProperties(string name, params int[] args)
+        public void SetControlProperties(string name, params Object[] args)
         {
-            switch(name)
+            switch (name)
             {
                 case "slider":
                     {
                         factorSlider.Visible = true;
-                        factorSlider.Minimum = args[0];
-                        factorSlider.Maximum = args[1];
+                        factorSlider.Minimum = (int)args[0];
+                        factorSlider.Maximum = (int)args[1];
                         break;
                     }
                 case "sliderLabel":
@@ -56,6 +56,41 @@ namespace ImageSoundProcessing
                         factorLabel.Text = args[0].ToString();
                         break;
                     }
+
+                case "slider2":
+                    {
+                        factorSlider2.Visible = true;
+                        factorSlider2.Minimum = (int)args[0];
+                        factorSlider2.Maximum = (int)args[1];
+                        break;
+                    }
+                case "sliderLabel2":
+                    {
+                        factorLabel2.Visible = true;
+                        factorLabel2.Text = args[0].ToString();
+                        break;
+                    }
+
+                case "sliderName1":
+                    {
+
+                        SliderName1.Visible = true;
+                        SliderName1.Text = args[0].ToString();
+                        break;
+                    }
+                case "sliderName2":
+                    {
+
+                        SliderName2.Visible = true;
+                        SliderName2.Text = args[0].ToString();
+                        break;
+                    }
+                case "histogramButton":
+                    {
+                        histogram.Visible = true;
+                        break;
+                    }
+
                 case "maskButton":
                     {
                         maskButton.Visible = true;
@@ -64,7 +99,7 @@ namespace ImageSoundProcessing
                 case "maskLabel":
                     {
                         maskLabel.Visible = true;
-                        if (args[0] == 0)
+                        if ((int)args[0] == 0)
                         {
                             maskLabel.Text = "None";
                         }
@@ -117,7 +152,12 @@ namespace ImageSoundProcessing
                     }
                 case "modifyHistogram":
                     {
-                        bitmap = Effect.ModifiHistogram(_originalBitmap, 0,255);
+                        bitmap = Effect.ModifiHistogram(_originalBitmap, factorSlider.Value,255);
+                        this.SetControlProperties("slider", 1, this.factorSlider2.Value);
+                        this.SetControlProperties("slider2", this.factorSlider.Value,255);
+                        SetControlProperties("sliderLabel", factorSlider.Value);
+                        SetControlProperties("sliderLabel2", factorSlider2.Value);
+
                         break;
                     }
                 default: break;
@@ -187,6 +227,11 @@ namespace ImageSoundProcessing
         private void MaskLabel_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void histogram_Click(object sender, EventArgs e)
+        {
+            Effect.ShowHistogram(Effect.Histogram(_processedBitmap));
         }
     }
 }

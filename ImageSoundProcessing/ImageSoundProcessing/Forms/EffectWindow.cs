@@ -43,6 +43,7 @@ namespace ImageSoundProcessing.Forms
                             form.SetType("brightness");
                             form.SetControlProperties("slider", -255, 255);
                             form.SetControlProperties("sliderLabel", 0);
+                            form.SetControlProperties("sliderName1", "brightness");
                             form.Show();
                             Close();
                             break;
@@ -54,6 +55,7 @@ namespace ImageSoundProcessing.Forms
                             form.SetType("contrast");
                             form.SetControlProperties("slider", -255, 255);
                             form.SetControlProperties("sliderLabel", 0);
+                            form.SetControlProperties("sliderName1", "contrast");
                             form.Show();
                             Close();
                             break;
@@ -105,7 +107,7 @@ namespace ImageSoundProcessing.Forms
                             //H5 S4 O6//
 
                             int[][] value = Effect.Histogram(_bitmap);
-                            ShowHistogram(value);
+                            Effect.ShowHistogram(value);
                             Close();
                             break;
                         }
@@ -115,11 +117,15 @@ namespace ImageSoundProcessing.Forms
                             Bitmap resultBitmap = Effect.ModifiHistogram(_bitmap, min, max);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.SetType("modifyHistogram");
+                            form.SetControlProperties("histogramButton");
+                            form.SetControlProperties("slider", min, max);
+                            form.SetControlProperties("sliderLabel", 1);
+                            form.SetControlProperties("slider2", min, max);
+                            form.SetControlProperties("sliderLabel2", 255);
+
+                            form.SetControlProperties("sliderName1", "min");
+                            form.SetControlProperties("sliderName2", "max");
                             form.Show();
-
-                            int[][] value = Effect.Histogram(resultBitmap); 
-                            ShowHistogram(value);
-
 
                             Close();
                             break;
@@ -135,35 +141,7 @@ namespace ImageSoundProcessing.Forms
         }
 
 
-        private void ShowHistogram(int[][] value)
-        {
-            if (value[0].SequenceEqual(value[1]) == false && value[0].SequenceEqual(value[2]) == false)
-            {
-                CharWindow formR = FormFactory.CreateCharForm(value[0]);
-                formR.Name = "ValueR";
-                formR.Histogram.Series[0].Name = "valueR";
-                formR.Histogram.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-                CharWindow formG = FormFactory.CreateCharForm(value[1]);
-                formG.Name = "ValueG";
-                formG.Histogram.Series[0].Name = "valueG";
-                formG.Histogram.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-                CharWindow formB = FormFactory.CreateCharForm(value[2]);
-                formB.Name = "ValueB";
-                formB.Histogram.Series[0].Name = "valueB";
-                formB.Histogram.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-                formR.Show();
-                formG.Show();
-                formB.Show();
-            }
-            else
-            {
-                CharWindow form = FormFactory.CreateCharForm(value[2]);
-                form.Name = "ValueLight";
-                form.Histogram.Series[0].Name = "ValueLight";
-                form.Histogram.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-                form.Show();
-            }
-        }
+        
         private void effectsList_SelectedIndexChanged(object sender, EventArgs e)
         {
 

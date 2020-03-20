@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageSoundProcessing.Forms;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -316,6 +317,36 @@ namespace ImageSoundProcessing.Helpers
             originalBitmapLock.UnlockBits();
             processedBitmapLock.UnlockBits();
             return processedBmp;
+        }
+
+        public static void ShowHistogram(int[][] value)
+        {
+            if (value[0].SequenceEqual(value[1]) == false && value[0].SequenceEqual(value[2]) == false)
+            {
+                CharWindow formR = FormFactory.CreateCharForm(value[0]);
+                formR.Name = "ValueR";
+                formR.Histogram.Series[0].Name = "valueR";
+                formR.Histogram.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+                CharWindow formG = FormFactory.CreateCharForm(value[1]);
+                formG.Name = "ValueG";
+                formG.Histogram.Series[0].Name = "valueG";
+                formG.Histogram.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+                CharWindow formB = FormFactory.CreateCharForm(value[2]);
+                formB.Name = "ValueB";
+                formB.Histogram.Series[0].Name = "valueB";
+                formB.Histogram.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+                formR.Show();
+                formG.Show();
+                formB.Show();
+            }
+            else
+            {
+                CharWindow form = FormFactory.CreateCharForm(value[2]);
+                form.Name = "ValueLight";
+                form.Histogram.Series[0].Name = "ValueLight";
+                form.Histogram.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+                form.Show();
+            }
         }
 
     }
