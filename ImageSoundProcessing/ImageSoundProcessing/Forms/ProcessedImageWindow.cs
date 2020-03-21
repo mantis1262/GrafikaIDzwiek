@@ -204,7 +204,7 @@ namespace ImageSoundProcessing
                                         SetProcessedBitmap(resultBitmap);
                                         break;
                                     }
-                                default: break;
+                               default: break;
                             }
 
                             maskLabel.Text = parseResult.ToString();

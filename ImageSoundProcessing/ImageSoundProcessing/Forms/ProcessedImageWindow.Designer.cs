@@ -155,6 +155,7 @@
             this.factorSlider2.Size = new System.Drawing.Size(800, 45);
             this.factorSlider2.TabIndex = 8;
             this.factorSlider2.Value = 255;
+            this.factorSlider2.Visible = false;
             this.factorSlider2.Scroll += new System.EventHandler(this.FactorSlider_Scroll);
             // 
             // factorLabel2
@@ -176,8 +177,8 @@
             this.histogram.Size = new System.Drawing.Size(117, 55);
             this.histogram.TabIndex = 10;
             this.histogram.Text = "Show histogram";
-            this.maskButton.Visible = false;
             this.histogram.UseVisualStyleBackColor = true;
+            this.histogram.Visible = false;
             this.histogram.Click += new System.EventHandler(this.histogram_Click);
             // 
             // ProcessedImageWindow

@@ -349,5 +349,82 @@ namespace ImageSoundProcessing.Helpers
             }
         }
 
+        public static Bitmap lineFilter(Bitmap original,int k) 
+        {
+            Bitmap processedBmp = new Bitmap(original.Width, original.Height);
+            LockBitmap originalBitmapLock = new LockBitmap(original);
+            LockBitmap processedBitmapLock = new LockBitmap(processedBmp);
+            originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
+            processedBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            int maskSize = 3;
+            int midIndex;
+            if (maskSize % 2 == 0) midIndex = (maskSize + 1) / 2;
+            else midIndex = maskSize / 2;
+
+            int[][] mask = new int[4][]
+            {
+              new int[] {-1, -1, -1,
+                          1, -2,  1,
+                          1,  1,  1},
+
+              new int[] { 1,  1, 1,
+                         -1, -2, 1,
+                         -1, -1, 1},
+
+              new int[] {-1,  1, 1,
+                         -1, -2, 1,
+                         -1,  1, 1},
+
+              new int[] {-1, -1, 1,
+                         -1, -2, 1,
+                          1,  1, 1}
+            };
+            for (int i = 0; i < originalBitmapLock.Width; i++)
+            {
+                for (int j = 0; j < originalBitmapLock.Height; j++)
+                {
+
+                    int tempR = 0;
+                    int tempG = 0;
+                    int tempB = 0;
+                    int x, y;
+                    int o = 0;
+                    for (int n = -midIndex; n <= midIndex; n++)
+                    {
+                        y = j + n;
+                        if (y < 0)
+                            y = 0;
+                        if (y >= originalBitmapLock.Height)
+                            y = originalBitmapLock.Height - 1;
+                        for (int m = -midIndex; m <= midIndex; m++)
+                        {
+                            
+                            x = i + m;
+                            if (x < 0) x = 0;
+                            if (x >= originalBitmapLock.Width) x = originalBitmapLock.Width - 1;
+
+                            tempR += originalBitmapLock.GetPixel(x, y).R * mask[k][o];
+                            tempG += originalBitmapLock.GetPixel(x, y).G * mask[k][o];
+                            tempB += originalBitmapLock.GetPixel(x, y).B * mask[k][o];
+                            o++;
+                        }
+
+                    }
+
+                    if (tempR > 255) tempR = 255;
+                    if (tempG > 255) tempG = 255;
+                    if (tempB > 255) tempB = 255;
+                    if (tempR < 0) tempR = 0;
+                    if (tempG < 0) tempG = 0;
+                    if (tempB < 0) tempB = 0;
+                    processedBitmapLock.SetPixel(i, j, Color.FromArgb(originalBitmapLock.GetPixel(i, j).A, tempR, tempG, tempB));
+
+                }
+            }
+            originalBitmapLock.UnlockBits();
+            processedBitmapLock.UnlockBits();
+            return processedBmp;
+        }
     }
 }
