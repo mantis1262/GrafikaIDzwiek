@@ -114,7 +114,7 @@ namespace ImageSoundProcessing.Forms
                     case "ModifyHistogram":
                         {
                             int min = 1, max = 255;
-                            Bitmap resultBitmap = Effect.ModifiHistogram(_bitmap,min,max);
+                            Bitmap resultBitmap = Effect.ModifiHistogram(_bitmap, min, max);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.SetType("modifyHistogram");
                             form.SetControlProperties("histogramButton");
@@ -132,8 +132,7 @@ namespace ImageSoundProcessing.Forms
                         }
                     case "SouthFilter":
                         {
-                            int minMaskSize = 9, maxMaskSize = 81;
-                            Bitmap resultBitmap = Effect.lineFilter(_bitmap,0);
+                            Bitmap resultBitmap = Effect.lineFilter(_bitmap, 0);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.Show();
                             Close();
@@ -141,7 +140,6 @@ namespace ImageSoundProcessing.Forms
                         }
                     case "SouthWestFilter":
                         {
-                            int minMaskSize = 9, maxMaskSize = 81;
                             Bitmap resultBitmap = Effect.lineFilter(_bitmap, 1);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.Show();
@@ -150,7 +148,6 @@ namespace ImageSoundProcessing.Forms
                         }
                     case "WestFilter":
                         {
-                            int minMaskSize = 9, maxMaskSize = 81;
                             Bitmap resultBitmap = Effect.lineFilter(_bitmap, 2);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.Show();
@@ -159,8 +156,15 @@ namespace ImageSoundProcessing.Forms
                         }
                     case "NorthWestFilter":
                         {
-                            int minMaskSize = 9, maxMaskSize = 81;
                             Bitmap resultBitmap = Effect.lineFilter(_bitmap, 3);
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.Show();
+                            Close();
+                            break;
+                        }
+                    case "UolisaFilter":
+                        {
+                            Bitmap resultBitmap = Effect.uolisaFilter(_bitmap);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.Show();
                             Close();
