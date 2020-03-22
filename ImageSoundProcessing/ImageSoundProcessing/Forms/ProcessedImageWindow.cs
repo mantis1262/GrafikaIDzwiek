@@ -152,9 +152,9 @@ namespace ImageSoundProcessing
                     }
                 case "modifyHistogram":
                     {
-                        bitmap = Effect.ModifiHistogram(_originalBitmap, factorSlider.Value,255);
+                        bitmap = Effect.ModifiHistogram(_originalBitmap, factorSlider.Value, factorSlider2.Value);
                         this.SetControlProperties("slider", 1, this.factorSlider2.Value);
-                        this.SetControlProperties("slider2", this.factorSlider.Value,255);
+                        this.SetControlProperties("slider2", this.factorSlider.Value, 255);
                         SetControlProperties("sliderLabel", factorSlider.Value);
                         SetControlProperties("sliderLabel2", factorSlider2.Value);
 
