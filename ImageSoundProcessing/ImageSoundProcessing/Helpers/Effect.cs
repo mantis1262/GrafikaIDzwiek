@@ -60,14 +60,16 @@ namespace ImageSoundProcessing.Helpers
                 LockBitmap processedBitmapLock = new LockBitmap(processedBmp);
                 originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
                 processedBitmapLock.LockBits(ImageLockMode.WriteOnly);
-
+                double a = 0;
                 for (int i = 0; i < originalBitmapLock.Width; i++)
                     for (int j = 0; j < originalBitmapLock.Height; j++)
                     {
+                        if (factor <= 0) a = 1.0 + factor / 256.0;
+                        else a = 256.0 / Math.Pow(2, Math.Log(257 - factor, 2));
                         Color temp = originalBitmapLock.GetPixel(i, j);
-                        int R = factor * (temp.R - 128) + 128;
-                        int G = factor * (temp.G - 128) + 128;
-                        int B = factor * (temp.B - 128) + 128;
+                        int R = (int)(a * (temp.R - 128) + 128);
+                        int G = (int)(a * (temp.G - 128) + 128);
+                        int B = (int)(a * (temp.B - 128) + 128);
                         if (R > 255) R = 255;
                         if (G > 255) G = 255;
                         if (B > 255) B = 255;
