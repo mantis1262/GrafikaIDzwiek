@@ -1,4 +1,4 @@
-﻿using ImageSoundProcessing.Forms;
+using ImageSoundProcessing.Forms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -311,7 +311,7 @@ namespace ImageSoundProcessing.Helpers
                 {
                     for (int j = 0; j < originalBitmapLock.Height; j++)
                     {
-                        Color color = Color.FromArgb(newHR[originalBitmapLock.GetPixel(i, j).R], newHG[originalBitmapLock.GetPixel(i, j).R], newHB[originalBitmapLock.GetPixel(i, j).R]);
+                        Color color = Color.FromArgb(newHR[originalBitmapLock.GetPixel(i, j).R], newHG[originalBitmapLock.GetPixel(i, j).G], newHB[originalBitmapLock.GetPixel(i, j).B]);
                         processedBitmapLock.SetPixel(i, j, color);
                     }
                 }
