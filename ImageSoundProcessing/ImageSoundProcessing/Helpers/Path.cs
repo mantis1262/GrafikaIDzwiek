@@ -18,7 +18,7 @@ namespace ImageSoundProcessing.Helpers
                 Title = "Browse Image Files",
                 CheckFileExists = true,
                 CheckPathExists = true,
-                DefaultExt = "txt",
+                DefaultExt = "bmp",
                 Filter =
                     "BMP (*.bmp)|*.bmp|" +
                     "JPG (*.jpg)|*.jpg|" +
@@ -33,6 +33,32 @@ namespace ImageSoundProcessing.Helpers
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 path = openFileDialog.FileName;
+            }
+            return path;
+        }
+
+        public static string GetSaveImagePath()
+        {
+            string path = "";
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Choose destination",
+                CheckPathExists = true,
+                DefaultExt = "bmp",
+                Filter =
+                    "BMP (*.bmp)|*.bmp|" +
+                    "JPG (*.jpg)|*.jpg|" +
+                    "JPEG (*.jpeg)|*.jpeg|" +
+                    "JPE (*.jpe)|*.jpe|" +
+                    "TIFF (*.tiff)|*.tiff|" +
+                    "PNG (*.png)|*.png|" +
+                    "All images (*.bmp, *.jpg, *.jpeg, *.jpe, *.tiff,*.png) | *.bmp; *.jpg; *.jpeg; *.jpe; *tiff; *.png",
+                FilterIndex = 1,
+                RestoreDirectory = true
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                path = saveFileDialog.FileName;
             }
             return path;
         }
