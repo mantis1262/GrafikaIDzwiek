@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -132,7 +133,23 @@ namespace ImageSoundProcessing.Forms
                         }
                     case "SouthFilter":
                         {
+                            Stopwatch time = new Stopwatch();
+                            time.Start();
                             Bitmap resultBitmap = Effect.lineFilter(_bitmap, 0);
+                            time.Stop();
+                            MessageBox.Show(time.Elapsed.ToString());
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.Show();
+                            Close();
+                            break;
+                        }
+                    case "SouthStatic":
+                        {
+                            Stopwatch time = new Stopwatch();
+                            time.Start();
+                            Bitmap resultBitmap = Effect.southFilter(_bitmap);
+                            time.Stop();
+                            MessageBox.Show(time.Elapsed.ToString());
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.Show();
                             Close();

@@ -429,6 +429,68 @@ namespace ImageSoundProcessing.Helpers
             return processedBmp;
         }
 
+        public static Bitmap southFilter(Bitmap original)
+        {
+            Bitmap processedBmp = new Bitmap(original.Width, original.Height);
+            LockBitmap originalBitmapLock = new LockBitmap(original);
+            LockBitmap processedBitmapLock = new LockBitmap(processedBmp);
+            originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
+            processedBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            int maskSize = 3;
+            int midIndex;
+            if (maskSize % 2 == 0) midIndex = (maskSize + 1) / 2;
+            else midIndex = maskSize / 2;
+
+            int[] mask = new int[9]
+             {-1, -1, -1,
+               1, -2,  1,
+               1,  1,  1}
+             ;
+            for (int i = 0; i < originalBitmapLock.Width; i++)
+            {
+                for (int j = 0; j < originalBitmapLock.Height; j++)
+                {
+
+                    int tempR = 0;
+                    int tempG = 0;
+                    int tempB = 0;
+
+                    int x1 = i - 1;
+                    int x2 = i + 1;
+                    if (x1 < 0) x1 = 0;
+                    if (x2 >= originalBitmapLock.Width) x2 = originalBitmapLock.Width - 1;
+
+                    int y1 = j - 1;
+                    int y2 = j + 1;
+                    if (y1 < 0) y1 = 0;
+                    if (y2 >= originalBitmapLock.Height) y2 = originalBitmapLock.Height - 1;
+
+                    tempR = originalBitmapLock.GetPixel(x1, j).R -2 * originalBitmapLock.GetPixel(i, j).R + originalBitmapLock.GetPixel(x2, j).R
+                            - originalBitmapLock.GetPixel(x1, y1).R - originalBitmapLock.GetPixel(i, y1).R - originalBitmapLock.GetPixel(x2, y1).R
+                            + originalBitmapLock.GetPixel(x1, y2).R + originalBitmapLock.GetPixel(i, y2).R + originalBitmapLock.GetPixel(x2, y2).R;
+                    tempG = originalBitmapLock.GetPixel(x1, j).G - 2 * originalBitmapLock.GetPixel(i, j).G + originalBitmapLock.GetPixel(x2, j).G
+                            - originalBitmapLock.GetPixel(x1, y1).G - originalBitmapLock.GetPixel(i, y1).G - originalBitmapLock.GetPixel(x2, y1).G
+                            + originalBitmapLock.GetPixel(x1, y2).G + originalBitmapLock.GetPixel(i, y2).G + originalBitmapLock.GetPixel(x2, y2).G;
+                    tempB = originalBitmapLock.GetPixel(x1, j).B - 2 * originalBitmapLock.GetPixel(i, j).B + originalBitmapLock.GetPixel(x2, j).B
+                            - originalBitmapLock.GetPixel(x1, y1).B - originalBitmapLock.GetPixel(i, y1).B - originalBitmapLock.GetPixel(x2, y1).B
+                            + originalBitmapLock.GetPixel(x1, y2).B + originalBitmapLock.GetPixel(i, y2).B + originalBitmapLock.GetPixel(x2, y2).B;
+
+                    if (tempR > 255) tempR = 255;
+                    if (tempG > 255) tempG = 255;
+                    if (tempB > 255) tempB = 255;
+                    if (tempR < 0) tempR = 0;
+                    if (tempG < 0) tempG = 0;
+                    if (tempB < 0) tempB = 0;
+                    processedBitmapLock.SetPixel(i, j, Color.FromArgb(originalBitmapLock.GetPixel(i, j).A, tempR, tempG, tempB));
+
+                }
+            }
+            originalBitmapLock.UnlockBits();
+            processedBitmapLock.UnlockBits();
+            return processedBmp;
+        }
+
         public static Bitmap uolisaFilter(Bitmap original)
         {
             Bitmap processedBmp = new Bitmap(original.Width, original.Height);

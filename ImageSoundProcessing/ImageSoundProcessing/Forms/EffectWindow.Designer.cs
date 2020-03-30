@@ -43,6 +43,7 @@
             System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("WestFilter");
             System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("NorthWestFilter");
             System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("UolisaFilter");
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("SouthStatic");
             this.effectsList = new System.Windows.Forms.ListView();
             this.effectHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chooseEffectButton = new System.Windows.Forms.Button();
@@ -74,7 +75,8 @@
             listViewItem10,
             listViewItem11,
             listViewItem12,
-            listViewItem13});
+            listViewItem13,
+            listViewItem14});
             this.effectsList.Location = new System.Drawing.Point(9, 10);
             this.effectsList.Margin = new System.Windows.Forms.Padding(2);
             this.effectsList.MultiSelect = false;

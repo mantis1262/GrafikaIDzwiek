@@ -194,13 +194,13 @@ namespace ImageSoundProcessing
                             {
                                 case "aritmeticMiddleFilter":
                                     {
-                                        Bitmap resultBitmap = Effect.AritmeticMiddleFilter(_originalBitmap, parseResult);
+                                        Bitmap resultBitmap = Effect.AritmeticMiddleFilter(_originalBitmap, (int)result);
                                         SetProcessedBitmap(resultBitmap);
                                         break;
                                     }
                                 case "medianFilter":
                                     {
-                                        Bitmap resultBitmap = Effect.MedianFilter(_originalBitmap, parseResult);
+                                        Bitmap resultBitmap = Effect.MedianFilter(_originalBitmap, (int)result);
                                         SetProcessedBitmap(resultBitmap);
                                         break;
                                     }
