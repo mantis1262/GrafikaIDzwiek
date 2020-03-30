@@ -437,24 +437,15 @@ namespace ImageSoundProcessing.Helpers
             originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
             processedBitmapLock.LockBits(ImageLockMode.WriteOnly);
 
-            int maskSize = 3;
-            int midIndex;
-            if (maskSize % 2 == 0) midIndex = (maskSize + 1) / 2;
-            else midIndex = maskSize / 2;
 
-            int[] mask = new int[9]
-             {-1, -1, -1,
-               1, -2,  1,
-               1,  1,  1}
-             ;
             for (int i = 0; i < originalBitmapLock.Width; i++)
             {
                 for (int j = 0; j < originalBitmapLock.Height; j++)
                 {
 
-                    int tempR = 0;
-                    int tempG = 0;
-                    int tempB = 0;
+                    int tempR;
+                    int tempG;
+                    int tempB;
 
                     int x1 = i - 1;
                     int x2 = i + 1;
