@@ -121,7 +121,10 @@ namespace ImageSoundProcessing
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-
+            
+          string savePath = Path.GetSaveImagePath();
+            if (savePath != null && savePath != " ")
+                processedImage.Image.Save(savePath);
         }
 
         private void FactorSlider_Scroll(object sender, EventArgs e)

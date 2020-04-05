@@ -68,7 +68,6 @@
             this.saveButton.TabIndex = 1;
             this.saveButton.Text = "Save image";
             this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Visible = false;
             this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // factorSlider
