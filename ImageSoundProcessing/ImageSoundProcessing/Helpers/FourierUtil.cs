@@ -1,6 +1,8 @@
 ﻿using ImageSoundProcessing.Model;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,10 +13,10 @@ namespace ImageSoundProcessing.Helpers
     {
         public static Complex[] GetComplexRow(Complex[,] complex, int dimNum)
         {
-            int width = complex.GetLength(1);
-            Complex[] result = new Complex[width];
+            int colsOrWidth = complex.GetLength(1);
+            Complex[] result = new Complex[colsOrWidth];
 
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < colsOrWidth; i++)
             {
                 result[i] = complex[dimNum, i];
             }
@@ -24,10 +26,10 @@ namespace ImageSoundProcessing.Helpers
 
         public static Complex[] GetComplexCol(Complex[,] complex, int dimNum)
         {
-            int height = complex.GetLength(0);
-            Complex[] result = new Complex[height];
+            int rowsOrHeight = complex.GetLength(0);
+            Complex[] result = new Complex[rowsOrHeight];
 
-            for (int i = 0; i < height; i++)
+            for (int i = 0; i < rowsOrHeight; i++)
             {
                 result[i] = complex[i, dimNum];
             }
@@ -183,6 +185,152 @@ namespace ImageSoundProcessing.Helpers
             }
 
             return afterTransformComplex;
+        }
+
+        public static Bitmap GetSpectrumBitmap(Complex[,] complexImage, string spectrum)
+        {
+            double[,] pixelValues = GetPixelValues(complexImage, true, spectrum);
+            int size = pixelValues.Length;
+            Bitmap resultBitmap = new Bitmap(size, size);
+            LockBitmap resultBitmapLock = new LockBitmap(resultBitmap);
+            resultBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            for (int x = 0; x < size; x++)
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    if (pixelValues[x, y] < 0)
+                    {
+                        pixelValues[x, y] = 0;
+                    }
+                    int pixelColor = (int)pixelValues[x, y];
+                    resultBitmapLock.SetPixel(x, y, Color.FromArgb(pixelColor, pixelColor, pixelColor));
+                }
+            }
+
+            resultBitmapLock.UnlockBits();
+            return resultBitmap;
+        }
+
+        public static Complex[,] SwapQuadrants(Complex[,] complexImage)
+        {
+            int size = complexImage.Length;
+
+            for (int x = 0; x < size / 2; x++)
+            {
+                for (int y = 0; y < size / 2; y++)
+                {
+                    Complex temp = complexImage[x, y];
+                    complexImage[x, y] = complexImage[x + size / 2, y + size / 2];
+                    complexImage[x + size / 2, y + size / 2] = temp;
+                }
+            }
+
+            for (int x = size / 2; x < size; x++)
+            {
+                for (int y = 0; y < size / 2; y++)
+                {
+                    Complex temp = complexImage[x, y];
+                    complexImage[x, y] = complexImage[x - size / 2, y + size / 2];
+                    complexImage[x - size / 2, y + size / 2] = temp;
+                }
+            }
+
+            return complexImage;
+        }
+
+        public static double[,] GetPixelValues(Complex[,] complexImage, bool normalize, string spectrum)
+        {
+            int rows = complexImage.GetLength(0);
+            int cols = complexImage.GetLength(1);
+
+            double[,] res = new double[rows, cols];
+            for (int x = 0; x < rows; x++)
+            {
+                for (int y = 0; y < cols; y++)
+                {
+                    if (spectrum == "none")
+                    {
+                        res[x, y] = complexImage[x, y].Real;
+                        if (res[x, y] < 0)
+                        {
+                            res[x, y] = 0;
+                        }
+                        else if (res[x, y] > 255)
+                        {
+                            res[x, y] = 255;
+                        }
+                    }
+                    else if (spectrum == "phase")
+                    {
+                        res[x, y] = complexImage[x, y].Phase();
+                    }
+                    else if (spectrum == "abs")
+                    {
+                        res[x, y] = complexImage[x, y].Abs();
+                    }
+                }
+            }
+
+            if (normalize)
+            {
+                res = Normalise(res);
+            }
+
+            return res;
+        }
+
+        public static double[,] Normalise(double[,] values)
+        {
+            int rows = values.GetLength(0);
+            int cols = values.GetLength(1);
+
+            double curMin = values[0, 0];
+            double curMax = values[0, 0];
+
+            for (int x = 0; x < rows; x++)
+            {
+                for (int y = 0; y < cols; y++)
+                {
+                    if (values[x, y] > curMax)
+                    {
+                        curMax = values[x, y];
+                    }
+                    if (values[x, y] < curMin)
+                    {
+                        curMin = values[x, y];
+                    }
+                }
+            }
+
+            for (int x = 0; x < rows; x++)
+            {
+                for (int y = 0; y < cols; y++)
+                {
+                    values[x, y] = 255 * Math.Log(values[x, y] + 1) / Math.Log(curMax + 1);
+                }
+            }
+
+            return values;
+        }
+
+        public static Complex[,] TransformImgToComplex2DTable(Bitmap original)
+        {
+            LockBitmap originalBitmapLock = new LockBitmap(original);
+            originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
+
+            Complex[,] complex2DTable = new Complex[originalBitmapLock.Width, originalBitmapLock.Height];
+          
+            for (int x = 0; x < originalBitmapLock.Width; x++)
+            {
+                for (int y = 0; y < originalBitmapLock.Height; y++)
+                {
+                    complex2DTable[x, y] = new Complex(originalBitmapLock.GetPixel(x, y).R, 0.0d);
+                }
+            }
+
+            originalBitmapLock.UnlockBits();
+            return complex2DTable;
         }
     }
 }

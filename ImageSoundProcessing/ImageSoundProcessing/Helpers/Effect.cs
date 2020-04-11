@@ -538,5 +538,20 @@ namespace ImageSoundProcessing.Helpers
             processedBitmapLock.UnlockBits();
             return processedBmp;
         }
+
+        public static Bitmap FourierTransform(Bitmap original, string filter)
+        {
+            Bitmap processedBmp = new Bitmap(original);
+            LockBitmap originalBitmapLock = new LockBitmap(original);
+            LockBitmap processedBitmapLock = new LockBitmap(processedBmp);
+            originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
+            processedBitmapLock.LockBits(ImageLockMode.WriteOnly);
+            
+
+
+            originalBitmapLock.UnlockBits();
+            processedBitmapLock.UnlockBits();
+            return processedBmp;
+        }
     }
 }
