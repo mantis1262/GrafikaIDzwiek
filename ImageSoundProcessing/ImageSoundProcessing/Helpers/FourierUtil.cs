@@ -199,9 +199,9 @@ namespace ImageSoundProcessing.Helpers
             {
                 for (int y = 0; y < size; y++)
                 {
-                    if (pixelValues[x, y] < 0)
+                    if (pixelValues[x, y] < Colors.MIN_PIXEL_VALUE)
                     {
-                        pixelValues[x, y] = 0;
+                        pixelValues[x, y] = Colors.MIN_PIXEL_VALUE;
                     }
                     int pixelColor = (int)pixelValues[x, y];
                     resultBitmapLock.SetPixel(x, y, Color.FromArgb(pixelColor, pixelColor, pixelColor));
@@ -252,13 +252,13 @@ namespace ImageSoundProcessing.Helpers
                     if (spectrum == "none")
                     {
                         res[x, y] = complexImage[x, y].Real;
-                        if (res[x, y] < 0)
+                        if (res[x, y] < Colors.MIN_PIXEL_VALUE)
                         {
-                            res[x, y] = 0;
+                            res[x, y] = Colors.MIN_PIXEL_VALUE;
                         }
-                        else if (res[x, y] > 255)
+                        else if (res[x, y] > Colors.MAX_PIXEL_VALUE)
                         {
-                            res[x, y] = 255;
+                            res[x, y] = Colors.MAX_PIXEL_VALUE;
                         }
                     }
                     else if (spectrum == "phase")
@@ -307,7 +307,7 @@ namespace ImageSoundProcessing.Helpers
             {
                 for (int y = 0; y < cols; y++)
                 {
-                    values[x, y] = 255 * Math.Log(values[x, y] + 1) / Math.Log(curMax + 1);
+                    values[x, y] = Colors.MAX_PIXEL_VALUE * Math.Log(values[x, y] + 1) / Math.Log(curMax + 1);
                 }
             }
 
