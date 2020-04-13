@@ -128,14 +128,34 @@ namespace ImageSoundProcessing
                         highPassFilterButton.Visible = true;
                         break;
                     }
+                case "bandPassFilterButton":
+                    {
+                        bandPassFilterButton.Visible = true;
+                        break;
+                    }
+                case "bandCutFilterButton":
+                    {
+                        bandCutFilterButton.Visible = true;
+                        break;
+                    }
                 case "filterRangeLabel":
                     {
                         fourierFilterLabel.Visible = true;
                         break;
                     }
+                case "filterRangeLabel2":
+                    {
+                        fourierFilterLabel2.Visible = true;
+                        break;
+                    }
                 case "filterRangeTextBox":
                     {
                         rangeTextBox.Visible = true;
+                        break;
+                    }
+                case "filterRangeTextBox2":
+                    {
+                        rangeTextBox2.Visible = true;
                         break;
                     }
                 default: break;
@@ -290,6 +310,16 @@ namespace ImageSoundProcessing
 
         }
 
+        private void FourierFilterLabel2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RangeTextBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void PowerSpectrumButton_Click(object sender, EventArgs e)
         {
             Bitmap resultBitmap = Effect.GetSpectrumBitmap(_processedComplexData, "magnitude");
@@ -314,7 +344,7 @@ namespace ImageSoundProcessing
             if (!string.IsNullOrEmpty(rangeText))
             {
                 int range = int.Parse(rangeTextBox.Text);
-                if (range >= 0)
+                if (range >= Colors.MIN_PIXEL_VALUE && range <= Colors.MAX_PIXEL_VALUE)
                 {
                     Complex[][] filteredData = FourierUtil.LowPassFilter(_originalComplexData, range);
                     _processedComplexData = filteredData;
@@ -341,9 +371,65 @@ namespace ImageSoundProcessing
             if (!string.IsNullOrEmpty(rangeText))
             {
                 int range = int.Parse(rangeTextBox.Text);
-                if (range >= 0)
+                if (range >= Colors.MIN_PIXEL_VALUE && range <= Colors.MAX_PIXEL_VALUE)
                 {
                     Complex[][] filteredData = FourierUtil.HighPassFilter(_originalComplexData, range);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        private void BandPassFilterButton_Click(object sender, EventArgs e)
+        {
+            string minRangeText = rangeTextBox.Text;
+            string maxRangeText = rangeTextBox2.Text;
+            if (!string.IsNullOrEmpty(minRangeText) && !string.IsNullOrEmpty(maxRangeText))
+            {
+                int minRange = int.Parse(rangeTextBox.Text);
+                int maxRange = int.Parse(rangeTextBox2.Text);
+                if (minRange >= Colors.MIN_PIXEL_VALUE && minRange <= Colors.MAX_PIXEL_VALUE &&
+                    maxRange >= Colors.MIN_PIXEL_VALUE && maxRange <= Colors.MAX_PIXEL_VALUE)
+                {
+                    Complex[][] filteredData = FourierUtil.BandPassFilter(_originalComplexData, minRange, maxRange);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        private void BandCutFilterButton_Click(object sender, EventArgs e)
+        {
+            string minRangeText = rangeTextBox.Text;
+            string maxRangeText = rangeTextBox2.Text;
+            if (!string.IsNullOrEmpty(minRangeText) && !string.IsNullOrEmpty(maxRangeText))
+            {
+                int minRange = int.Parse(rangeTextBox.Text);
+                int maxRange = int.Parse(rangeTextBox2.Text);
+                if (minRange >= Colors.MIN_PIXEL_VALUE && minRange <= Colors.MAX_PIXEL_VALUE &&
+                    maxRange >= Colors.MIN_PIXEL_VALUE && maxRange <= Colors.MAX_PIXEL_VALUE)
+                {
+                    Complex[][] filteredData = FourierUtil.BandCutFilter(_originalComplexData, minRange, maxRange);
                     _processedComplexData = filteredData;
                 }
                 else

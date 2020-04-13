@@ -197,8 +197,12 @@ namespace ImageSoundProcessing.Forms
                             form.SetControlProperties("phaseSpectrumButton");
                             form.SetControlProperties("lowPassFilterButton");
                             form.SetControlProperties("highPassFilterButton");
+                            form.SetControlProperties("bandPassFilterButton");
+                            form.SetControlProperties("bandCutFilterButton");
                             form.SetControlProperties("filterRangeLabel");
+                            form.SetControlProperties("filterRangeLabel2");
                             form.SetControlProperties("filterRangeTextBox");
+                            form.SetControlProperties("filterRangeTextBox2");
                             form.SetOriginalComplexData(complexData);
                             form.SetProcessedComplexData(complexData);
                             form.Show();

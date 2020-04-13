@@ -47,6 +47,10 @@
             this.fourierFilterLabel = new System.Windows.Forms.Label();
             this.rangeTextBox = new System.Windows.Forms.TextBox();
             this.highPassFilterButton = new System.Windows.Forms.Button();
+            this.fourierFilterLabel2 = new System.Windows.Forms.Label();
+            this.rangeTextBox2 = new System.Windows.Forms.TextBox();
+            this.bandPassFilterButton = new System.Windows.Forms.Button();
+            this.bandCutFilterButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.processedImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.factorSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -230,18 +234,18 @@
             // 
             this.fourierFilterLabel.AutoSize = true;
             this.fourierFilterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.fourierFilterLabel.Location = new System.Drawing.Point(857, 212);
+            this.fourierFilterLabel.Location = new System.Drawing.Point(798, 212);
             this.fourierFilterLabel.Name = "fourierFilterLabel";
-            this.fourierFilterLabel.Size = new System.Drawing.Size(69, 25);
+            this.fourierFilterLabel.Size = new System.Drawing.Size(119, 25);
             this.fourierFilterLabel.TabIndex = 14;
-            this.fourierFilterLabel.Text = "Range";
+            this.fourierFilterLabel.Text = "Range (min)";
             this.fourierFilterLabel.Visible = false;
             this.fourierFilterLabel.Click += new System.EventHandler(this.FourierFilterLabel_Click);
             // 
             // rangeTextBox
             // 
             this.rangeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.rangeTextBox.Location = new System.Drawing.Point(932, 209);
+            this.rangeTextBox.Location = new System.Drawing.Point(941, 209);
             this.rangeTextBox.Name = "rangeTextBox";
             this.rangeTextBox.Size = new System.Drawing.Size(64, 30);
             this.rangeTextBox.TabIndex = 15;
@@ -260,12 +264,62 @@
             this.highPassFilterButton.Visible = false;
             this.highPassFilterButton.Click += new System.EventHandler(this.HighPassFilterButton_Click);
             // 
+            // fourierFilterLabel2
+            // 
+            this.fourierFilterLabel2.AutoSize = true;
+            this.fourierFilterLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.fourierFilterLabel2.Location = new System.Drawing.Point(798, 250);
+            this.fourierFilterLabel2.Name = "fourierFilterLabel2";
+            this.fourierFilterLabel2.Size = new System.Drawing.Size(125, 25);
+            this.fourierFilterLabel2.TabIndex = 17;
+            this.fourierFilterLabel2.Text = "Range (max)";
+            this.fourierFilterLabel2.Visible = false;
+            this.fourierFilterLabel2.Click += new System.EventHandler(this.FourierFilterLabel2_Click);
+            // 
+            // rangeTextBox2
+            // 
+            this.rangeTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.rangeTextBox2.Location = new System.Drawing.Point(941, 252);
+            this.rangeTextBox2.Name = "rangeTextBox2";
+            this.rangeTextBox2.Size = new System.Drawing.Size(64, 30);
+            this.rangeTextBox2.TabIndex = 18;
+            this.rangeTextBox2.Visible = false;
+            this.rangeTextBox2.TextChanged += new System.EventHandler(this.RangeTextBox2_TextChanged);
+            // 
+            // bandPassFilterButton
+            // 
+            this.bandPassFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.bandPassFilterButton.Location = new System.Drawing.Point(1036, 300);
+            this.bandPassFilterButton.Name = "bandPassFilterButton";
+            this.bandPassFilterButton.Size = new System.Drawing.Size(170, 42);
+            this.bandPassFilterButton.TabIndex = 19;
+            this.bandPassFilterButton.Text = "Band pass filter";
+            this.bandPassFilterButton.UseVisualStyleBackColor = true;
+            this.bandPassFilterButton.Visible = false;
+            this.bandPassFilterButton.Click += new System.EventHandler(this.BandPassFilterButton_Click);
+            // 
+            // bandCutFilterButton
+            // 
+            this.bandCutFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.bandCutFilterButton.Location = new System.Drawing.Point(1036, 349);
+            this.bandCutFilterButton.Name = "bandCutFilterButton";
+            this.bandCutFilterButton.Size = new System.Drawing.Size(170, 42);
+            this.bandCutFilterButton.TabIndex = 20;
+            this.bandCutFilterButton.Text = "Band cut filter";
+            this.bandCutFilterButton.UseVisualStyleBackColor = true;
+            this.bandCutFilterButton.Visible = false;
+            this.bandCutFilterButton.Click += new System.EventHandler(this.BandCutFilterButton_Click);
+            // 
             // ProcessedImageWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1261, 922);
+            this.Controls.Add(this.bandCutFilterButton);
+            this.Controls.Add(this.bandPassFilterButton);
+            this.Controls.Add(this.rangeTextBox2);
+            this.Controls.Add(this.fourierFilterLabel2);
             this.Controls.Add(this.highPassFilterButton);
             this.Controls.Add(this.rangeTextBox);
             this.Controls.Add(this.fourierFilterLabel);
@@ -316,5 +370,9 @@
         private System.Windows.Forms.Label fourierFilterLabel;
         private System.Windows.Forms.TextBox rangeTextBox;
         private System.Windows.Forms.Button highPassFilterButton;
+        private System.Windows.Forms.Label fourierFilterLabel2;
+        private System.Windows.Forms.TextBox rangeTextBox2;
+        private System.Windows.Forms.Button bandPassFilterButton;
+        private System.Windows.Forms.Button bandCutFilterButton;
     }
 }

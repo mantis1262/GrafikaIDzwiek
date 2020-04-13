@@ -347,8 +347,50 @@ namespace ImageSoundProcessing.Helpers
                 }
             }
 
-            resultComplex[size / 2][size / 2].Real = contantComponent.Real;
-            resultComplex[size / 2][size / 2].Imaginary = contantComponent.Imaginary;
+            resultComplex[size / 2][size / 2] = contantComponent;
+
+            return resultComplex;
+        }
+
+        public static Complex[][] BandPassFilter(Complex[][] transform, int minRange = Colors.MIN_PIXEL_VALUE, int maxRange = Colors.MAX_PIXEL_VALUE)
+        {
+            int size = transform.Length;
+            Complex contantComponent = new Complex(transform[size / 2][size / 2].Real, transform[size / 2][size / 2].Imaginary);
+            Complex[][] resultComplex = CopyComplexArray(transform);
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    double x = Math.Sqrt((i - size / 2) * (i - size / 2) + (j - size / 2) * (j - size / 2));
+                    if ((x > maxRange) || (x < minRange))
+                    {
+                        resultComplex[i][j] = new Complex(0.0f, 0.0f);
+                    }
+                }
+            }
+
+            resultComplex[size / 2][size / 2] = contantComponent;
+
+            return resultComplex;
+        }
+
+        public static Complex[][] BandCutFilter(Complex[][] transform, int minRange = Colors.MIN_PIXEL_VALUE, int maxRange = Colors.MAX_PIXEL_VALUE)
+        {
+            int size = transform.Length;
+            Complex[][] resultComplex = CopyComplexArray(transform);
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    double x = Math.Sqrt((i - size / 2) * (i - size / 2) + (j - size / 2) * (j - size / 2));
+                    if ((x <= maxRange) && (x >= minRange))
+                    {
+                        resultComplex[i][j] = new Complex(0.0f, 0.0f);
+                    }
+                }
+            }
 
             return resultComplex;
         }
