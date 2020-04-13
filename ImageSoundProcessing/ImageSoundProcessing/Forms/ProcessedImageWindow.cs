@@ -148,6 +148,11 @@ namespace ImageSoundProcessing
                         phaseSpectrumFilterButton.Visible = true;
                         break;
                     }
+                case "regionSplittingAndMergingSegmentation":
+                    {
+                        regionSplittingAndMergingSegmentation.Visible = true;
+                        break;
+                    }
                 case "filterRangeLabel":
                     {
                         fourierFilterLabel.Visible = true;
@@ -168,6 +173,16 @@ namespace ImageSoundProcessing
                         lComponentLabel.Visible = true;
                         break;
                     }
+                case "thresholdLabel":
+                    {
+                        thresholdLabel.Visible = true;
+                        break;
+                    }
+                case "minimumPixelsForRegionLabel":
+                    {
+                        minimumPixelsForRegionLabel.Visible = true;
+                        break;
+                    }
                 case "filterRangeTextBox":
                     {
                         rangeTextBox.Visible = true;
@@ -186,6 +201,16 @@ namespace ImageSoundProcessing
                 case "lComponentTextBox":
                     {
                         lComponentTextBox.Visible = true;
+                        break;
+                    }
+                case "thresholdTextBox":
+                    {
+                        thresholdTextBox.Visible = true;
+                        break;
+                    }
+                case "minPixelsTextBox":
+                    {
+                        minPixelsTextBox.Visible = true;
                         break;
                     }
                 default: break;
@@ -370,6 +395,26 @@ namespace ImageSoundProcessing
 
         }
 
+        private void ThresholdLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MinimumPixelsForRegionLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ThresholdTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MinPixelsTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void PowerSpectrumButton_Click(object sender, EventArgs e)
         {
             Bitmap resultBitmap = Effect.GetSpectrumBitmap(_processedComplexData, "magnitude");
@@ -542,6 +587,25 @@ namespace ImageSoundProcessing
             SetProcessedBitmap(resultBitmap);
         }
 
-        
+        private void RegionSplittingAndMergingSegmentation_Click(object sender, EventArgs e)
+        {
+            string thresholdText = thresholdTextBox.Text;
+            string minPixelsForRegionText = minPixelsTextBox.Text;
+            if (!string.IsNullOrEmpty(thresholdText) && !string.IsNullOrEmpty(minPixelsForRegionText))
+            {
+                int threshold = int.Parse(thresholdText);
+                int minPixelsForRegion = int.Parse(minPixelsForRegionText);
+
+                Bitmap resultBitmap = Effect.SegmentationRegionSplittingAndMerging(_originalBitmap, threshold, minPixelsForRegion);
+                SetProcessedBitmap(resultBitmap);
+            }
+            else
+            {
+                SetProcessedBitmap(_originalBitmap);
+            }
+
+            
+            
+        }
     }
 }

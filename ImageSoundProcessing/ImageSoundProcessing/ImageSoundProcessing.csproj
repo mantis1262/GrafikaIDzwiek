@@ -79,6 +79,10 @@
     <Compile Include="Helpers\Path.cs" />
     <Compile Include="Model\Colors.cs" />
     <Compile Include="Model\Complex.cs" />
+    <Compile Include="Model\Segmentation\PixelPoint.cs" />
+    <Compile Include="Model\Segmentation\QuadNode.cs" />
+    <Compile Include="Model\Segmentation\QuadTree.cs" />
+    <Compile Include="Model\Segmentation\RegionSplittingAndMerging.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Factories\FormFactory.cs" />

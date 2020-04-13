@@ -57,6 +57,11 @@
             this.lComponentLabel = new System.Windows.Forms.Label();
             this.kComponentTextBox = new System.Windows.Forms.TextBox();
             this.lComponentTextBox = new System.Windows.Forms.TextBox();
+            this.regionSplittingAndMergingSegmentation = new System.Windows.Forms.Button();
+            this.thresholdLabel = new System.Windows.Forms.Label();
+            this.minimumPixelsForRegionLabel = new System.Windows.Forms.Label();
+            this.thresholdTextBox = new System.Windows.Forms.TextBox();
+            this.minPixelsTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.processedImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.factorSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -165,7 +170,7 @@
             // factorSlider2
             // 
             this.factorSlider2.Location = new System.Drawing.Point(180, 124);
-            this.factorSlider2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.factorSlider2.Margin = new System.Windows.Forms.Padding(4);
             this.factorSlider2.Maximum = 255;
             this.factorSlider2.Minimum = -255;
             this.factorSlider2.Name = "factorSlider2";
@@ -191,7 +196,7 @@
             // 
             this.histogram.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.histogram.Location = new System.Drawing.Point(12, 95);
-            this.histogram.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.histogram.Margin = new System.Windows.Forms.Padding(4);
             this.histogram.Name = "histogram";
             this.histogram.Size = new System.Drawing.Size(156, 68);
             this.histogram.TabIndex = 10;
@@ -384,12 +389,73 @@
             this.lComponentTextBox.Visible = false;
             this.lComponentTextBox.TextChanged += new System.EventHandler(this.LComponentTextBox_TextChanged);
             // 
+            // regionSplittingAndMergingSegmentation
+            // 
+            this.regionSplittingAndMergingSegmentation.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.regionSplittingAndMergingSegmentation.Location = new System.Drawing.Point(1036, 518);
+            this.regionSplittingAndMergingSegmentation.Name = "regionSplittingAndMergingSegmentation";
+            this.regionSplittingAndMergingSegmentation.Size = new System.Drawing.Size(170, 64);
+            this.regionSplittingAndMergingSegmentation.TabIndex = 27;
+            this.regionSplittingAndMergingSegmentation.Text = "Region splitting and merging";
+            this.regionSplittingAndMergingSegmentation.UseVisualStyleBackColor = true;
+            this.regionSplittingAndMergingSegmentation.Visible = false;
+            this.regionSplittingAndMergingSegmentation.Click += new System.EventHandler(this.RegionSplittingAndMergingSegmentation_Click);
+            // 
+            // thresholdLabel
+            // 
+            this.thresholdLabel.AutoSize = true;
+            this.thresholdLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.thresholdLabel.Location = new System.Drawing.Point(823, 532);
+            this.thresholdLabel.Name = "thresholdLabel";
+            this.thresholdLabel.Size = new System.Drawing.Size(100, 25);
+            this.thresholdLabel.TabIndex = 28;
+            this.thresholdLabel.Text = "Threshold";
+            this.thresholdLabel.Visible = false;
+            this.thresholdLabel.Click += new System.EventHandler(this.ThresholdLabel_Click);
+            // 
+            // minimumPixelsForRegionLabel
+            // 
+            this.minimumPixelsForRegionLabel.AutoSize = true;
+            this.minimumPixelsForRegionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.minimumPixelsForRegionLabel.Location = new System.Drawing.Point(819, 572);
+            this.minimumPixelsForRegionLabel.Name = "minimumPixelsForRegionLabel";
+            this.minimumPixelsForRegionLabel.Size = new System.Drawing.Size(104, 25);
+            this.minimumPixelsForRegionLabel.TabIndex = 29;
+            this.minimumPixelsForRegionLabel.Text = "Min. pixels";
+            this.minimumPixelsForRegionLabel.Visible = false;
+            this.minimumPixelsForRegionLabel.Click += new System.EventHandler(this.MinimumPixelsForRegionLabel_Click);
+            // 
+            // thresholdTextBox
+            // 
+            this.thresholdTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.thresholdTextBox.Location = new System.Drawing.Point(941, 531);
+            this.thresholdTextBox.Name = "thresholdTextBox";
+            this.thresholdTextBox.Size = new System.Drawing.Size(64, 30);
+            this.thresholdTextBox.TabIndex = 30;
+            this.thresholdTextBox.Visible = false;
+            this.thresholdTextBox.TextChanged += new System.EventHandler(this.ThresholdTextBox_TextChanged);
+            // 
+            // minPixelsTextBox
+            // 
+            this.minPixelsTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.minPixelsTextBox.Location = new System.Drawing.Point(941, 572);
+            this.minPixelsTextBox.Name = "minPixelsTextBox";
+            this.minPixelsTextBox.Size = new System.Drawing.Size(64, 30);
+            this.minPixelsTextBox.TabIndex = 31;
+            this.minPixelsTextBox.Visible = false;
+            this.minPixelsTextBox.TextChanged += new System.EventHandler(this.MinPixelsTextBox_TextChanged);
+            // 
             // ProcessedImageWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1262, 853);
+            this.Controls.Add(this.minPixelsTextBox);
+            this.Controls.Add(this.thresholdTextBox);
+            this.Controls.Add(this.minimumPixelsForRegionLabel);
+            this.Controls.Add(this.thresholdLabel);
+            this.Controls.Add(this.regionSplittingAndMergingSegmentation);
             this.Controls.Add(this.lComponentTextBox);
             this.Controls.Add(this.kComponentTextBox);
             this.Controls.Add(this.lComponentLabel);
@@ -460,5 +526,10 @@
         private System.Windows.Forms.Label lComponentLabel;
         private System.Windows.Forms.TextBox kComponentTextBox;
         private System.Windows.Forms.TextBox lComponentTextBox;
+        private System.Windows.Forms.Button regionSplittingAndMergingSegmentation;
+        private System.Windows.Forms.Label thresholdLabel;
+        private System.Windows.Forms.Label minimumPixelsForRegionLabel;
+        private System.Windows.Forms.TextBox thresholdTextBox;
+        private System.Windows.Forms.TextBox minPixelsTextBox;
     }
 }

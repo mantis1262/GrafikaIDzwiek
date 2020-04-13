@@ -1,5 +1,6 @@
 using ImageSoundProcessing.Forms;
 using ImageSoundProcessing.Model;
+using ImageSoundProcessing.Model.Segmentation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -614,6 +615,14 @@ namespace ImageSoundProcessing.Helpers
 
             resultBitmapLock.UnlockBits();
             return resultBitmap;
+        }
+
+        public static Bitmap SegmentationRegionSplittingAndMerging(Bitmap original, int threshold, int minPixels)
+        {
+            RegionSplittingAndMerging segm = new RegionSplittingAndMerging(threshold, minPixels);
+            Bitmap processedBmp = segm.Process(original);
+
+            return processedBmp;
         }
     }
 }
