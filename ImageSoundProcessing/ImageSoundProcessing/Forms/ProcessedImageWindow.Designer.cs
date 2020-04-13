@@ -52,6 +52,11 @@
             this.bandPassFilterButton = new System.Windows.Forms.Button();
             this.bandCutFilterButton = new System.Windows.Forms.Button();
             this.highPassEdgeDetectionFilterButton = new System.Windows.Forms.Button();
+            this.phaseSpectrumFilterButton = new System.Windows.Forms.Button();
+            this.kComponentLabel = new System.Windows.Forms.Label();
+            this.lComponentLabel = new System.Windows.Forms.Label();
+            this.kComponentTextBox = new System.Windows.Forms.TextBox();
+            this.lComponentTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.processedImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.factorSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -160,7 +165,7 @@
             // factorSlider2
             // 
             this.factorSlider2.Location = new System.Drawing.Point(180, 124);
-            this.factorSlider2.Margin = new System.Windows.Forms.Padding(4);
+            this.factorSlider2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.factorSlider2.Maximum = 255;
             this.factorSlider2.Minimum = -255;
             this.factorSlider2.Name = "factorSlider2";
@@ -186,7 +191,7 @@
             // 
             this.histogram.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.histogram.Location = new System.Drawing.Point(12, 95);
-            this.histogram.Margin = new System.Windows.Forms.Padding(4);
+            this.histogram.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.histogram.Name = "histogram";
             this.histogram.Size = new System.Drawing.Size(156, 68);
             this.histogram.TabIndex = 10;
@@ -235,7 +240,7 @@
             // 
             this.fourierFilterLabel.AutoSize = true;
             this.fourierFilterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.fourierFilterLabel.Location = new System.Drawing.Point(798, 212);
+            this.fourierFilterLabel.Location = new System.Drawing.Point(798, 266);
             this.fourierFilterLabel.Name = "fourierFilterLabel";
             this.fourierFilterLabel.Size = new System.Drawing.Size(119, 25);
             this.fourierFilterLabel.TabIndex = 14;
@@ -246,7 +251,7 @@
             // rangeTextBox
             // 
             this.rangeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.rangeTextBox.Location = new System.Drawing.Point(941, 209);
+            this.rangeTextBox.Location = new System.Drawing.Point(941, 263);
             this.rangeTextBox.Name = "rangeTextBox";
             this.rangeTextBox.Size = new System.Drawing.Size(64, 30);
             this.rangeTextBox.TabIndex = 15;
@@ -269,7 +274,7 @@
             // 
             this.fourierFilterLabel2.AutoSize = true;
             this.fourierFilterLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.fourierFilterLabel2.Location = new System.Drawing.Point(798, 250);
+            this.fourierFilterLabel2.Location = new System.Drawing.Point(798, 304);
             this.fourierFilterLabel2.Name = "fourierFilterLabel2";
             this.fourierFilterLabel2.Size = new System.Drawing.Size(125, 25);
             this.fourierFilterLabel2.TabIndex = 17;
@@ -280,7 +285,7 @@
             // rangeTextBox2
             // 
             this.rangeTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.rangeTextBox2.Location = new System.Drawing.Point(941, 252);
+            this.rangeTextBox2.Location = new System.Drawing.Point(941, 306);
             this.rangeTextBox2.Name = "rangeTextBox2";
             this.rangeTextBox2.Size = new System.Drawing.Size(64, 30);
             this.rangeTextBox2.TabIndex = 18;
@@ -323,12 +328,73 @@
             this.highPassEdgeDetectionFilterButton.Visible = false;
             this.highPassEdgeDetectionFilterButton.Click += new System.EventHandler(this.HighPassEdgeDetectionFilterButton_Click);
             // 
+            // phaseSpectrumFilterButton
+            // 
+            this.phaseSpectrumFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.phaseSpectrumFilterButton.Location = new System.Drawing.Point(1036, 447);
+            this.phaseSpectrumFilterButton.Name = "phaseSpectrumFilterButton";
+            this.phaseSpectrumFilterButton.Size = new System.Drawing.Size(170, 64);
+            this.phaseSpectrumFilterButton.TabIndex = 22;
+            this.phaseSpectrumFilterButton.Text = "Phase spectrum filter";
+            this.phaseSpectrumFilterButton.UseVisualStyleBackColor = true;
+            this.phaseSpectrumFilterButton.Visible = false;
+            this.phaseSpectrumFilterButton.Click += new System.EventHandler(this.PhaseSpectrumFilterButton_Click);
+            // 
+            // kComponentLabel
+            // 
+            this.kComponentLabel.AutoSize = true;
+            this.kComponentLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.kComponentLabel.Location = new System.Drawing.Point(895, 447);
+            this.kComponentLabel.Name = "kComponentLabel";
+            this.kComponentLabel.Size = new System.Drawing.Size(22, 25);
+            this.kComponentLabel.TabIndex = 23;
+            this.kComponentLabel.Text = "k";
+            this.kComponentLabel.Visible = false;
+            this.kComponentLabel.Click += new System.EventHandler(this.KComponentLabel_Click);
+            // 
+            // lComponentLabel
+            // 
+            this.lComponentLabel.AutoSize = true;
+            this.lComponentLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lComponentLabel.Location = new System.Drawing.Point(895, 486);
+            this.lComponentLabel.Name = "lComponentLabel";
+            this.lComponentLabel.Size = new System.Drawing.Size(16, 25);
+            this.lComponentLabel.TabIndex = 24;
+            this.lComponentLabel.Text = "l";
+            this.lComponentLabel.Visible = false;
+            this.lComponentLabel.Click += new System.EventHandler(this.LComponentLabel_Click);
+            // 
+            // kComponentTextBox
+            // 
+            this.kComponentTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.kComponentTextBox.Location = new System.Drawing.Point(941, 447);
+            this.kComponentTextBox.Name = "kComponentTextBox";
+            this.kComponentTextBox.Size = new System.Drawing.Size(64, 30);
+            this.kComponentTextBox.TabIndex = 25;
+            this.kComponentTextBox.Visible = false;
+            this.kComponentTextBox.TextChanged += new System.EventHandler(this.KComponentTextBox_TextChanged);
+            // 
+            // lComponentTextBox
+            // 
+            this.lComponentTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lComponentTextBox.Location = new System.Drawing.Point(941, 484);
+            this.lComponentTextBox.Name = "lComponentTextBox";
+            this.lComponentTextBox.Size = new System.Drawing.Size(64, 30);
+            this.lComponentTextBox.TabIndex = 26;
+            this.lComponentTextBox.Visible = false;
+            this.lComponentTextBox.TextChanged += new System.EventHandler(this.LComponentTextBox_TextChanged);
+            // 
             // ProcessedImageWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1261, 922);
+            this.ClientSize = new System.Drawing.Size(1262, 853);
+            this.Controls.Add(this.lComponentTextBox);
+            this.Controls.Add(this.kComponentTextBox);
+            this.Controls.Add(this.lComponentLabel);
+            this.Controls.Add(this.kComponentLabel);
+            this.Controls.Add(this.phaseSpectrumFilterButton);
             this.Controls.Add(this.highPassEdgeDetectionFilterButton);
             this.Controls.Add(this.bandCutFilterButton);
             this.Controls.Add(this.bandPassFilterButton);
@@ -389,5 +455,10 @@
         private System.Windows.Forms.Button bandPassFilterButton;
         private System.Windows.Forms.Button bandCutFilterButton;
         private System.Windows.Forms.Button highPassEdgeDetectionFilterButton;
+        private System.Windows.Forms.Button phaseSpectrumFilterButton;
+        private System.Windows.Forms.Label kComponentLabel;
+        private System.Windows.Forms.Label lComponentLabel;
+        private System.Windows.Forms.TextBox kComponentTextBox;
+        private System.Windows.Forms.TextBox lComponentTextBox;
     }
 }

@@ -413,5 +413,22 @@ namespace ImageSoundProcessing.Helpers
 
             return resultComplex;
         }
+
+        public static Complex[][] PhaseSpectrumFilter(Complex[][] transform, int k, int l)
+        {
+            int size = transform.Length;
+            Complex[][] resultComplex = CopyComplexArray(transform);
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    resultComplex[i][j] = transform[i][j] * Complex.FromPolar(1,
+                        ((-(float)i * k * 2.0f) / size + (-(float)j * l * 2.0f) / size + (k + l)) * (float)Math.PI);
+                }
+            }
+
+            return resultComplex;
+        }
     }
 }
