@@ -18,7 +18,8 @@ namespace ImageSoundProcessing
         private string _type;
         private Bitmap _originalBitmap;
         private Bitmap _processedBitmap;
-        private Complex[][] _complexData;
+        private Complex[][] _originalComplexData;
+        private Complex[][] _processedComplexData;
 
         public ProcessedImageWindow()
         {
@@ -117,13 +118,38 @@ namespace ImageSoundProcessing
                         phaseSpectrumButton.Visible = true;
                         break;
                     }
+                case "lowPassFilterButton":
+                    {
+                        lowPassFilterButton.Visible = true;
+                        break;
+                    }
+                case "highPassFilterButton":
+                    {
+                        highPassFilterButton.Visible = true;
+                        break;
+                    }
+                case "filterRangeLabel":
+                    {
+                        fourierFilterLabel.Visible = true;
+                        break;
+                    }
+                case "filterRangeTextBox":
+                    {
+                        rangeTextBox.Visible = true;
+                        break;
+                    }
                 default: break;
             }
         }
 
-        public void SetComplexData(Complex[][] complex)
+        public void SetOriginalComplexData(Complex[][] complex)
         {
-            _complexData = complex;
+            _originalComplexData = complex;
+        }
+
+        public void SetProcessedComplexData(Complex[][] complex)
+        {
+            _processedComplexData = complex;
         }
 
         private void ProcessedImageWindow_Load(object sender, EventArgs e)
@@ -254,9 +280,19 @@ namespace ImageSoundProcessing
             Effect.ShowHistogram(Effect.Histogram(_processedBitmap));
         }
 
+        private void FourierFilterLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RangeTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void PowerSpectrumButton_Click(object sender, EventArgs e)
         {
-            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_complexData, "magnitude");
+            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_processedComplexData, "magnitude");
             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
             form.SetProcessedBitmap(resultBitmap);
             form.SetType("fourierPowerSpectrum");
@@ -265,11 +301,63 @@ namespace ImageSoundProcessing
 
         private void PhaseSpectrumButton_Click(object sender, EventArgs e)
         {
-            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_complexData, "phase");
+            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_processedComplexData, "phase");
             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
             form.SetProcessedBitmap(resultBitmap);
             form.SetType("fourierPhaseSpectrum");
             form.Show();
+        }
+
+        private void LowPassFilterButton_Click(object sender, EventArgs e)
+        {
+            string rangeText = rangeTextBox.Text;
+            if (!string.IsNullOrEmpty(rangeText))
+            {
+                int range = int.Parse(rangeTextBox.Text);
+                if (range >= 0)
+                {
+                    Complex[][] filteredData = FourierUtil.LowPassFilter(_originalComplexData, range);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        
+
+        private void HighPassFilterButton_Click(object sender, EventArgs e)
+        {
+            string rangeText = rangeTextBox.Text;
+            if (!string.IsNullOrEmpty(rangeText))
+            {
+                int range = int.Parse(rangeTextBox.Text);
+                if (range >= 0)
+                {
+                    Complex[][] filteredData = FourierUtil.HighPassFilter(_originalComplexData, range);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
         }
     }
 }

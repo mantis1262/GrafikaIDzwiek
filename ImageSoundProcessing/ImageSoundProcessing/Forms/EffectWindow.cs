@@ -195,7 +195,12 @@ namespace ImageSoundProcessing.Forms
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.SetControlProperties("powerSpectrumButtom");
                             form.SetControlProperties("phaseSpectrumButton");
-                            form.SetComplexData(complexData);
+                            form.SetControlProperties("lowPassFilterButton");
+                            form.SetControlProperties("highPassFilterButton");
+                            form.SetControlProperties("filterRangeLabel");
+                            form.SetControlProperties("filterRangeTextBox");
+                            form.SetOriginalComplexData(complexData);
+                            form.SetProcessedComplexData(complexData);
                             form.Show();
                             Close();
                             break;

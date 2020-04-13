@@ -294,5 +294,63 @@ namespace ImageSoundProcessing.Helpers
 
             return Normalise(floatTransform);
         }
+
+        public static float[,] Phase(Complex[][] transform)
+        {
+            int size = transform.Length;
+            float[,] floatTransform = new float[size, size];
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    floatTransform[i, j] = transform[i][j].Phase();
+                }
+            }
+
+            return Normalise(floatTransform);
+        }
+
+        public static Complex[][] LowPassFilter(Complex[][] transform, int range = Colors.MIN_PIXEL_VALUE)
+        {
+            int size = transform.Length;
+            Complex[][] resultComplex = CopyComplexArray(transform);
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (Math.Sqrt((i - size / 2) * (i - size / 2) + (j - size / 2) * (j - size / 2)) > range)
+                    {
+                        resultComplex[i][j] = new Complex(0.0f, 0.0f);
+                    }
+                }
+            }
+
+            return resultComplex;
+        }
+
+        public static Complex[][] HighPassFilter(Complex[][] transform, int range = Colors.MAX_PIXEL_VALUE)
+        {
+            int size = transform.Length;
+            Complex contantComponent = new Complex(transform[size / 2][size / 2].Real, transform[size / 2][size / 2].Imaginary);
+            Complex[][] resultComplex = CopyComplexArray(transform);
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (Math.Sqrt((i - size / 2) * (i - size / 2) + (j - size / 2) * (j - size / 2)) <= range)
+                    {
+                        resultComplex[i][j] = new Complex(0.0f, 0.0f);
+                    }
+                }
+            }
+
+            resultComplex[size / 2][size / 2].Real = contantComponent.Real;
+            resultComplex[size / 2][size / 2].Imaginary = contantComponent.Imaginary;
+
+            return resultComplex;
+        }
     }
 }

@@ -8,9 +8,9 @@ namespace ImageSoundProcessing.Model
 {
     public static class Colors
     {
-        public static int MIN_PIXEL_VALUE = 0;
-        public static int MIDDLE_PIXEL_VALUE = 128;
-        public static int MAX_PIXEL_VALUE = 255;
-        public static int NUMBER_OF_PIXEL_VALUES = 256;
+        public const int MIN_PIXEL_VALUE = 0;
+        public const int MIDDLE_PIXEL_VALUE = 128;
+        public const int MAX_PIXEL_VALUE = 255;
+        public const int NUMBER_OF_PIXEL_VALUES = 256;
     }
 }

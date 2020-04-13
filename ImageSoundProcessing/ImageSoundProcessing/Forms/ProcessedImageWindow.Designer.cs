@@ -43,6 +43,10 @@
             this.histogram = new System.Windows.Forms.Button();
             this.powerSpectrumButton = new System.Windows.Forms.Button();
             this.phaseSpectrumButton = new System.Windows.Forms.Button();
+            this.lowPassFilterButton = new System.Windows.Forms.Button();
+            this.fourierFilterLabel = new System.Windows.Forms.Label();
+            this.rangeTextBox = new System.Windows.Forms.TextBox();
+            this.highPassFilterButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.processedImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.factorSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -189,7 +193,7 @@
             // powerSpectrumButton
             // 
             this.powerSpectrumButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.powerSpectrumButton.Location = new System.Drawing.Point(339, 14);
+            this.powerSpectrumButton.Location = new System.Drawing.Point(339, 10);
             this.powerSpectrumButton.Name = "powerSpectrumButton";
             this.powerSpectrumButton.Size = new System.Drawing.Size(170, 44);
             this.powerSpectrumButton.TabIndex = 11;
@@ -201,7 +205,7 @@
             // phaseSpectrumButton
             // 
             this.phaseSpectrumButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.phaseSpectrumButton.Location = new System.Drawing.Point(515, 14);
+            this.phaseSpectrumButton.Location = new System.Drawing.Point(515, 10);
             this.phaseSpectrumButton.Name = "phaseSpectrumButton";
             this.phaseSpectrumButton.Size = new System.Drawing.Size(169, 44);
             this.phaseSpectrumButton.TabIndex = 12;
@@ -210,12 +214,62 @@
             this.phaseSpectrumButton.Visible = false;
             this.phaseSpectrumButton.Click += new System.EventHandler(this.PhaseSpectrumButton_Click);
             // 
+            // lowPassFilterButton
+            // 
+            this.lowPassFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lowPassFilterButton.Location = new System.Drawing.Point(1036, 203);
+            this.lowPassFilterButton.Name = "lowPassFilterButton";
+            this.lowPassFilterButton.Size = new System.Drawing.Size(170, 42);
+            this.lowPassFilterButton.TabIndex = 13;
+            this.lowPassFilterButton.Text = "Low pass filter";
+            this.lowPassFilterButton.UseVisualStyleBackColor = true;
+            this.lowPassFilterButton.Visible = false;
+            this.lowPassFilterButton.Click += new System.EventHandler(this.LowPassFilterButton_Click);
+            // 
+            // fourierFilterLabel
+            // 
+            this.fourierFilterLabel.AutoSize = true;
+            this.fourierFilterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.fourierFilterLabel.Location = new System.Drawing.Point(857, 212);
+            this.fourierFilterLabel.Name = "fourierFilterLabel";
+            this.fourierFilterLabel.Size = new System.Drawing.Size(69, 25);
+            this.fourierFilterLabel.TabIndex = 14;
+            this.fourierFilterLabel.Text = "Range";
+            this.fourierFilterLabel.Visible = false;
+            this.fourierFilterLabel.Click += new System.EventHandler(this.FourierFilterLabel_Click);
+            // 
+            // rangeTextBox
+            // 
+            this.rangeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.rangeTextBox.Location = new System.Drawing.Point(932, 209);
+            this.rangeTextBox.Name = "rangeTextBox";
+            this.rangeTextBox.Size = new System.Drawing.Size(64, 30);
+            this.rangeTextBox.TabIndex = 15;
+            this.rangeTextBox.Visible = false;
+            this.rangeTextBox.TextChanged += new System.EventHandler(this.RangeTextBox_TextChanged);
+            // 
+            // highPassFilterButton
+            // 
+            this.highPassFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.highPassFilterButton.Location = new System.Drawing.Point(1036, 251);
+            this.highPassFilterButton.Name = "highPassFilterButton";
+            this.highPassFilterButton.Size = new System.Drawing.Size(170, 42);
+            this.highPassFilterButton.TabIndex = 16;
+            this.highPassFilterButton.Text = "High pass filter";
+            this.highPassFilterButton.UseVisualStyleBackColor = true;
+            this.highPassFilterButton.Visible = false;
+            this.highPassFilterButton.Click += new System.EventHandler(this.HighPassFilterButton_Click);
+            // 
             // ProcessedImageWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1261, 922);
+            this.Controls.Add(this.highPassFilterButton);
+            this.Controls.Add(this.rangeTextBox);
+            this.Controls.Add(this.fourierFilterLabel);
+            this.Controls.Add(this.lowPassFilterButton);
             this.Controls.Add(this.phaseSpectrumButton);
             this.Controls.Add(this.powerSpectrumButton);
             this.Controls.Add(this.histogram);
@@ -258,5 +312,9 @@
         private System.Windows.Forms.Button histogram;
         private System.Windows.Forms.Button powerSpectrumButton;
         private System.Windows.Forms.Button phaseSpectrumButton;
+        private System.Windows.Forms.Button lowPassFilterButton;
+        private System.Windows.Forms.Label fourierFilterLabel;
+        private System.Windows.Forms.TextBox rangeTextBox;
+        private System.Windows.Forms.Button highPassFilterButton;
     }
 }

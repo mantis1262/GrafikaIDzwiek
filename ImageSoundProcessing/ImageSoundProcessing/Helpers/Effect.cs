@@ -575,7 +575,7 @@ namespace ImageSoundProcessing.Helpers
             {
                 case "none":
                     {
-                        pixelValues = FourierUtil.Normalise(FourierUtil.IfftDit2d(complexImage));
+                        pixelValues = FourierUtil.IfftDit2d(complexImage);
                         break;
                     }
                 case "magnitude":
@@ -585,13 +585,12 @@ namespace ImageSoundProcessing.Helpers
                     }
                 case "phase":
                     {
-                        // TODO
-                        pixelValues = FourierUtil.Normalise(FourierUtil.IfftDit2d(complexImage));
+                        pixelValues = FourierUtil.Phase(complexImage);
                         break;
                     }
                 default:
                     {
-                        pixelValues = FourierUtil.Normalise(FourierUtil.IfftDit2d(complexImage));
+                        pixelValues = FourierUtil.IfftDit2d(complexImage);
                         break;
                     }
             }
