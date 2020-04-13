@@ -18,7 +18,7 @@ namespace ImageSoundProcessing
         private string _type;
         private Bitmap _originalBitmap;
         private Bitmap _processedBitmap;
-        private Complex[,] _complexData;
+        private Complex[][] _complexData;
 
         public ProcessedImageWindow()
         {
@@ -121,7 +121,7 @@ namespace ImageSoundProcessing
             }
         }
 
-        public void SetComplexData(Complex[,] complex)
+        public void SetComplexData(Complex[][] complex)
         {
             _complexData = complex;
         }
@@ -256,7 +256,7 @@ namespace ImageSoundProcessing
 
         private void PowerSpectrumButton_Click(object sender, EventArgs e)
         {
-            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_complexData, "abs");
+            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_complexData, "magnitude");
             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
             form.SetProcessedBitmap(resultBitmap);
             form.SetType("fourierPowerSpectrum");

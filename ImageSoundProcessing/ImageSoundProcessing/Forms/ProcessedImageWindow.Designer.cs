@@ -51,7 +51,7 @@
             // 
             // processedImage
             // 
-            this.processedImage.Location = new System.Drawing.Point(12, 217);
+            this.processedImage.Location = new System.Drawing.Point(12, 203);
             this.processedImage.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.processedImage.Name = "processedImage";
             this.processedImage.Size = new System.Drawing.Size(69, 72);
@@ -151,7 +151,7 @@
             // factorSlider2
             // 
             this.factorSlider2.Location = new System.Drawing.Point(180, 124);
-            this.factorSlider2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.factorSlider2.Margin = new System.Windows.Forms.Padding(4);
             this.factorSlider2.Maximum = 255;
             this.factorSlider2.Minimum = -255;
             this.factorSlider2.Name = "factorSlider2";
@@ -177,7 +177,7 @@
             // 
             this.histogram.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.histogram.Location = new System.Drawing.Point(12, 95);
-            this.histogram.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.histogram.Margin = new System.Windows.Forms.Padding(4);
             this.histogram.Name = "histogram";
             this.histogram.Size = new System.Drawing.Size(156, 68);
             this.histogram.TabIndex = 10;
@@ -189,11 +189,11 @@
             // powerSpectrumButton
             // 
             this.powerSpectrumButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.powerSpectrumButton.Location = new System.Drawing.Point(343, 73);
+            this.powerSpectrumButton.Location = new System.Drawing.Point(339, 14);
             this.powerSpectrumButton.Name = "powerSpectrumButton";
             this.powerSpectrumButton.Size = new System.Drawing.Size(170, 44);
             this.powerSpectrumButton.TabIndex = 11;
-            this.powerSpectrumButton.Text = "Power spectrum";
+            this.powerSpectrumButton.Text = "Magnitude";
             this.powerSpectrumButton.UseVisualStyleBackColor = true;
             this.powerSpectrumButton.Visible = false;
             this.powerSpectrumButton.Click += new System.EventHandler(this.PowerSpectrumButton_Click);
@@ -201,11 +201,11 @@
             // phaseSpectrumButton
             // 
             this.phaseSpectrumButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.phaseSpectrumButton.Location = new System.Drawing.Point(517, 73);
+            this.phaseSpectrumButton.Location = new System.Drawing.Point(515, 14);
             this.phaseSpectrumButton.Name = "phaseSpectrumButton";
             this.phaseSpectrumButton.Size = new System.Drawing.Size(169, 44);
             this.phaseSpectrumButton.TabIndex = 12;
-            this.phaseSpectrumButton.Text = "Phase spectrum";
+            this.phaseSpectrumButton.Text = "Phase";
             this.phaseSpectrumButton.UseVisualStyleBackColor = true;
             this.phaseSpectrumButton.Visible = false;
             this.phaseSpectrumButton.Click += new System.EventHandler(this.PhaseSpectrumButton_Click);

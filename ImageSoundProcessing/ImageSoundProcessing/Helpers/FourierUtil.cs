@@ -11,73 +11,97 @@ namespace ImageSoundProcessing.Helpers
 {
     public static class FourierUtil
     {
-        public static Complex[] GetComplexRow(Complex[,] complex, int dimNum)
+        public static Complex[][] CopyComplexArray(Complex[][] complex)
         {
-            int colsOrWidth = complex.GetLength(0);
-            Complex[] result = new Complex[colsOrWidth];
+            int size = complex.Length;
+            Complex[][] result = new Complex[size][];
 
-            for (int i = 0; i < colsOrWidth; i++)
+            for (int i = 0; i < size; i++)
             {
-                result[i] = complex[dimNum, i];
+                result[i] = new Complex[size];
+
+                for (int j = 0; j < size; j++)
+                {
+                    Complex singleComplex = complex[i][j];
+                    result[i][j] = new Complex(singleComplex.Real, singleComplex.Imaginary);
+                }
             }
 
             return result;
         }
 
-        public static Complex[] GetComplexCol(Complex[,] complex, int dimNum)
+        public static Complex[][] BitmapToComplex(LockBitmap lockBitmap)
         {
-            int rowsOrHeight = complex.GetLength(1);
-            Complex[] result = new Complex[rowsOrHeight];
+            int size = lockBitmap.Width;
+            Complex[][] result = new Complex[size][];
 
-            for (int i = 0; i < rowsOrHeight; i++)
+            for (int x = 0; x < size; x++)
             {
-                result[i] = complex[i, dimNum];
+                result[x] = new Complex[size];
+
+                for (int y = 0; y < size; y++)
+                {
+                    result[x][y] = new Complex(lockBitmap.GetPixel(x, y).R, 0.0f);
+                }
             }
 
             return result;
         }
 
-        public static void SetComplexRow(Complex[,] complex, Complex[] complexRow, int dimNum)
+        public static Bitmap TransformResultToBitmap(float[,] transform)
         {
-            for (int i = 0; i < complexRow.Length; i++)
+            int size = transform.GetLength(1);
+            Bitmap resultBitmap = new Bitmap(size, size);
+            LockBitmap resultBitmapLock = new LockBitmap(resultBitmap);
+            resultBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            float max = 0.0f;
+
+            for (int i = 0; i < size; i++)
             {
-                complex[dimNum, i] = complexRow[i];
+                for (int j = 0; j < size; j++)
+                {
+                    if (max < transform[i, j])
+                        max = transform[i, j];
+                }
             }
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (!float.IsNaN(transform[i, j]))
+                    {
+                        float pixelValue = transform[i, j];
+                        Color color = Color.FromArgb(
+                            (int)(pixelValue / max * Colors.MAX_PIXEL_VALUE),
+                            (int)(pixelValue / max * Colors.MAX_PIXEL_VALUE),
+                            (int)(pixelValue / max * Colors.MAX_PIXEL_VALUE));
+                        resultBitmapLock.SetPixel(i, j, color);
+                    }
+                }
+            }
+
+            resultBitmapLock.UnlockBits();
+            return resultBitmap;
         }
 
-        public static void SetComplexCol(Complex[,] complex, Complex[] complexCol, int dimNum)
+        public static Complex[] FftDit1d(Complex[] input)
         {
-            for (int i = 0; i < complexCol.Length; i++)
-            {
-                complex[i, dimNum] = complexCol[i];
-            }
-        }
-
-        //public static Complex[,] Swap2dDimensions(Complex[,] complex)
-        //{
-        //    int rows = complex.GetLength(0);
-        //    int cols = complex.GetLength(1);
-        //    Complex[,] swappedTab = new Complex[rows, cols];
-
-        //    for (int x = 0; x < rows; x++)
-        //    {
-        //        for (int y = 0; y < cols; y++)
-        //        {
-        //            swappedTab[x, y] = complex[y, x];
-        //        }
-        //    }
-
-        //    return swappedTab;
-        //}
-
-        public static Complex[] FftDit1d(Complex[] complex)
-        {
-            int N = complex.Length;
+            int N = input.Length;
+            float omega = (float)(-2.0 * Math.PI / N);
+            Complex[] result = new Complex[input.Length];
 
             // base case
             if (N == 1)
             {
-                return new Complex[] { complex[0] };
+                result[0] = input[0];
+
+                if (Complex.IsNaN(result[0]))
+                {
+                    return new[] { new Complex(0, 0) };
+                }
+                return result;
             }
 
             // radix 2 Cooley-Tukey FFT
@@ -86,108 +110,124 @@ namespace ImageSoundProcessing.Helpers
                 throw new ArgumentException("N has to be the power of 2.");
             }
 
-            // fft of even terms
-            Complex[] even = new Complex[N / 2];
-            for (int k = 0; k < N / 2; k++)
-            {
-                even[k] = complex[2 * k];
-            }
-            Complex[] q = FftDit1d(even);
+            Complex[] evenInput = new Complex[N / 2];
+            Complex[] oddInput = new Complex[N / 2];
 
-            // fft of odd terms
-            Complex[] odd = even;  // reuse the array
-            for (int k = 0; k < N / 2; k++)
+            for (int i = 0; i < N / 2; i++)
             {
-                odd[k] = complex[2 * k + 1];
+                evenInput[i] = input[2 * i];
+                oddInput[i] = input[2 * i + 1];
             }
-            Complex[] r = FftDit1d(odd);
 
-            // combine
-            Complex[] y = new Complex[N];
+            Complex[] even = FftDit1d(evenInput);
+            Complex[] odd = FftDit1d(oddInput);
+
             for (int k = 0; k < N / 2; k++)
             {
-                double kth = -2 * k * Math.PI / N;
-                Complex wk = new Complex(Math.Cos(kth), Math.Sin(kth));
-                y[k] = q[k].Plus(wk.Times(r[k]));
-                y[k + N / 2] = q[k].Minus(wk.Times(r[k]));
+                int phase = k;
+                odd[k] *= Complex.FromPolar(1, omega * phase);
             }
-            return y;
+
+            for (int k = 0; k < N / 2; k++)
+            {
+                result[k] = even[k] + odd[k];
+                result[k + N / 2] = even[k] - odd[k];
+            }
+
+            return result;
         }
 
-        public static Complex[] IfftDit1d(Complex[] complex)
+        public static Complex[] IfftDit1d(Complex[] input)
         {
-            int N = complex.Length;
-            Complex[] y = new Complex[N];
+            int N = input.Length;
+            Complex[] result = new Complex[N];
 
             // take conjugate
             for (int i = 0; i < N; i++)
             {
-                y[i] = complex[i].Conjugate();
+                result[i] = input[i].Conjugate();
             }
 
             // compute forward FFT
-            y = FftDit1d(y);
+            result = FftDit1d(result);
 
             // take conjugate again
             for (int i = 0; i < N; i++)
             {
-                y[i] = y[i].Conjugate();
+                result[i] = result[i].Conjugate();
             }
 
-            // divide by N
-            for (int i = 0; i < N; i++)
-            {
-                y[i] = y[i].Times(1.0 / N);
-            }
-
-            return y;
+            return result;
         }
 
-        public static Complex[,] FftDit2d(Complex[,] complex2d)
+        public static Complex[][] FftDit2d(Complex[][] complexImage)
         {
-            int rows = complex2d.GetLength(0);
-            int cols = complex2d.GetLength(1);
+            int size = complexImage.GetLength(0);
+            Complex[][] p = new Complex[size][];
+            Complex[][] f = new Complex[size][];
+            Complex[][] t = new Complex[size][];
 
-            Complex[,] afterTransformComplex = new Complex[rows, cols];
-
-            for (int x = 0; x < rows; x++)
+            //CALCULATE P
+            for (int l = 0; l < size; l++)
             {
-                Complex[] complex = GetComplexRow(complex2d, x);
-                SetComplexRow(afterTransformComplex, FftDit1d(complex), x);
+                p[l] = FftDit1d(complexImage[l]);
             }
 
-            for (int y = 0; y < cols; y++)
+            //TANSPOSE AND COMPUTE
+            for (int l = 0; l < size; l++)
             {
-                Complex[] complex = GetComplexCol(complex2d, y);
-                SetComplexCol(afterTransformComplex, FftDit1d(complex), y);
+                t[l] = new Complex[size];
+
+                for (int k = 0; k < size; k++)
+                {
+                    t[l][k] = p[k][l];
+                }
+
+                f[l] = FftDit1d(t[l]);
             }
 
-            return afterTransformComplex;
+            return f;
         }
 
-        public static Complex[,] IfftDit2d(Complex[,] complex2d)
+        public static float[,] IfftDit2d(Complex[][] inputComplex)
         {
-            int rows = complex2d.GetLength(0);
-            int cols = complex2d.GetLength(1);
+            int size = inputComplex.GetLength(0);
+            Complex[][] p = new Complex[size][];
+            Complex[][] f = new Complex[size][];
+            Complex[][] t = new Complex[size][];
 
-            Complex[,] afterTransformComplex = new Complex[rows, cols];
+            float[,] floatImage = new float[size, size];
 
-            for (int x = 0; x < rows; x++)
+            //CALCULATE P
+            for (int l = 0; l < size; l++)
             {
-                Complex[] complex = GetComplexRow(complex2d, x);
-                SetComplexRow(afterTransformComplex, IfftDit1d(complex), x);
+                p[l] = IfftDit1d(inputComplex[l]);
             }
 
-            for (int y = 0; y < rows; y++)
+            //TRANSPOSE AND COMPUTE
+            for (int l = 0; l < size; l++)
             {
-                Complex[] complex = GetComplexCol(complex2d, y);
-                SetComplexCol(afterTransformComplex, FftDit1d(complex), y);
+                t[l] = new Complex[size];
+
+                for (int k = 0; k < size; k++)
+                {
+                    t[l][k] = p[k][l] / (size * size);
+                }
+
+                f[l] = IfftDit1d(t[l]);
             }
 
-            return afterTransformComplex;
+            for (int k = 0; k < size; k++)
+            {
+                for (int l = 0; l < size; l++)
+                {
+                    floatImage[k, l] = f[k][l].Modulus();
+                }
+            }
+            return floatImage;
         }
 
-        public static void SwapQuadrants(Complex[,] complexImage)
+        public static void SwapQuadrants(Complex[][] complexImage)
         {
             int size = complexImage.GetLength(0);
 
@@ -195,9 +235,9 @@ namespace ImageSoundProcessing.Helpers
             {
                 for (int y = 0; y < size / 2; y++)
                 {
-                    Complex temp = complexImage[x, y];
-                    complexImage[x, y] = complexImage[x + size / 2, y + size / 2];
-                    complexImage[x + size / 2, y + size / 2] = temp;
+                    Complex temp = complexImage[x][y];
+                    complexImage[x][y] = complexImage[x + size / 2][y + size / 2];
+                    complexImage[x + size / 2][y + size / 2] = temp;
                 }
             }
 
@@ -205,107 +245,54 @@ namespace ImageSoundProcessing.Helpers
             {
                 for (int y = 0; y < size / 2; y++)
                 {
-                    Complex temp = complexImage[x, y];
-                    complexImage[x, y] = complexImage[x - size / 2, y + size / 2];
-                    complexImage[x - size / 2, y + size / 2] = temp;
+                    Complex temp = complexImage[x][y];
+                    complexImage[x][y] = complexImage[x - size / 2][y + size / 2];
+                    complexImage[x - size / 2][y + size / 2] = temp;
                 }
             }
         }
 
-        public static double[,] GetPixelValues(Complex[,] complexImage, bool normalize, string spectrum)
+        public static float[,] Normalise(float[,] transform)
         {
-            int rows = complexImage.GetLength(0);
-            int cols = complexImage.GetLength(1);
+            int size = transform.GetLength(0);
+            float[,] floatTransform = new float[size, size];
+            float max = 0.0f;
 
-            double[,] res = new double[rows, cols];
-            for (int x = 0; x < rows; x++)
+            for (int i = 0; i < size; i++)
             {
-                for (int y = 0; y < cols; y++)
+                for (int j = 0; j < size; j++)
                 {
-                    if (spectrum == "none")
-                    {
-                        res[x, y] = complexImage[x, y].Real;
-                        if (res[x, y] < Colors.MIN_PIXEL_VALUE)
-                        {
-                            res[x, y] = Colors.MIN_PIXEL_VALUE;
-                        }
-                        else if (res[x, y] > Colors.MAX_PIXEL_VALUE)
-                        {
-                            res[x, y] = Colors.MAX_PIXEL_VALUE;
-                        }
-                    }
-                    else if (spectrum == "phase")
-                    {
-                        res[x, y] = complexImage[x, y].Phase();
-                    }
-                    else if (spectrum == "abs")
-                    {
-                        res[x, y] = complexImage[x, y].Abs();
-                    }
+                    if (max < transform[i, j])
+                        max = transform[i, j];
                 }
             }
 
-            if (normalize)
+            for (int i = 0; i < size; i++)
             {
-                res = Normalise(res);
+                for (int j = 0; j < size; j++)
+                {
+                    double pixelValue = Math.Log10(1 + transform[i, j]) * 255 / Math.Log10(1 + max);
+                    floatTransform[i, j] = (float)pixelValue;
+                }
             }
 
-            return res;
+            return floatTransform;
         }
 
-        public static double[,] Normalise(double[,] values)
+        public static float[,] Magnitude(Complex[][] transform)
         {
-            int rows = values.GetLength(0);
-            int cols = values.GetLength(1);
+            int size = transform.GetLength(0);
+            float[,] floatTransform = new float[size, size];
 
-            double curMin = values[0, 0];
-            double curMax = values[0, 0];
-
-            for (int x = 0; x < rows; x++)
+            for (int i = 0; i < size; i++)
             {
-                for (int y = 0; y < cols; y++)
+                for (int j = 0; j < size; j++)
                 {
-                    if (values[x, y] > curMax)
-                    {
-                        curMax = values[x, y];
-                    }
-                    if (values[x, y] < curMin)
-                    {
-                        curMin = values[x, y];
-                    }
+                    floatTransform[i, j] = transform[i][j].Modulus();
                 }
             }
 
-            for (int x = 0; x < rows; x++)
-            {
-                for (int y = 0; y < cols; y++)
-                {
-                    values[x, y] = Colors.MAX_PIXEL_VALUE * Math.Log(values[x, y] + 1) / Math.Log(curMax + 1);
-                }
-            }
-
-            return values;
-        }
-
-        public static Complex[,] TransformImgToComplex2DTable(LockBitmap lockBitmap)
-        {
-            Complex[,] complex2DTable = new Complex[lockBitmap.Width, lockBitmap.Height];
-          
-            for (int x = 0; x < lockBitmap.Width; x++)
-            {
-                for (int y = 0; y < lockBitmap.Height; y++)
-                {
-                    complex2DTable[x, y] = new Complex(lockBitmap.GetPixel(x, y).R, 0.0d);
-                }
-            }
-
-            return complex2DTable;
-        }
-
-        public static Complex[,] CopyComplexArray(Complex[,] complex)
-        {
-            Complex[,] result = new Complex[complex.GetLength(0), complex.GetLength(1)];
-            return result;
+            return Normalise(floatTransform);
         }
     }
 }

@@ -190,8 +190,8 @@ namespace ImageSoundProcessing.Forms
                         }
                     case "FFT":
                         {
-                            Complex[,] complexData = Effect.FftTransform(_bitmap);
-                            Bitmap resultBitmap = Effect.GetSpectrumBitmap(complexData, "none");
+                            Complex[][] complexData = Effect.FftTransform(_bitmap);
+                            Bitmap resultBitmap = Effect.IfftTransform(complexData);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
                             form.SetControlProperties("powerSpectrumButtom");
                             form.SetControlProperties("phaseSpectrumButton");
