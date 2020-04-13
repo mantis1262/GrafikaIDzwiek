@@ -138,6 +138,11 @@ namespace ImageSoundProcessing
                         bandCutFilterButton.Visible = true;
                         break;
                     }
+                case "highPassEdgeDetectionFilterButton":
+                    {
+                        highPassEdgeDetectionFilterButton.Visible = true;
+                        break;
+                    }
                 case "filterRangeLabel":
                     {
                         fourierFilterLabel.Visible = true;
@@ -430,6 +435,31 @@ namespace ImageSoundProcessing
                     maxRange >= Colors.MIN_PIXEL_VALUE && maxRange <= Colors.MAX_PIXEL_VALUE)
                 {
                     Complex[][] filteredData = FourierUtil.BandCutFilter(_originalComplexData, minRange, maxRange);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        private void HighPassEdgeDetectionFilterButton_Click(object sender, EventArgs e)
+        {
+            string rangeText = rangeTextBox.Text;
+            if (!string.IsNullOrEmpty(rangeText))
+            {
+                int range = int.Parse(rangeTextBox.Text);
+                if (range >= Colors.MIN_PIXEL_VALUE && range <= Colors.MAX_PIXEL_VALUE)
+                {
+                    Complex[][] filteredData = FourierUtil.HighPassEdgeDetectionFilter(_originalComplexData, range);
                     _processedComplexData = filteredData;
                 }
                 else

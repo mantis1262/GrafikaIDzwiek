@@ -199,6 +199,7 @@ namespace ImageSoundProcessing.Forms
                             form.SetControlProperties("highPassFilterButton");
                             form.SetControlProperties("bandPassFilterButton");
                             form.SetControlProperties("bandCutFilterButton");
+                            form.SetControlProperties("highPassEdgeDetectionFilterButton");
                             form.SetControlProperties("filterRangeLabel");
                             form.SetControlProperties("filterRangeLabel2");
                             form.SetControlProperties("filterRangeTextBox");

@@ -51,6 +51,7 @@
             this.rangeTextBox2 = new System.Windows.Forms.TextBox();
             this.bandPassFilterButton = new System.Windows.Forms.Button();
             this.bandCutFilterButton = new System.Windows.Forms.Button();
+            this.highPassEdgeDetectionFilterButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.processedImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.factorSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -310,12 +311,25 @@
             this.bandCutFilterButton.Visible = false;
             this.bandCutFilterButton.Click += new System.EventHandler(this.BandCutFilterButton_Click);
             // 
+            // highPassEdgeDetectionFilterButton
+            // 
+            this.highPassEdgeDetectionFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.highPassEdgeDetectionFilterButton.Location = new System.Drawing.Point(1036, 398);
+            this.highPassEdgeDetectionFilterButton.Name = "highPassEdgeDetectionFilterButton";
+            this.highPassEdgeDetectionFilterButton.Size = new System.Drawing.Size(170, 42);
+            this.highPassEdgeDetectionFilterButton.TabIndex = 21;
+            this.highPassEdgeDetectionFilterButton.Text = "Edge detection";
+            this.highPassEdgeDetectionFilterButton.UseVisualStyleBackColor = true;
+            this.highPassEdgeDetectionFilterButton.Visible = false;
+            this.highPassEdgeDetectionFilterButton.Click += new System.EventHandler(this.HighPassEdgeDetectionFilterButton_Click);
+            // 
             // ProcessedImageWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1261, 922);
+            this.Controls.Add(this.highPassEdgeDetectionFilterButton);
             this.Controls.Add(this.bandCutFilterButton);
             this.Controls.Add(this.bandPassFilterButton);
             this.Controls.Add(this.rangeTextBox2);
@@ -374,5 +388,6 @@
         private System.Windows.Forms.TextBox rangeTextBox2;
         private System.Windows.Forms.Button bandPassFilterButton;
         private System.Windows.Forms.Button bandCutFilterButton;
+        private System.Windows.Forms.Button highPassEdgeDetectionFilterButton;
     }
 }

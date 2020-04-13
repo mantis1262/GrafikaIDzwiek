@@ -394,5 +394,24 @@ namespace ImageSoundProcessing.Helpers
 
             return resultComplex;
         }
+
+        public static Complex[][] HighPassEdgeDetectionFilter(Complex[][] transform, int range = Colors.MAX_PIXEL_VALUE)
+        {
+            int size = transform.Length;
+            Complex[][] resultComplex = CopyComplexArray(transform);
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (Math.Sqrt((i - size / 2) * (i - size / 2) + (j - size / 2) * (j - size / 2)) <= range)
+                    {
+                        resultComplex[i][j] = new Complex(0.0f, 0.0f);
+                    }
+                }
+            }
+
+            return resultComplex;
+        }
     }
 }
