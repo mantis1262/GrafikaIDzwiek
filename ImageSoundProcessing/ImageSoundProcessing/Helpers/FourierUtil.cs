@@ -13,7 +13,7 @@ namespace ImageSoundProcessing.Helpers
     {
         public static Complex[] GetComplexRow(Complex[,] complex, int dimNum)
         {
-            int colsOrWidth = complex.GetLength(1);
+            int colsOrWidth = complex.GetLength(0);
             Complex[] result = new Complex[colsOrWidth];
 
             for (int i = 0; i < colsOrWidth; i++)
@@ -26,7 +26,7 @@ namespace ImageSoundProcessing.Helpers
 
         public static Complex[] GetComplexCol(Complex[,] complex, int dimNum)
         {
-            int rowsOrHeight = complex.GetLength(0);
+            int rowsOrHeight = complex.GetLength(1);
             Complex[] result = new Complex[rowsOrHeight];
 
             for (int i = 0; i < rowsOrHeight; i++)
@@ -187,34 +187,9 @@ namespace ImageSoundProcessing.Helpers
             return afterTransformComplex;
         }
 
-        public static Bitmap GetSpectrumBitmap(Complex[,] complexImage, string spectrum)
+        public static void SwapQuadrants(Complex[,] complexImage)
         {
-            double[,] pixelValues = GetPixelValues(complexImage, true, spectrum);
-            int size = pixelValues.Length;
-            Bitmap resultBitmap = new Bitmap(size, size);
-            LockBitmap resultBitmapLock = new LockBitmap(resultBitmap);
-            resultBitmapLock.LockBits(ImageLockMode.WriteOnly);
-
-            for (int x = 0; x < size; x++)
-            {
-                for (int y = 0; y < size; y++)
-                {
-                    if (pixelValues[x, y] < Colors.MIN_PIXEL_VALUE)
-                    {
-                        pixelValues[x, y] = Colors.MIN_PIXEL_VALUE;
-                    }
-                    int pixelColor = (int)pixelValues[x, y];
-                    resultBitmapLock.SetPixel(x, y, Color.FromArgb(pixelColor, pixelColor, pixelColor));
-                }
-            }
-
-            resultBitmapLock.UnlockBits();
-            return resultBitmap;
-        }
-
-        public static Complex[,] SwapQuadrants(Complex[,] complexImage)
-        {
-            int size = complexImage.Length;
+            int size = complexImage.GetLength(0);
 
             for (int x = 0; x < size / 2; x++)
             {
@@ -235,8 +210,6 @@ namespace ImageSoundProcessing.Helpers
                     complexImage[x - size / 2, y + size / 2] = temp;
                 }
             }
-
-            return complexImage;
         }
 
         public static double[,] GetPixelValues(Complex[,] complexImage, bool normalize, string spectrum)
@@ -314,23 +287,25 @@ namespace ImageSoundProcessing.Helpers
             return values;
         }
 
-        public static Complex[,] TransformImgToComplex2DTable(Bitmap original)
+        public static Complex[,] TransformImgToComplex2DTable(LockBitmap lockBitmap)
         {
-            LockBitmap originalBitmapLock = new LockBitmap(original);
-            originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
-
-            Complex[,] complex2DTable = new Complex[originalBitmapLock.Width, originalBitmapLock.Height];
+            Complex[,] complex2DTable = new Complex[lockBitmap.Width, lockBitmap.Height];
           
-            for (int x = 0; x < originalBitmapLock.Width; x++)
+            for (int x = 0; x < lockBitmap.Width; x++)
             {
-                for (int y = 0; y < originalBitmapLock.Height; y++)
+                for (int y = 0; y < lockBitmap.Height; y++)
                 {
-                    complex2DTable[x, y] = new Complex(originalBitmapLock.GetPixel(x, y).R, 0.0d);
+                    complex2DTable[x, y] = new Complex(lockBitmap.GetPixel(x, y).R, 0.0d);
                 }
             }
 
-            originalBitmapLock.UnlockBits();
             return complex2DTable;
+        }
+
+        public static Complex[,] CopyComplexArray(Complex[,] complex)
+        {
+            Complex[,] result = new Complex[complex.GetLength(0), complex.GetLength(1)];
+            return result;
         }
     }
 }

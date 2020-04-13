@@ -1,4 +1,5 @@
 ﻿using ImageSoundProcessing.Helpers;
+using ImageSoundProcessing.Model;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace ImageSoundProcessing
         private string _type;
         private Bitmap _originalBitmap;
         private Bitmap _processedBitmap;
+        private Complex[,] _complexData;
 
         public ProcessedImageWindow()
         {
@@ -105,8 +107,23 @@ namespace ImageSoundProcessing
                         }
                         break;
                     }
+                case "powerSpectrumButtom":
+                    {
+                        powerSpectrumButton.Visible = true;
+                        break;
+                    }
+                case "phaseSpectrumButton":
+                    {
+                        phaseSpectrumButton.Visible = true;
+                        break;
+                    }
                 default: break;
             }
+        }
+
+        public void SetComplexData(Complex[,] complex)
+        {
+            _complexData = complex;
         }
 
         private void ProcessedImageWindow_Load(object sender, EventArgs e)
@@ -235,6 +252,24 @@ namespace ImageSoundProcessing
         private void histogram_Click(object sender, EventArgs e)
         {
             Effect.ShowHistogram(Effect.Histogram(_processedBitmap));
+        }
+
+        private void PowerSpectrumButton_Click(object sender, EventArgs e)
+        {
+            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_complexData, "abs");
+            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+            form.SetProcessedBitmap(resultBitmap);
+            form.SetType("fourierPowerSpectrum");
+            form.Show();
+        }
+
+        private void PhaseSpectrumButton_Click(object sender, EventArgs e)
+        {
+            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_complexData, "phase");
+            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+            form.SetProcessedBitmap(resultBitmap);
+            form.SetType("fourierPhaseSpectrum");
+            form.Show();
         }
     }
 }

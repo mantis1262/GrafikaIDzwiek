@@ -77,6 +77,7 @@
     <Compile Include="Helpers\FourierUtil.cs" />
     <Compile Include="Helpers\LockBitmap.cs" />
     <Compile Include="Helpers\Path.cs" />
+    <Compile Include="Model\Colors.cs" />
     <Compile Include="Model\Complex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

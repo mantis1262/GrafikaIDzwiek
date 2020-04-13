@@ -1,4 +1,5 @@
 using ImageSoundProcessing.Forms;
+using ImageSoundProcessing.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -539,19 +540,64 @@ namespace ImageSoundProcessing.Helpers
             return processedBmp;
         }
 
-        public static Bitmap FourierTransform(Bitmap original, string filter)
+        public static Complex[,] FftTransform(Bitmap original)
         {
-            Bitmap processedBmp = new Bitmap(original);
             LockBitmap originalBitmapLock = new LockBitmap(original);
-            LockBitmap processedBitmapLock = new LockBitmap(processedBmp);
             originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
-            processedBitmapLock.LockBits(ImageLockMode.WriteOnly);
-            
 
+            Complex[,] pixelsData = FourierUtil.TransformImgToComplex2DTable(originalBitmapLock);
+            Complex[,] afterForwardComplex = FourierUtil.FftDit2d(pixelsData);
+            FourierUtil.SwapQuadrants(afterForwardComplex);
 
             originalBitmapLock.UnlockBits();
+            return afterForwardComplex;
+        }
+
+        public static Bitmap IfftTransform(Complex[,] complex)
+        {
+            Bitmap processedBmp = new Bitmap(complex.GetLength(0), complex.GetLength(1));
+            LockBitmap processedBitmapLock = new LockBitmap(processedBmp);
+            processedBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            Complex[,] afterInverseComplex = FourierUtil.IfftDit2d(complex);
+            double[,] normalisedResult = FourierUtil.GetPixelValues(afterInverseComplex, false, "none");
+
+            for (int x = 0; x < processedBitmapLock.Width; x++)
+            {
+                for (int y = 0; y < processedBitmapLock.Height; y++)
+                {
+                    processedBitmapLock.SetPixel(x, y, Color.FromArgb((int)normalisedResult[x, y], (int)normalisedResult[x, y], (int)normalisedResult[x, y]));
+                }
+            }
+
             processedBitmapLock.UnlockBits();
             return processedBmp;
+        }
+
+        public static Bitmap GetSpectrumBitmap(Complex[,] complexImage, string spectrum)
+        {
+            double[,] pixelValues = FourierUtil.GetPixelValues(complexImage, true, spectrum);
+            int width = complexImage.GetLength(0);
+            int height = complexImage.GetLength(1);
+            Bitmap resultBitmap = new Bitmap(width, height);
+            LockBitmap resultBitmapLock = new LockBitmap(resultBitmap);
+            resultBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (pixelValues[x, y] < Colors.MIN_PIXEL_VALUE)
+                    {
+                        pixelValues[x, y] = Colors.MIN_PIXEL_VALUE;
+                    }
+                    int pixelColor = (int)pixelValues[x, y];
+                    resultBitmapLock.SetPixel(x, y, Color.FromArgb(255, pixelColor, pixelColor, pixelColor));
+                }
+            }
+
+            resultBitmapLock.UnlockBits();
+            return resultBitmap;
         }
     }
 }

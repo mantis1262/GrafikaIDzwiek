@@ -44,6 +44,7 @@
             System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("NorthWestFilter");
             System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("UolisaFilter");
             System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("SouthStatic");
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("FFT");
             this.effectsList = new System.Windows.Forms.ListView();
             this.effectHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chooseEffectButton = new System.Windows.Forms.Button();
@@ -76,12 +77,13 @@
             listViewItem11,
             listViewItem12,
             listViewItem13,
-            listViewItem14});
-            this.effectsList.Location = new System.Drawing.Point(9, 10);
-            this.effectsList.Margin = new System.Windows.Forms.Padding(2);
+            listViewItem14,
+            listViewItem15});
+            this.effectsList.Location = new System.Drawing.Point(12, 12);
+            this.effectsList.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.effectsList.MultiSelect = false;
             this.effectsList.Name = "effectsList";
-            this.effectsList.Size = new System.Drawing.Size(186, 314);
+            this.effectsList.Size = new System.Drawing.Size(247, 386);
             this.effectsList.TabIndex = 0;
             this.effectsList.UseCompatibleStateImageBehavior = false;
             this.effectsList.View = System.Windows.Forms.View.Details;
@@ -94,10 +96,10 @@
             // chooseEffectButton
             // 
             this.chooseEffectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.chooseEffectButton.Location = new System.Drawing.Point(66, 328);
-            this.chooseEffectButton.Margin = new System.Windows.Forms.Padding(2);
+            this.chooseEffectButton.Location = new System.Drawing.Point(88, 404);
+            this.chooseEffectButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.chooseEffectButton.Name = "chooseEffectButton";
-            this.chooseEffectButton.Size = new System.Drawing.Size(81, 35);
+            this.chooseEffectButton.Size = new System.Drawing.Size(108, 43);
             this.chooseEffectButton.TabIndex = 1;
             this.chooseEffectButton.Text = "Apply";
             this.chooseEffectButton.UseVisualStyleBackColor = true;
@@ -105,12 +107,12 @@
             // 
             // EffectWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(204, 374);
+            this.ClientSize = new System.Drawing.Size(272, 460);
             this.Controls.Add(this.chooseEffectButton);
             this.Controls.Add(this.effectsList);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "EffectWindow";
             this.Text = "Effect";
             this.Load += new System.EventHandler(this.Effect_Load);

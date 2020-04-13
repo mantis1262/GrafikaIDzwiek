@@ -1,5 +1,6 @@
 ﻿using ImageSoundProcessing.Factories;
 using ImageSoundProcessing.Helpers;
+using ImageSoundProcessing.Model;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -183,6 +184,18 @@ namespace ImageSoundProcessing.Forms
                         {
                             Bitmap resultBitmap = Effect.uolisaFilter(_bitmap);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.Show();
+                            Close();
+                            break;
+                        }
+                    case "FFT":
+                        {
+                            Complex[,] complexData = Effect.FftTransform(_bitmap);
+                            Bitmap resultBitmap = Effect.GetSpectrumBitmap(complexData, "none");
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.SetControlProperties("powerSpectrumButtom");
+                            form.SetControlProperties("phaseSpectrumButton");
+                            form.SetComplexData(complexData);
                             form.Show();
                             Close();
                             break;
