@@ -617,6 +617,44 @@ namespace ImageSoundProcessing.Helpers
             return resultBitmap;
         }
 
+        public static float ConvertToRadians(float degrees)
+        {
+            return (float)((Math.PI / 180.0) * degrees);
+        }
+
+        public static float ConvertToDegrees(float radians)
+        {
+            return (float)((180.0 / Math.PI) * radians);
+        }
+
+        public static int[,] GenerateEdgeDetectionMask(int imageWidth, int imageHeight, int sectorWidth, float rotationAngle, int diameter)
+        {
+            int[,] result = new int[imageWidth, imageHeight];
+
+            int halfSectorWidth = sectorWidth / 2;
+            int[] center = new int[] { imageWidth / 2, imageHeight / 2 };
+            int[] leftTopVector = new int[] { -center[0], center[1] - halfSectorWidth - center[1] };
+            int[] leftBottomVector = new int[] { -center[0], center[1] + halfSectorWidth - center[1] };
+            int[] rightTopVector = new int[] { imageWidth - 1 - center[0], center[1] - halfSectorWidth - center[1] };
+            int[] rightBottomVector = new int[] { imageWidth - 1 - center[0], center[1] + halfSectorWidth - center[1] };
+
+            float leftTopSectorAngle = ConvertToDegrees((float)Math.Atan2(leftTopVector[1], leftTopVector[0]));
+            float leftBottomSectorAngle = ConvertToDegrees((float)Math.Atan2(leftBottomVector[1], leftBottomVector[0]));
+            float rightTopSectorAngle = ConvertToDegrees((float)Math.Atan2(rightTopVector[1], rightTopVector[0]));
+            float rightBottomSectorAngle = ConvertToDegrees((float)Math.Atan2(rightBottomVector[1], rightBottomVector[0]));
+
+            for (int i = 0; i < imageWidth; i++)
+            {
+                for (int j = 0; j < imageHeight; j++)
+                {
+                    // zmienic na generowanie wartosci maski 0 lub 255
+                    result[i, j] = 0;
+                }
+            }
+
+            return result;
+        }
+
         public static Bitmap SegmentationRegionSplittingAndMerging(Bitmap original, int threshold, int minPixels)
         {
             RegionSplittingAndMerging segm = new RegionSplittingAndMerging(threshold, minPixels);

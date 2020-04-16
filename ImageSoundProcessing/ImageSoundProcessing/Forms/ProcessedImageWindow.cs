@@ -543,13 +543,15 @@ namespace ImageSoundProcessing
 
         private void HighPassEdgeDetectionFilterButton_Click(object sender, EventArgs e)
         {
+            int[,] mask = Effect.GenerateEdgeDetectionMask(_originalBitmap.Width, _originalBitmap.Height, 200, 45, 70);
+
             string rangeText = rangeTextBox.Text;
             if (!string.IsNullOrEmpty(rangeText))
             {
                 int range = int.Parse(rangeText);
                 if (range >= Colors.MIN_PIXEL_VALUE && range <= Colors.MAX_PIXEL_VALUE)
                 {
-                    Complex[][] filteredData = FourierUtil.HighPassEdgeDetectionFilter(_originalComplexData, range);
+                    Complex[][] filteredData = FourierUtil.HighPassEdgeDetectionFilter(mask, _originalComplexData, range);
                     _processedComplexData = filteredData;
                 }
                 else
