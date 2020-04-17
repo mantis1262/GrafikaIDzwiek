@@ -459,23 +459,55 @@ namespace ImageSoundProcessing.Helpers
                     if (y1 < 0) y1 = 0;
                     if (y2 >= originalBitmapLock.Height) y2 = originalBitmapLock.Height - 1;
 
-                    tempR = originalBitmapLock.GetPixel(x1, j).R -2 * originalBitmapLock.GetPixel(i, j).R + originalBitmapLock.GetPixel(x2, j).R
-                            - originalBitmapLock.GetPixel(x1, y1).R - originalBitmapLock.GetPixel(i, y1).R - originalBitmapLock.GetPixel(x2, y1).R
-                            + originalBitmapLock.GetPixel(x1, y2).R + originalBitmapLock.GetPixel(i, y2).R + originalBitmapLock.GetPixel(x2, y2).R;
-                    tempG = originalBitmapLock.GetPixel(x1, j).G - 2 * originalBitmapLock.GetPixel(i, j).G + originalBitmapLock.GetPixel(x2, j).G
-                            - originalBitmapLock.GetPixel(x1, y1).G - originalBitmapLock.GetPixel(i, y1).G - originalBitmapLock.GetPixel(x2, y1).G
-                            + originalBitmapLock.GetPixel(x1, y2).G + originalBitmapLock.GetPixel(i, y2).G + originalBitmapLock.GetPixel(x2, y2).G;
-                    tempB = originalBitmapLock.GetPixel(x1, j).B - 2 * originalBitmapLock.GetPixel(i, j).B + originalBitmapLock.GetPixel(x2, j).B
-                            - originalBitmapLock.GetPixel(x1, y1).B - originalBitmapLock.GetPixel(i, y1).B - originalBitmapLock.GetPixel(x2, y1).B
-                            + originalBitmapLock.GetPixel(x1, y2).B + originalBitmapLock.GetPixel(i, y2).B + originalBitmapLock.GetPixel(x2, y2).B;
+                    int Depth = Bitmap.GetPixelFormatSize(original.PixelFormat);
+                    int cCount = Depth / 8;
+                    int i1 = ((j * original.Width) + x1) * cCount;
+                    int i2 = ((j * original.Width) + i) * cCount;
+                    int i3 = ((j * original.Width) + x2) * cCount;
+                    int i4 = ((y1 * original.Width) + x1) * cCount;
+                    int i5 = ((y1 * original.Width) + i) * cCount;
+                    int i6 = ((y1 * original.Width) + x2) * cCount;
+                    int i7 = ((y2 * original.Width) + x1) * cCount;
+                    int i8 = ((y2 * original.Width) + i) * cCount;
+                    int i9 = ((y2 * original.Width) + x2) * cCount;
 
-                    if (tempR > 255) tempR = 255;
-                    if (tempG > 255) tempG = 255;
-                    if (tempB > 255) tempB = 255;
-                    if (tempR < 0) tempR = 0;
-                    if (tempG < 0) tempG = 0;
-                    if (tempB < 0) tempB = 0;
-                    processedBitmapLock.SetPixel(i, j, Color.FromArgb(originalBitmapLock.GetPixel(i, j).A, tempR, tempG, tempB));
+                    if (Depth == 24)
+                    {
+                        tempB = originalBitmapLock.Pixels[i1] - 2 * originalBitmapLock.Pixels[i2] + originalBitmapLock.Pixels[i3]
+                                - originalBitmapLock.Pixels[i4] - originalBitmapLock.Pixels[i5] - originalBitmapLock.Pixels[i6]
+                                + originalBitmapLock.Pixels[i7] + originalBitmapLock.Pixels[i8] + originalBitmapLock.Pixels[i9];
+                        tempG = originalBitmapLock.Pixels[i1 + 1] - 2 * originalBitmapLock.Pixels[i2 + 1] + originalBitmapLock.Pixels[i3 + 1]
+                                - originalBitmapLock.Pixels[i4 + 1] - originalBitmapLock.Pixels[i5 + 1] - originalBitmapLock.Pixels[i6 + 1]
+                                + originalBitmapLock.Pixels[i7 + 1] + originalBitmapLock.Pixels[i8 + 1] + originalBitmapLock.Pixels[i9 + 1];
+                        tempR = originalBitmapLock.Pixels[i1 + 2] - 2 * originalBitmapLock.Pixels[i2 + 2] + originalBitmapLock.Pixels[i3 + 2]
+                                - originalBitmapLock.Pixels[i4 + 2] - originalBitmapLock.Pixels[i5 + 2] - originalBitmapLock.Pixels[i6 + 2]
+                                + originalBitmapLock.Pixels[i7 + 2] + originalBitmapLock.Pixels[i8 + 2] + originalBitmapLock.Pixels[i9 + 2];
+
+                        if (tempR > 255) tempR = 255;
+                        if (tempG > 255) tempG = 255;
+                        if (tempB > 255) tempB = 255;
+                        if (tempR < 0) tempR = 0;
+                        if (tempG < 0) tempG = 0;
+                        if (tempB < 0) tempB = 0;
+
+                        processedBitmapLock.SetPixel(i, j, Color.FromArgb(originalBitmapLock.GetPixel(i, j).A, tempR, tempG, tempB));
+
+                    }
+                    if (Depth == 8)
+                    {
+                        tempR = originalBitmapLock.Pixels[i1] - 2 * originalBitmapLock.Pixels[i2] + originalBitmapLock.Pixels[i3]
+                                    - originalBitmapLock.Pixels[i4] - originalBitmapLock.Pixels[i5] - originalBitmapLock.Pixels[i6]
+                                    + originalBitmapLock.Pixels[i7] + originalBitmapLock.Pixels[i8] + originalBitmapLock.Pixels[i9];
+
+                        if (tempR > 255) tempR = 255;
+                        if (tempR < 0) tempR = 0;
+
+                        processedBitmapLock.SetPixel(i, j, Color.FromArgb(originalBitmapLock.GetPixel(i, j).A, tempR, tempR, tempR));
+
+                    }
+
+
+                    // processedBitmapLock.SetPixel(i, j, Color.FromArgb(originalBitmapLock.GetPixel(i, j).A, tempR, tempG, tempB));
 
                 }
             }
