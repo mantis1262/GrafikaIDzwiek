@@ -665,10 +665,10 @@ namespace ImageSoundProcessing.Helpers
 
             int halfSectorWidth = sectorWidth / 2;
             int[] center = new int[] { imageWidth / 2, imageHeight / 2 };
-            int[] leftTopVector = new int[] { -center[0], center[1] - halfSectorWidth - center[1] };
-            int[] leftBottomVector = new int[] { -center[0], center[1] + halfSectorWidth - center[1] };
-            int[] rightTopVector = new int[] { imageWidth - 1 - center[0], center[1] - halfSectorWidth - center[1] };
-            int[] rightBottomVector = new int[] { imageWidth - 1 - center[0], center[1] + halfSectorWidth - center[1] };
+            int[] leftTopVector = new int[] { -center[0], center[1] - halfSectorWidth };
+            int[] leftBottomVector = new int[] { -center[0], center[1] + halfSectorWidth };
+            int[] rightTopVector = new int[] { imageWidth - 1 - center[0], center[1] - halfSectorWidth };
+            int[] rightBottomVector = new int[] { imageWidth - 1 - center[0], center[1] + halfSectorWidth };
 
             float leftTopSectorAngle = ConvertToDegrees((float)Math.Atan2(leftTopVector[1], leftTopVector[0]));
             float leftBottomSectorAngle = ConvertToDegrees((float)Math.Atan2(leftBottomVector[1], leftBottomVector[0]));
@@ -679,8 +679,22 @@ namespace ImageSoundProcessing.Helpers
             {
                 for (int j = 0; j < imageHeight; j++)
                 {
-                    // zmienic na generowanie wartosci maski 0 lub 255
-                    result[i, j] = 0;
+                    int[] temp = new int[] { -center[0] + i, -center[1] + j };
+                    float tempAngle = ConvertToDegrees((float)Math.Atan2(temp[0], temp[1]));
+                    if(i <  center[0])
+                    {
+                        if(-rotationAngle+leftBottomSectorAngle < tempAngle+180 && tempAngle+180 < leftTopSectorAngle-rotationAngle && center[0]-i > halfSectorWidth)
+                            result[i, j] = 255;
+                        else
+                            result[i, j] = 0;
+                    }
+                    else if(i >= center[0])
+                    {
+                        if (rightBottomSectorAngle+rotationAngle > tempAngle && tempAngle > rotationAngle+rightTopSectorAngle && i-center[0] > halfSectorWidth)
+                            result[i, j] = 255;
+                        else
+                            result[i, j] = 0;
+                    }
                 }
             }
 
