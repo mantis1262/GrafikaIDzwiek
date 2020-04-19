@@ -22,12 +22,12 @@ namespace ImageSoundProcessing.Model.Segmentation
         {
             _root.ExecuteSplit(threshold, _regions);
 
-            int sum = 0;
+            //int sum = 0;
 
-            foreach (PixelPoint[][] arr in _regions)
-            {
-                sum += arr.Length * arr.Length;
-            }
+            //foreach (PixelPoint[][] arr in _regions)
+            //{
+            //    sum += arr.Length * arr.Length;
+            //}
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ImageSoundProcessing.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -35,6 +36,15 @@ namespace ImageSoundProcessing.Model.Segmentation
             LockBitmap originalBitmapLock = new LockBitmap(originalBitmap);
             LockBitmap resultBitmapLock = new LockBitmap(resultBitmap);
             originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
+            resultBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            resultBitmapLock.Pixels = (byte[])originalBitmapLock.Pixels.Clone();
+
+            for (int n = 0; n < imageWithRegionNumbers.GetLength(0); n++)
+                for (int n2 = 0; n2 < imageWithRegionNumbers.GetLength(1); n2++)
+                {
+                    imageWithRegionNumbers[n, n2] = -10;
+                }
 
             PixelPoint[][] pixelPoints = new PixelPoint[size][];
 
@@ -66,8 +76,15 @@ namespace ImageSoundProcessing.Model.Segmentation
             }
 
             int[,] regionsMask = new int[size, size];
-            int foundRegions = 0;
 
+            for(int n = 0; n < regionsMask.GetLength(0); n++)
+                for(int n2 = 0; n2 < regionsMask.GetLength(1); n2++)
+                {
+                    regionsMask[n, n2] = -10;
+                }
+
+            int foundRegions = 0;
+            
             while (regionsMap.Count != 0)
             {
                 int curKey = regionsMap.First().Key;
@@ -75,6 +92,13 @@ namespace ImageSoundProcessing.Model.Segmentation
                 PixelPoint[][] cur = regionsMap[curKey];
                 Stack<int> regionNumbers = new Stack<int>();
                 int[,] finalMask = new int[size, size];
+
+                for (int n = 0; n < finalMask.GetLength(0); n++)
+                    for (int n2 = 0; n2 < finalMask.GetLength(1); n2++)
+                    {
+                        finalMask[n, n2] = -10;
+                    }
+
                 regionNumbers.Push(curKey);
                 int curMin = GetMin(cur);
                 int curMax = GetMax(cur);
@@ -98,9 +122,9 @@ namespace ImageSoundProcessing.Model.Segmentation
                         {
                             if (regionsMask[x, y] == -10)
                             {
-                                if (regionsMask[x + 1, y] != -10 || 
-                                    regionsMask[x - 1, y] != -10 || 
-                                    regionsMask[x, y + 1] != -10 || 
+                                if (regionsMask[x + 1, y] != -10 ||
+                                    regionsMask[x - 1, y] != -10 ||
+                                    regionsMask[x, y + 1] != -10 ||
                                     regionsMask[x, y - 1] != -10)
                                 {
                                     int regionNumber = imageWithRegionNumbers[x, y];
@@ -112,7 +136,8 @@ namespace ImageSoundProcessing.Model.Segmentation
 
                     foreach (int key in adjacentRegions)
                     {
-                        PixelPoint[][] region = regionsMap[key];
+                        PixelPoint[][] region;
+                        regionsMap.TryGetValue(key, out region);
                         if (region != null)
                         {
                             int regionMin = GetMin(region);
@@ -140,8 +165,15 @@ namespace ImageSoundProcessing.Model.Segmentation
                     }
 
                     regionsMap.Remove(curKey);
-                    curKey = regionNumbers.Pop();
-                    cur = regionsMap[curKey];
+                    if (regionNumbers.Count != 0)
+                    {
+                        curKey = regionNumbers.Pop();
+                        regionsMap.TryGetValue(curKey, out cur);
+                    }
+                    else
+                    {
+                        cur = null;
+                    }
                 }
 
                 int regionElements = 0;
@@ -164,10 +196,10 @@ namespace ImageSoundProcessing.Model.Segmentation
                         {
                             if (finalMask[i, j] >= 0)
                             {
-                                resultBitmapLock.SetPixel(i, j, Color.FromArgb(
+                                resultBitmapLock.SetPixel(i, j, Color.FromArgb( 
                                     Colors.MIN_PIXEL_VALUE, 
-                                    Math.Abs(255 - foundRegions * 15),
-                                    Math.Abs(255 - foundRegions * 15)));
+                                    Math.Abs(255 - foundRegions * 15) > 256 ? 255 : Math.Abs(255 - foundRegions * 15),
+                                    Math.Abs(255 - foundRegions * 15) > 256 ? 255 : Math.Abs(255 - foundRegions * 15)));
                             }
                         }
                     }
