@@ -700,5 +700,28 @@ namespace ImageSoundProcessing.Helpers
 
             return processedBmp;
         }
+
+        public static Bitmap Cut(Bitmap orginal)
+        {
+            Bitmap bitmap = Factories.BitmapFactory.CreateBitmap(Path.GetImagePath());
+            Bitmap processedBmp = new Bitmap(orginal);
+
+            LockBitmap MaskBitmapLock = new LockBitmap(bitmap);
+            LockBitmap resultBitmapLock = new LockBitmap(processedBmp);
+            MaskBitmapLock.LockBits(ImageLockMode.ReadOnly);
+            resultBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            for (int i = 0; i < resultBitmapLock.Width; i++)
+                for(int j = 0; j < resultBitmapLock.Height; j++)
+                {
+                    if (MaskBitmapLock.GetPixel(i, j).R != 255)
+                        resultBitmapLock.SetPixel(i, j, Color.Black);
+                }
+
+            MaskBitmapLock.UnlockBits();
+            resultBitmapLock.UnlockBits();
+
+            return processedBmp;
+        }
     }
 }

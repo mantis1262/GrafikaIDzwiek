@@ -618,5 +618,11 @@ namespace ImageSoundProcessing
             
             
         }
+
+        private void MaskUse_Click(object sender, EventArgs e)
+        {
+            Bitmap result = Effect.Cut(_originalBitmap);
+            SetProcessedBitmap(result);
+        }
     }
 }
