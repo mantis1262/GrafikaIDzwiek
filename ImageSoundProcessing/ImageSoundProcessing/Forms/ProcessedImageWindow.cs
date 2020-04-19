@@ -544,7 +544,16 @@ namespace ImageSoundProcessing
         private void HighPassEdgeDetectionFilterButton_Click(object sender, EventArgs e)
         {
             int[,] mask = Effect.GenerateEdgeDetectionMask(_originalBitmap.Width, _originalBitmap.Height, 200, 45, 70);
-
+            Bitmap bitmap = new Bitmap(512, 512);
+            for(int i=0; i< bitmap.Width; i++)
+                for(int j=0; j< bitmap.Height; j++)
+                {
+                    if (mask[i, j] == 0)
+                        bitmap.SetPixel(i, j, Color.Black);
+                    else
+                        bitmap.SetPixel(i, j, Color.White);
+                }
+            bitmap.Save("detMask.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
             string rangeText = rangeTextBox.Text;
             if (!string.IsNullOrEmpty(rangeText))
             {
