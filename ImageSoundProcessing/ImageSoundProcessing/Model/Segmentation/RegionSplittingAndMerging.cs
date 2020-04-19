@@ -14,18 +14,21 @@ namespace ImageSoundProcessing.Model.Segmentation
     {
         private int threshold;
         private int minimumPixelsForRegion;
+        public List<Bitmap> bitmapsMasks;
 
         public int Threshold { get => threshold; set => threshold = value; }
         public int MinimumPixelsForRegion { get => minimumPixelsForRegion; set => minimumPixelsForRegion = value; }
 
         public RegionSplittingAndMerging()
         {
+            bitmapsMasks = new List<Bitmap>();
         }
 
         public RegionSplittingAndMerging(int threshold, int minimumPixelsForRegion)
         {
             this.threshold = threshold;
             this.minimumPixelsForRegion = minimumPixelsForRegion;
+            bitmapsMasks = new List<Bitmap>();
         }
 
         public Bitmap Process(Bitmap originalBitmap)
@@ -190,6 +193,18 @@ namespace ImageSoundProcessing.Model.Segmentation
 
                 if (regionElements >= minimumPixelsForRegion)
                 {
+
+                    Bitmap temp = new Bitmap(512, 512);
+                    for (int i = 0; i < temp.Width; i++)
+                    {
+                        for (int j = 0; j < temp.Height; j++)
+                        {
+                            temp.SetPixel(i, j, Color.Black);
+                        }
+                    }
+
+                    bitmapsMasks.Add(temp);
+                    
                     for (int i = 0; i < finalMask.GetLength(0); i++)
                     {
                         for (int j = 0; j < finalMask.GetLength(1); j++)
@@ -200,6 +215,8 @@ namespace ImageSoundProcessing.Model.Segmentation
                                     Colors.MIN_PIXEL_VALUE, 
                                     Math.Abs(255 - foundRegions * 15) > 256 ? 255 : Math.Abs(255 - foundRegions * 15),
                                     Math.Abs(255 - foundRegions * 15) > 256 ? 255 : Math.Abs(255 - foundRegions * 15)));
+                                bitmapsMasks[foundRegions].SetPixel(i, j, Color.White);
+                                
                             }
                         }
                     }

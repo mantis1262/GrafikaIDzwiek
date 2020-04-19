@@ -691,6 +691,12 @@ namespace ImageSoundProcessing.Helpers
         {
             RegionSplittingAndMerging segm = new RegionSplittingAndMerging(threshold, minPixels);
             Bitmap processedBmp = segm.Process(original);
+            int imgNumber = 0;
+            foreach (Image img in segm.bitmapsMasks)
+            {
+                img.Save("SegmentationMaskNumber" + imgNumber + ".bmp", ImageFormat.Bmp);
+                imgNumber++;
+            }
 
             return processedBmp;
         }
