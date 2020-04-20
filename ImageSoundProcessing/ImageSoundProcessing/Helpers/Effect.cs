@@ -9,6 +9,8 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 
 namespace ImageSoundProcessing.Helpers
 {
@@ -659,44 +661,136 @@ namespace ImageSoundProcessing.Helpers
             return (float)((180.0 / Math.PI) * radians);
         }
 
+        public static Vector RotateVectorByAngle(Vector vector, Vector origin, float angle)
+        {
+            float radians = ConvertToRadians(angle);
+
+            double[] result = new double[2];
+            //result[0] = vector.X * Math.Cos(angle) - vector.Y * Math.Sin(radians);
+            //result[1] = vector.X * Math.Sin(angle) + vector.Y * Math.Cos(radians);
+
+            result[0] = ((vector.X - origin.X) * Math.Cos(radians)) - ((origin.Y - vector.Y) * Math.Sin(radians)) + origin.X;
+            result[1] = ((origin.Y - vector.Y) * Math.Cos(radians)) - ((vector.X - origin.X) * Math.Sin(radians)) + origin.Y;
+
+            return new Vector(result[0], result[1]);
+        }
+
         public static int[,] GenerateEdgeDetectionMask(int imageWidth, int imageHeight, int sectorWidth, float rotationAngle, int diameter)
         {
             int[,] result = new int[imageWidth, imageHeight];
 
             int halfSectorWidth = sectorWidth / 2;
             int[] center = new int[] { imageWidth / 2, imageHeight / 2 };
-            int[] leftTopVector = new int[] { -center[0], center[1] - halfSectorWidth };
-            int[] leftBottomVector = new int[] { -center[0], center[1] + halfSectorWidth };
-            int[] rightTopVector = new int[] { imageWidth - 1 - center[0], center[1] - halfSectorWidth };
-            int[] rightBottomVector = new int[] { imageWidth - 1 - center[0], center[1] + halfSectorWidth };
+            Vector centerVector = new Vector(center[0], center[1]);
+            Vector leftLinePartVector = new Vector(-1, 0);
+            Vector rightLinePartVector = new Vector(1, 0);
 
-            float leftTopSectorAngle = ConvertToDegrees((float)Math.Atan2(leftTopVector[1], leftTopVector[0]));
-            float leftBottomSectorAngle = ConvertToDegrees((float)Math.Atan2(leftBottomVector[1], leftBottomVector[0]));
-            float rightTopSectorAngle = ConvertToDegrees((float)Math.Atan2(rightTopVector[1], rightTopVector[0]));
-            float rightBottomSectorAngle = ConvertToDegrees((float)Math.Atan2(rightBottomVector[1], rightBottomVector[0]));
+            int[] leftTopPoint = new int[] { 0, center[1] - halfSectorWidth };
+            int[] leftBottomPoint = new int[] { 0, center[1] + halfSectorWidth };
+            int[] rightTopPoint = new int[] { imageWidth - 1, center[1] - halfSectorWidth };
+            int[] rightBottomPoint = new int[] { imageWidth - 1, center[1] + halfSectorWidth };
 
-            for (int i = 0; i < imageWidth; i++)
+            Vector leftTopVector;
+            Vector leftBottomVector;
+            Vector rightTopVector;
+            Vector rightBottomVector;
+
+            leftTopVector = new Vector(leftTopPoint[0] - center[0], leftTopPoint[1] - center[1]);
+            leftBottomVector = new Vector(leftBottomPoint[0] - center[0], leftBottomPoint[1] - center[1]);
+            rightTopVector = new Vector(rightTopPoint[0] - center[0], rightTopPoint[1] - center[1]);
+            rightBottomVector = new Vector(rightBottomPoint[0] - center[0], rightBottomPoint[1] - center[1]);
+
+            if (rotationAngle > 0 && rotationAngle < 360)
             {
-                for (int j = 0; j < imageHeight; j++)
+                Matrix m = new Matrix();
+                m.Rotate(rotationAngle);
+                leftLinePartVector = Vector.Multiply(leftLinePartVector, m);
+                rightLinePartVector = Vector.Multiply(rightLinePartVector, m);
+                leftTopVector = Vector.Multiply(leftTopVector, m);
+                leftBottomVector = Vector.Multiply(leftBottomVector, m);
+                rightTopVector = Vector.Multiply(rightTopVector, m);
+                rightBottomVector = Vector.Multiply(rightBottomVector, m);
+            }
+
+            double leftTopSectorAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, leftTopVector));
+            double leftBottomSectorAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, leftBottomVector));
+            double rightTopSectorAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, rightTopVector));
+            double rightBottomSectorAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, rightBottomVector));
+
+            for (int i = 0; i < imageWidth / 2; i++)
+            {
+                for (int j = 0; j < imageHeight / 2; j++)
                 {
-                    int[] temp = new int[] { -center[0] + i, -center[1] + j };
-                    float tempAngle = ConvertToDegrees((float)Math.Atan2(temp[0], temp[1]));
-                    if(i <  center[0])
+                    Vector temp = new Vector(i - center[0], j - center[1]);
+                    double tempAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, temp));
+                    if (tempAngle <= leftTopSectorAngle)
                     {
-                        if(-rotationAngle+leftBottomSectorAngle < tempAngle+180 && tempAngle+180 < leftTopSectorAngle-rotationAngle && center[0]-i > halfSectorWidth)
-                            result[i, j] = 255;
-                        else
-                            result[i, j] = 0;
-                    }
-                    else if(i >= center[0])
-                    {
-                        if (rightBottomSectorAngle+rotationAngle > tempAngle && tempAngle > rotationAngle+rightTopSectorAngle && i-center[0] > halfSectorWidth)
-                            result[i, j] = 255;
-                        else
-                            result[i, j] = 0;
+                        result[i, j] = 255;
                     }
                 }
             }
+
+            for (int i = 0; i < imageWidth / 2; i++)
+            {
+                for (int j = imageHeight / 2; j < imageHeight - 1; j++)
+                {
+                    Vector temp = new Vector(i - center[0], j - center[1]);
+                    double tempAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, temp));
+                    if (tempAngle <= leftBottomSectorAngle)
+                    {
+                        result[i, j] = 255;
+                    }
+                }
+            }
+
+            for (int i = imageWidth / 2; i < imageWidth - 1; i++)
+            {
+                for (int j = 0; j < imageHeight / 2; j++)
+                {
+                    Vector temp = new Vector(i - center[0], j - center[1]);
+                    double tempAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, temp));
+                    if (tempAngle <= rightTopSectorAngle)
+                    {
+                        result[i, j] = 255;
+                    }
+                }
+            }
+
+            for (int i = imageWidth / 2; i < imageWidth - 1; i++)
+            {
+                for (int j = imageHeight / 2; j < imageHeight - 1; j++)
+                {
+                    Vector temp = new Vector(i - center[0], j - center[1]);
+                    double tempAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, temp));
+                    if (tempAngle <= rightBottomSectorAngle)
+                    {
+                        result[i, j] = 255;
+                    }
+                }
+            }
+
+            //for (int i = 0; i < imageWidth; i++)
+            //{
+            //    for (int j = 0; j < imageHeight; j++)
+            //    {
+            //        int[] temp = new int[] { -center[0] + i, -center[1] + j };
+            //        float tempAngle = ConvertToDegrees((float)Math.Atan2(temp[0], temp[1]));
+            //        if(i <  center[0])
+            //        {
+            //            if(-rotationAngle+leftBottomSectorAngle < tempAngle+180 && tempAngle+180 < leftTopSectorAngle-rotationAngle)
+            //                result[i, j] = 255;
+            //            else
+            //                result[i, j] = 0;
+            //        }
+            //        else if(i >= center[0])
+            //        {
+            //            if (rightBottomSectorAngle+rotationAngle > tempAngle && tempAngle > rotationAngle+rightTopSectorAngle)
+            //                result[i, j] = 255;
+            //            else
+            //                result[i, j] = 0;
+            //        }
+            //    }
+            //}
 
             return result;
         }
