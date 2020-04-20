@@ -178,6 +178,16 @@ namespace ImageSoundProcessing
                         thresholdLabel.Visible = true;
                         break;
                     }
+                case "sectorWidthLabel":
+                    {
+                        sectorWidthLabel.Visible = true;
+                        break;
+                    }
+                case "rotationLabel":
+                    {
+                        rotationLabel.Visible = true;
+                        break;
+                    }
                 case "minimumPixelsForRegionLabel":
                     {
                         minimumPixelsForRegionLabel.Visible = true;
@@ -211,6 +221,16 @@ namespace ImageSoundProcessing
                 case "minPixelsTextBox":
                     {
                         minPixelsTextBox.Visible = true;
+                        break;
+                    }
+                case "sectorWidthTextBox":
+                    {
+                        sectorWidthTextBox.Visible = true;
+                        break;
+                    }
+                case "rotationTextBox":
+                    {
+                        rotationTextBox.Visible = true;
                         break;
                     }
                 default: break;
@@ -543,35 +563,48 @@ namespace ImageSoundProcessing
 
         private void HighPassEdgeDetectionFilterButton_Click(object sender, EventArgs e)
         {
-            int[,] mask = Effect.GenerateEdgeDetectionMask(_originalBitmap.Width, _originalBitmap.Height, 100, 10, 70);
-            Bitmap bitmap = new Bitmap(512, 512);
-            for(int i=0; i< bitmap.Width; i++)
-                for(int j=0; j< bitmap.Height; j++)
-                {
-                    if (mask[i, j] == 0)
-                        bitmap.SetPixel(i, j, Color.Black);
-                    else
-                        bitmap.SetPixel(i, j, Color.White);
-                }
-            bitmap.Save("detMask.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+            string sectorWidthText = sectorWidthTextBox.Text;
+            string rotationAngleText = rotationTextBox.Text;
             string rangeText = rangeTextBox.Text;
-            if (!string.IsNullOrEmpty(rangeText))
+
+            if (!string.IsNullOrEmpty(sectorWidthText) && 
+                !string.IsNullOrEmpty(rotationAngleText) && 
+                !string.IsNullOrEmpty(rangeText))
             {
+                int sectorWidth = int.Parse(sectorWidthText);
+                int rotationAngle = int.Parse(rotationAngleText);
                 int range = int.Parse(rangeText);
-                if (range >= Colors.MIN_PIXEL_VALUE && range <= Colors.MAX_PIXEL_VALUE)
+
+                if (sectorWidth >= 0 && 
+                    sectorWidth <= _originalBitmap.Width && 
+                    rotationAngle >= 0 && rotationAngle <= 360 && 
+                    range >= Colors.MIN_PIXEL_VALUE && 
+                    range <= Colors.MAX_PIXEL_VALUE)
                 {
+                    int[,] mask = Effect.GenerateEdgeDetectionMask(_originalBitmap.Width, _originalBitmap.Height, sectorWidth, rotationAngle);
+                    Bitmap bitmap = new Bitmap(_originalBitmap.Width, _originalBitmap.Height);
+                    for (int i = 0; i < bitmap.Width; i++)
+                        for (int j = 0; j < bitmap.Height; j++)
+                        {
+                            if (mask[i, j] == Colors.MIN_PIXEL_VALUE)
+                                bitmap.SetPixel(i, j, Color.Black);
+                            else
+                                bitmap.SetPixel(i, j, Color.White);
+                        }
+
+                    bitmap.Save("detMask.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
                     Complex[][] filteredData = FourierUtil.HighPassEdgeDetectionFilter(mask, _originalComplexData, range);
                     _processedComplexData = filteredData;
-                }
-                else
-                {
-                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
                 }
             }
             else
             {
                 _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
             }
+
+            
+           
 
             Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
             SetProcessedBitmap(resultBitmap);

@@ -675,7 +675,7 @@ namespace ImageSoundProcessing.Helpers
             return new Vector(result[0], result[1]);
         }
 
-        public static int[,] GenerateEdgeDetectionMask(int imageWidth, int imageHeight, int sectorWidth, float rotationAngle, int diameter)
+        public static int[,] GenerateEdgeDetectionMask(int imageWidth, int imageHeight, int sectorWidth, float rotationAngle)
         {
             int[,] result = new int[imageWidth, imageHeight];
 
@@ -700,7 +700,7 @@ namespace ImageSoundProcessing.Helpers
             rightTopVector = new Vector(rightTopPoint[0] - center[0], rightTopPoint[1] - center[1]);
             rightBottomVector = new Vector(rightBottomPoint[0] - center[0], rightBottomPoint[1] - center[1]);
 
-            if (rotationAngle > 0 && rotationAngle < 360)
+            if (rotationAngle >= 0 && rotationAngle <= 360)
             {
                 Matrix m = new Matrix();
                 m.Rotate(rotationAngle);
@@ -725,7 +725,7 @@ namespace ImageSoundProcessing.Helpers
                     double tempAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, temp));
                     if (tempAngle <= leftTopSectorAngle)
                     {
-                        result[i, j] = 255;
+                        result[i, j] = Colors.MAX_PIXEL_VALUE;
                     }
                 }
             }
@@ -738,7 +738,7 @@ namespace ImageSoundProcessing.Helpers
                     double tempAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, temp));
                     if (tempAngle <= leftBottomSectorAngle)
                     {
-                        result[i, j] = 255;
+                        result[i, j] = Colors.MAX_PIXEL_VALUE;
                     }
                 }
             }
@@ -751,7 +751,7 @@ namespace ImageSoundProcessing.Helpers
                     double tempAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, temp));
                     if (tempAngle <= rightTopSectorAngle)
                     {
-                        result[i, j] = 255;
+                        result[i, j] = Colors.MAX_PIXEL_VALUE;
                     }
                 }
             }
@@ -764,33 +764,10 @@ namespace ImageSoundProcessing.Helpers
                     double tempAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, temp));
                     if (tempAngle <= rightBottomSectorAngle)
                     {
-                        result[i, j] = 255;
+                        result[i, j] = Colors.MAX_PIXEL_VALUE;
                     }
                 }
             }
-
-            //for (int i = 0; i < imageWidth; i++)
-            //{
-            //    for (int j = 0; j < imageHeight; j++)
-            //    {
-            //        int[] temp = new int[] { -center[0] + i, -center[1] + j };
-            //        float tempAngle = ConvertToDegrees((float)Math.Atan2(temp[0], temp[1]));
-            //        if(i <  center[0])
-            //        {
-            //            if(-rotationAngle+leftBottomSectorAngle < tempAngle+180 && tempAngle+180 < leftTopSectorAngle-rotationAngle)
-            //                result[i, j] = 255;
-            //            else
-            //                result[i, j] = 0;
-            //        }
-            //        else if(i >= center[0])
-            //        {
-            //            if (rightBottomSectorAngle+rotationAngle > tempAngle && tempAngle > rotationAngle+rightTopSectorAngle)
-            //                result[i, j] = 255;
-            //            else
-            //                result[i, j] = 0;
-            //        }
-            //    }
-            //}
 
             return result;
         }

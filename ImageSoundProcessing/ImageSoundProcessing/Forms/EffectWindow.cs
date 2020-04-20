@@ -208,12 +208,17 @@ namespace ImageSoundProcessing.Forms
                             form.SetControlProperties("lComponentLabel");
                             form.SetControlProperties("thresholdLabel");
                             form.SetControlProperties("minimumPixelsForRegionLabel");
+                            form.SetControlProperties("sectorWidthLabel");
+                            form.SetControlProperties("rotationLabel");
                             form.SetControlProperties("filterRangeTextBox");
                             form.SetControlProperties("filterRangeTextBox2");
                             form.SetControlProperties("kComponentTextBox");
                             form.SetControlProperties("lComponentTextBox");
                             form.SetControlProperties("thresholdTextBox");
                             form.SetControlProperties("minPixelsTextBox");
+                            form.SetControlProperties("sectorWidthTextBox");
+                            form.SetControlProperties("rotationTextBox");
+
                             form.SetOriginalComplexData(complexData);
                             form.SetProcessedComplexData(complexData);
                             form.Show();

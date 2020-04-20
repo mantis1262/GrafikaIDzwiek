@@ -62,6 +62,10 @@
             this.minimumPixelsForRegionLabel = new System.Windows.Forms.Label();
             this.thresholdTextBox = new System.Windows.Forms.TextBox();
             this.minPixelsTextBox = new System.Windows.Forms.TextBox();
+            this.sectorWidthLabel = new System.Windows.Forms.Label();
+            this.sectorWidthTextBox = new System.Windows.Forms.TextBox();
+            this.rotationLabel = new System.Windows.Forms.Label();
+            this.rotationTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.processedImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.factorSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -245,7 +249,7 @@
             // 
             this.fourierFilterLabel.AutoSize = true;
             this.fourierFilterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.fourierFilterLabel.Location = new System.Drawing.Point(798, 266);
+            this.fourierFilterLabel.Location = new System.Drawing.Point(797, 212);
             this.fourierFilterLabel.Name = "fourierFilterLabel";
             this.fourierFilterLabel.Size = new System.Drawing.Size(119, 25);
             this.fourierFilterLabel.TabIndex = 14;
@@ -256,7 +260,7 @@
             // rangeTextBox
             // 
             this.rangeTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.rangeTextBox.Location = new System.Drawing.Point(941, 263);
+            this.rangeTextBox.Location = new System.Drawing.Point(940, 209);
             this.rangeTextBox.Name = "rangeTextBox";
             this.rangeTextBox.Size = new System.Drawing.Size(64, 30);
             this.rangeTextBox.TabIndex = 15;
@@ -279,7 +283,7 @@
             // 
             this.fourierFilterLabel2.AutoSize = true;
             this.fourierFilterLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.fourierFilterLabel2.Location = new System.Drawing.Point(798, 304);
+            this.fourierFilterLabel2.Location = new System.Drawing.Point(797, 250);
             this.fourierFilterLabel2.Name = "fourierFilterLabel2";
             this.fourierFilterLabel2.Size = new System.Drawing.Size(125, 25);
             this.fourierFilterLabel2.TabIndex = 17;
@@ -290,7 +294,7 @@
             // rangeTextBox2
             // 
             this.rangeTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.rangeTextBox2.Location = new System.Drawing.Point(941, 306);
+            this.rangeTextBox2.Location = new System.Drawing.Point(940, 252);
             this.rangeTextBox2.Name = "rangeTextBox2";
             this.rangeTextBox2.Size = new System.Drawing.Size(64, 30);
             this.rangeTextBox2.TabIndex = 18;
@@ -349,7 +353,7 @@
             // 
             this.kComponentLabel.AutoSize = true;
             this.kComponentLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.kComponentLabel.Location = new System.Drawing.Point(895, 447);
+            this.kComponentLabel.Location = new System.Drawing.Point(894, 427);
             this.kComponentLabel.Name = "kComponentLabel";
             this.kComponentLabel.Size = new System.Drawing.Size(22, 25);
             this.kComponentLabel.TabIndex = 23;
@@ -361,7 +365,7 @@
             // 
             this.lComponentLabel.AutoSize = true;
             this.lComponentLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lComponentLabel.Location = new System.Drawing.Point(895, 486);
+            this.lComponentLabel.Location = new System.Drawing.Point(894, 466);
             this.lComponentLabel.Name = "lComponentLabel";
             this.lComponentLabel.Size = new System.Drawing.Size(16, 25);
             this.lComponentLabel.TabIndex = 24;
@@ -372,7 +376,7 @@
             // kComponentTextBox
             // 
             this.kComponentTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.kComponentTextBox.Location = new System.Drawing.Point(941, 447);
+            this.kComponentTextBox.Location = new System.Drawing.Point(940, 427);
             this.kComponentTextBox.Name = "kComponentTextBox";
             this.kComponentTextBox.Size = new System.Drawing.Size(64, 30);
             this.kComponentTextBox.TabIndex = 25;
@@ -382,7 +386,7 @@
             // lComponentTextBox
             // 
             this.lComponentTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lComponentTextBox.Location = new System.Drawing.Point(941, 484);
+            this.lComponentTextBox.Location = new System.Drawing.Point(940, 464);
             this.lComponentTextBox.Name = "lComponentTextBox";
             this.lComponentTextBox.Size = new System.Drawing.Size(64, 30);
             this.lComponentTextBox.TabIndex = 26;
@@ -405,7 +409,7 @@
             // 
             this.thresholdLabel.AutoSize = true;
             this.thresholdLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.thresholdLabel.Location = new System.Drawing.Point(823, 532);
+            this.thresholdLabel.Location = new System.Drawing.Point(822, 512);
             this.thresholdLabel.Name = "thresholdLabel";
             this.thresholdLabel.Size = new System.Drawing.Size(100, 25);
             this.thresholdLabel.TabIndex = 28;
@@ -417,7 +421,7 @@
             // 
             this.minimumPixelsForRegionLabel.AutoSize = true;
             this.minimumPixelsForRegionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.minimumPixelsForRegionLabel.Location = new System.Drawing.Point(819, 572);
+            this.minimumPixelsForRegionLabel.Location = new System.Drawing.Point(818, 552);
             this.minimumPixelsForRegionLabel.Name = "minimumPixelsForRegionLabel";
             this.minimumPixelsForRegionLabel.Size = new System.Drawing.Size(104, 25);
             this.minimumPixelsForRegionLabel.TabIndex = 29;
@@ -428,7 +432,7 @@
             // thresholdTextBox
             // 
             this.thresholdTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.thresholdTextBox.Location = new System.Drawing.Point(941, 531);
+            this.thresholdTextBox.Location = new System.Drawing.Point(940, 511);
             this.thresholdTextBox.Name = "thresholdTextBox";
             this.thresholdTextBox.Size = new System.Drawing.Size(64, 30);
             this.thresholdTextBox.TabIndex = 30;
@@ -438,12 +442,52 @@
             // minPixelsTextBox
             // 
             this.minPixelsTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.minPixelsTextBox.Location = new System.Drawing.Point(941, 572);
+            this.minPixelsTextBox.Location = new System.Drawing.Point(940, 552);
             this.minPixelsTextBox.Name = "minPixelsTextBox";
             this.minPixelsTextBox.Size = new System.Drawing.Size(64, 30);
             this.minPixelsTextBox.TabIndex = 31;
             this.minPixelsTextBox.Visible = false;
             this.minPixelsTextBox.TextChanged += new System.EventHandler(this.MinPixelsTextBox_TextChanged);
+            // 
+            // sectorWidthLabel
+            // 
+            this.sectorWidthLabel.AutoSize = true;
+            this.sectorWidthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.sectorWidthLabel.Location = new System.Drawing.Point(803, 295);
+            this.sectorWidthLabel.Name = "sectorWidthLabel";
+            this.sectorWidthLabel.Size = new System.Drawing.Size(119, 25);
+            this.sectorWidthLabel.TabIndex = 32;
+            this.sectorWidthLabel.Text = "Sector width";
+            this.sectorWidthLabel.Visible = false;
+            // 
+            // sectorWidthTextBox
+            // 
+            this.sectorWidthTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.sectorWidthTextBox.Location = new System.Drawing.Point(940, 295);
+            this.sectorWidthTextBox.Name = "sectorWidthTextBox";
+            this.sectorWidthTextBox.Size = new System.Drawing.Size(64, 30);
+            this.sectorWidthTextBox.TabIndex = 33;
+            this.sectorWidthTextBox.Visible = false;
+            // 
+            // rotationLabel
+            // 
+            this.rotationLabel.AutoSize = true;
+            this.rotationLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.rotationLabel.Location = new System.Drawing.Point(786, 344);
+            this.rotationLabel.Name = "rotationLabel";
+            this.rotationLabel.Size = new System.Drawing.Size(136, 25);
+            this.rotationLabel.TabIndex = 34;
+            this.rotationLabel.Text = "Rotation angle";
+            this.rotationLabel.Visible = false;
+            // 
+            // rotationTextBox
+            // 
+            this.rotationTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.rotationTextBox.Location = new System.Drawing.Point(940, 344);
+            this.rotationTextBox.Name = "rotationTextBox";
+            this.rotationTextBox.Size = new System.Drawing.Size(64, 30);
+            this.rotationTextBox.TabIndex = 35;
+            this.rotationTextBox.Visible = false;
             // 
             // ProcessedImageWindow
             // 
@@ -451,6 +495,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1262, 853);
+            this.Controls.Add(this.rotationTextBox);
+            this.Controls.Add(this.rotationLabel);
+            this.Controls.Add(this.sectorWidthTextBox);
+            this.Controls.Add(this.sectorWidthLabel);
             this.Controls.Add(this.minPixelsTextBox);
             this.Controls.Add(this.thresholdTextBox);
             this.Controls.Add(this.minimumPixelsForRegionLabel);
@@ -531,5 +579,9 @@
         private System.Windows.Forms.Label minimumPixelsForRegionLabel;
         private System.Windows.Forms.TextBox thresholdTextBox;
         private System.Windows.Forms.TextBox minPixelsTextBox;
+        private System.Windows.Forms.Label sectorWidthLabel;
+        private System.Windows.Forms.TextBox sectorWidthTextBox;
+        private System.Windows.Forms.Label rotationLabel;
+        private System.Windows.Forms.TextBox rotationTextBox;
     }
 }
