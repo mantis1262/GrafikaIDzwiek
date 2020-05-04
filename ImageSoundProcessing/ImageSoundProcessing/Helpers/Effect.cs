@@ -1,4 +1,6 @@
 using ImageSoundProcessing.Forms;
+using ImageSoundProcessing.Model;
+using ImageSoundProcessing.Model.Segmentation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +9,8 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 
 namespace ImageSoundProcessing.Helpers
 {
@@ -568,6 +572,240 @@ namespace ImageSoundProcessing.Helpers
 
             originalBitmapLock.UnlockBits();
             processedBitmapLock.UnlockBits();
+            return processedBmp;
+        }
+
+        public static Complex[][] FftTransform(Bitmap original)
+        {
+            LockBitmap originalBitmapLock = new LockBitmap(original);
+            originalBitmapLock.LockBits(ImageLockMode.ReadOnly);
+
+            Complex[][] pixelsData = FourierUtil.BitmapToComplex(originalBitmapLock);
+            Complex[][] afterForwardComplex = FourierUtil.FftDit2d(pixelsData);
+            FourierUtil.SwapQuadrants(afterForwardComplex);
+
+            originalBitmapLock.UnlockBits();
+            return afterForwardComplex;
+        }
+
+        public static Bitmap IfftTransform(Complex[][] complex)
+        {
+            Complex[][] resultComplex = FourierUtil.CopyComplexArray(complex);
+            FourierUtil.SwapQuadrants(resultComplex);
+            float[,] afterInverseResult = FourierUtil.IfftDit2d(resultComplex);
+            Bitmap resultBitmap = FourierUtil.TransformResultToBitmap(afterInverseResult);
+
+            return resultBitmap;
+        }
+
+        public static Bitmap GetSpectrumBitmap(Complex[][] complexImage, string spectrum)
+        {
+            float[,] pixelValues;
+            int size = complexImage.Length;
+            Bitmap resultBitmap = new Bitmap(size, size);
+            LockBitmap resultBitmapLock = new LockBitmap(resultBitmap);
+            resultBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            switch (spectrum)
+            {
+                case "none":
+                    {
+                        pixelValues = FourierUtil.IfftDit2d(complexImage);
+                        break;
+                    }
+                case "magnitude":
+                    {
+                        pixelValues = FourierUtil.Magnitude(complexImage);
+                        break;
+                    }
+                case "phase":
+                    {
+                        pixelValues = FourierUtil.Phase(complexImage);
+                        break;
+                    }
+                default:
+                    {
+                        pixelValues = FourierUtil.IfftDit2d(complexImage);
+                        break;
+                    }
+            }
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (pixelValues[i, j] < Colors.MIN_PIXEL_VALUE)
+                    {
+                        pixelValues[i, j] = Colors.MIN_PIXEL_VALUE;
+                    }
+
+                    if (!float.IsNaN(pixelValues[i, j]))
+                    {
+                        int pixelColor = (int)pixelValues[i, j];
+                        resultBitmapLock.SetPixel(i, j, Color.FromArgb(pixelColor, pixelColor, pixelColor));
+                    }
+                }
+            }
+
+            resultBitmapLock.UnlockBits();
+            return resultBitmap;
+        }
+
+        public static float ConvertToRadians(float degrees)
+        {
+            return (float)((Math.PI / 180.0) * degrees);
+        }
+
+        public static float ConvertToDegrees(float radians)
+        {
+            return (float)((180.0 / Math.PI) * radians);
+        }
+
+        public static Vector RotateVectorByAngle(Vector vector, Vector origin, float angle)
+        {
+            float radians = ConvertToRadians(angle);
+
+            double[] result = new double[2];
+            //result[0] = vector.X * Math.Cos(angle) - vector.Y * Math.Sin(radians);
+            //result[1] = vector.X * Math.Sin(angle) + vector.Y * Math.Cos(radians);
+
+            result[0] = ((vector.X - origin.X) * Math.Cos(radians)) - ((origin.Y - vector.Y) * Math.Sin(radians)) + origin.X;
+            result[1] = ((origin.Y - vector.Y) * Math.Cos(radians)) - ((vector.X - origin.X) * Math.Sin(radians)) + origin.Y;
+
+            return new Vector(result[0], result[1]);
+        }
+
+        public static int[,] GenerateEdgeDetectionMask(int imageWidth, int imageHeight, int sectorWidth, float rotationAngle)
+        {
+            int[,] result = new int[imageWidth, imageHeight];
+
+            int halfSectorWidth = sectorWidth / 2;
+            int[] center = new int[] { imageWidth / 2, imageHeight / 2 };
+            Vector centerVector = new Vector(center[0], center[1]);
+            Vector leftLinePartVector = new Vector(-1, 0);
+            Vector rightLinePartVector = new Vector(1, 0);
+
+            int[] leftTopPoint = new int[] { 0, center[1] - halfSectorWidth };
+            int[] leftBottomPoint = new int[] { 0, center[1] + halfSectorWidth };
+            int[] rightTopPoint = new int[] { imageWidth - 1, center[1] - halfSectorWidth };
+            int[] rightBottomPoint = new int[] { imageWidth - 1, center[1] + halfSectorWidth };
+
+            Vector leftTopVector;
+            Vector leftBottomVector;
+            Vector rightTopVector;
+            Vector rightBottomVector;
+
+            leftTopVector = new Vector(leftTopPoint[0] - center[0], leftTopPoint[1] - center[1]);
+            leftBottomVector = new Vector(leftBottomPoint[0] - center[0], leftBottomPoint[1] - center[1]);
+            rightTopVector = new Vector(rightTopPoint[0] - center[0], rightTopPoint[1] - center[1]);
+            rightBottomVector = new Vector(rightBottomPoint[0] - center[0], rightBottomPoint[1] - center[1]);
+
+            if (Math.Abs(rotationAngle) >= 0 && Math.Abs(rotationAngle) <= 360)
+            {
+                Matrix m = new Matrix();
+                m.Rotate(rotationAngle);
+                leftLinePartVector = Vector.Multiply(leftLinePartVector, m);
+                rightLinePartVector = Vector.Multiply(rightLinePartVector, m);
+                leftTopVector = Vector.Multiply(leftTopVector, m);
+                leftBottomVector = Vector.Multiply(leftBottomVector, m);
+                rightTopVector = Vector.Multiply(rightTopVector, m);
+                rightBottomVector = Vector.Multiply(rightBottomVector, m);
+            }
+
+            double leftTopSectorAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, leftTopVector));
+            double leftBottomSectorAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, leftBottomVector));
+            double rightTopSectorAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, rightTopVector));
+            double rightBottomSectorAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, rightBottomVector));
+
+            for (int i = 0; i < imageWidth / 2; i++)
+            {
+                for (int j = 0; j < imageHeight / 2; j++)
+                {
+                    Vector temp = new Vector(i - center[0], j - center[1]);
+                    double tempAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, temp));
+                    if (tempAngle <= leftTopSectorAngle)
+                    {
+                        result[i, j] = Colors.MAX_PIXEL_VALUE;
+                    }
+                }
+            }
+
+            for (int i = 0; i < imageWidth / 2; i++)
+            {
+                for (int j = imageHeight / 2; j < imageHeight - 1; j++)
+                {
+                    Vector temp = new Vector(i - center[0], j - center[1]);
+                    double tempAngle = Math.Abs(Vector.AngleBetween(leftLinePartVector, temp));
+                    if (tempAngle <= leftBottomSectorAngle)
+                    {
+                        result[i, j] = Colors.MAX_PIXEL_VALUE;
+                    }
+                }
+            }
+
+            for (int i = imageWidth / 2; i < imageWidth - 1; i++)
+            {
+                for (int j = 0; j < imageHeight / 2; j++)
+                {
+                    Vector temp = new Vector(i - center[0], j - center[1]);
+                    double tempAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, temp));
+                    if (tempAngle <= rightTopSectorAngle)
+                    {
+                        result[i, j] = Colors.MAX_PIXEL_VALUE;
+                    }
+                }
+            }
+
+            for (int i = imageWidth / 2; i < imageWidth - 1; i++)
+            {
+                for (int j = imageHeight / 2; j < imageHeight - 1; j++)
+                {
+                    Vector temp = new Vector(i - center[0], j - center[1]);
+                    double tempAngle = Math.Abs(Vector.AngleBetween(rightLinePartVector, temp));
+                    if (tempAngle <= rightBottomSectorAngle)
+                    {
+                        result[i, j] = Colors.MAX_PIXEL_VALUE;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static Bitmap SegmentationRegionSplittingAndMerging(Bitmap original, int threshold, int minPixels)
+        {
+            RegionSplittingAndMerging segm = new RegionSplittingAndMerging(threshold, minPixels);
+            Bitmap processedBmp = segm.Process(original);
+            int imgNumber = 0;
+            foreach (Image img in segm.bitmapsMasks)
+            {
+                img.Save("SegmentationMaskNumber" + imgNumber + ".bmp", ImageFormat.Bmp);
+                imgNumber++;
+            }
+
+            return processedBmp;
+        }
+
+        public static Bitmap Cut(Bitmap orginal)
+        {
+            Bitmap bitmap = Factories.BitmapFactory.CreateBitmap(Path.GetImagePath());
+            Bitmap processedBmp = new Bitmap(orginal);
+
+            LockBitmap MaskBitmapLock = new LockBitmap(bitmap);
+            LockBitmap resultBitmapLock = new LockBitmap(processedBmp);
+            MaskBitmapLock.LockBits(ImageLockMode.ReadOnly);
+            resultBitmapLock.LockBits(ImageLockMode.WriteOnly);
+
+            for (int i = 0; i < resultBitmapLock.Width; i++)
+                for(int j = 0; j < resultBitmapLock.Height; j++)
+                {
+                    if (MaskBitmapLock.GetPixel(i, j).R != 255)
+                        resultBitmapLock.SetPixel(i, j, Color.Black);
+                }
+
+            MaskBitmapLock.UnlockBits();
+            resultBitmapLock.UnlockBits();
+
             return processedBmp;
         }
     }

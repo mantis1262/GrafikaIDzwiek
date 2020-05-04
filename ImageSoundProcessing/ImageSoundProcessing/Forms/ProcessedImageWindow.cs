@@ -1,4 +1,5 @@
 ﻿using ImageSoundProcessing.Helpers;
+using ImageSoundProcessing.Model;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace ImageSoundProcessing
         private string _type;
         private Bitmap _originalBitmap;
         private Bitmap _processedBitmap;
+        private Complex[][] _originalComplexData;
+        private Complex[][] _processedComplexData;
 
         public ProcessedImageWindow()
         {
@@ -105,8 +108,148 @@ namespace ImageSoundProcessing
                         }
                         break;
                     }
+                case "powerSpectrumButtom":
+                    {
+                        powerSpectrumButton.Visible = true;
+                        break;
+                    }
+                case "phaseSpectrumButton":
+                    {
+                        phaseSpectrumButton.Visible = true;
+                        break;
+                    }
+                case "lowPassFilterButton":
+                    {
+                        lowPassFilterButton.Visible = true;
+                        break;
+                    }
+                case "highPassFilterButton":
+                    {
+                        highPassFilterButton.Visible = true;
+                        break;
+                    }
+                case "bandPassFilterButton":
+                    {
+                        bandPassFilterButton.Visible = true;
+                        break;
+                    }
+                case "bandCutFilterButton":
+                    {
+                        bandCutFilterButton.Visible = true;
+                        break;
+                    }
+                case "highPassEdgeDetectionFilterButton":
+                    {
+                        highPassEdgeDetectionFilterButton.Visible = true;
+                        break;
+                    }
+                case "phaseSpectrumFilterButton":
+                    {
+                        phaseSpectrumFilterButton.Visible = true;
+                        break;
+                    }
+                case "MaskUse":
+                    {
+                        MaskUse.Visible = true;
+                        break;
+                    }
+                case "regionSplittingAndMergingSegmentation":
+                    {
+                        regionSplittingAndMergingSegmentation.Visible = true;
+                        break;
+                    }
+                case "filterRangeLabel":
+                    {
+                        fourierFilterLabel.Visible = true;
+                        break;
+                    }
+                case "filterRangeLabel2":
+                    {
+                        fourierFilterLabel2.Visible = true;
+                        break;
+                    }
+                case "kComponentLabel":
+                    {
+                        kComponentLabel.Visible = true;
+                        break;
+                    }
+                case "lComponentLabel":
+                    {
+                        lComponentLabel.Visible = true;
+                        break;
+                    }
+                case "thresholdLabel":
+                    {
+                        thresholdLabel.Visible = true;
+                        break;
+                    }
+                case "sectorWidthLabel":
+                    {
+                        sectorWidthLabel.Visible = true;
+                        break;
+                    }
+                case "rotationLabel":
+                    {
+                        rotationLabel.Visible = true;
+                        break;
+                    }
+                case "minimumPixelsForRegionLabel":
+                    {
+                        minimumPixelsForRegionLabel.Visible = true;
+                        break;
+                    }
+                case "filterRangeTextBox":
+                    {
+                        rangeTextBox.Visible = true;
+                        break;
+                    }
+                case "filterRangeTextBox2":
+                    {
+                        rangeTextBox2.Visible = true;
+                        break;
+                    }
+                case "kComponentTextBox":
+                    {
+                        kComponentTextBox.Visible = true;
+                        break;
+                    }
+                case "lComponentTextBox":
+                    {
+                        lComponentTextBox.Visible = true;
+                        break;
+                    }
+                case "thresholdTextBox":
+                    {
+                        thresholdTextBox.Visible = true;
+                        break;
+                    }
+                case "minPixelsTextBox":
+                    {
+                        minPixelsTextBox.Visible = true;
+                        break;
+                    }
+                case "sectorWidthTextBox":
+                    {
+                        sectorWidthTextBox.Visible = true;
+                        break;
+                    }
+                case "rotationTextBox":
+                    {
+                        rotationTextBox.Visible = true;
+                        break;
+                    }
                 default: break;
             }
+        }
+
+        public void SetOriginalComplexData(Complex[][] complex)
+        {
+            _originalComplexData = complex;
+        }
+
+        public void SetProcessedComplexData(Complex[][] complex)
+        {
+            _processedComplexData = complex;
         }
 
         private void ProcessedImageWindow_Load(object sender, EventArgs e)
@@ -235,6 +378,289 @@ namespace ImageSoundProcessing
         private void histogram_Click(object sender, EventArgs e)
         {
             Effect.ShowHistogram(Effect.Histogram(_processedBitmap));
+        }
+
+        private void FourierFilterLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RangeTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FourierFilterLabel2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void RangeTextBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void KComponentLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LComponentLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void KComponentTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LComponentTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ThresholdLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MinimumPixelsForRegionLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ThresholdTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MinPixelsTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PowerSpectrumButton_Click(object sender, EventArgs e)
+        {
+            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_processedComplexData, "magnitude");
+            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+            form.SetProcessedBitmap(resultBitmap);
+            form.SetType("fourierPowerSpectrum");
+            form.Show();
+        }
+
+        private void PhaseSpectrumButton_Click(object sender, EventArgs e)
+        {
+            Bitmap resultBitmap = Effect.GetSpectrumBitmap(_processedComplexData, "phase");
+            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+            form.SetProcessedBitmap(resultBitmap);
+            form.SetType("fourierPhaseSpectrum");
+            form.Show();
+        }
+
+        private void LowPassFilterButton_Click(object sender, EventArgs e)
+        {
+            string rangeText = rangeTextBox.Text;
+            if (!string.IsNullOrEmpty(rangeText))
+            {
+                int range = int.Parse(rangeText);
+                if (range >= Colors.MIN_PIXEL_VALUE && range <= Colors.MAX_PIXEL_VALUE)
+                {
+                    Complex[][] filteredData = FourierUtil.LowPassFilter(_originalComplexData, range);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        
+
+        private void HighPassFilterButton_Click(object sender, EventArgs e)
+        {
+            string rangeText = rangeTextBox.Text;
+            if (!string.IsNullOrEmpty(rangeText))
+            {
+                int range = int.Parse(rangeText);
+                if (range >= Colors.MIN_PIXEL_VALUE && range <= Colors.MAX_PIXEL_VALUE)
+                {
+                    Complex[][] filteredData = FourierUtil.HighPassFilter(_originalComplexData, range);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        private void BandPassFilterButton_Click(object sender, EventArgs e)
+        {
+            string minRangeText = rangeTextBox.Text;
+            string maxRangeText = rangeTextBox2.Text;
+            if (!string.IsNullOrEmpty(minRangeText) && !string.IsNullOrEmpty(maxRangeText))
+            {
+                int minRange = int.Parse(minRangeText);
+                int maxRange = int.Parse(maxRangeText);
+                if (minRange >= Colors.MIN_PIXEL_VALUE && minRange <= Colors.MAX_PIXEL_VALUE &&
+                    maxRange >= Colors.MIN_PIXEL_VALUE && maxRange <= Colors.MAX_PIXEL_VALUE)
+                {
+                    Complex[][] filteredData = FourierUtil.BandPassFilter(_originalComplexData, minRange, maxRange);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        private void BandCutFilterButton_Click(object sender, EventArgs e)
+        {
+            string minRangeText = rangeTextBox.Text;
+            string maxRangeText = rangeTextBox2.Text;
+            if (!string.IsNullOrEmpty(minRangeText) && !string.IsNullOrEmpty(maxRangeText))
+            {
+                int minRange = int.Parse(minRangeText);
+                int maxRange = int.Parse(maxRangeText);
+                if (minRange >= Colors.MIN_PIXEL_VALUE && minRange <= Colors.MAX_PIXEL_VALUE &&
+                    maxRange >= Colors.MIN_PIXEL_VALUE && maxRange <= Colors.MAX_PIXEL_VALUE)
+                {
+                    Complex[][] filteredData = FourierUtil.BandCutFilter(_originalComplexData, minRange, maxRange);
+                    _processedComplexData = filteredData;
+                }
+                else
+                {
+                    _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        private void HighPassEdgeDetectionFilterButton_Click(object sender, EventArgs e)
+        {
+            string sectorWidthText = sectorWidthTextBox.Text;
+            string rotationAngleText = rotationTextBox.Text;
+            string rangeText = rangeTextBox.Text;
+
+            if (!string.IsNullOrEmpty(sectorWidthText) && 
+                !string.IsNullOrEmpty(rotationAngleText) && 
+                !string.IsNullOrEmpty(rangeText))
+            {
+                int sectorWidth = int.Parse(sectorWidthText);
+                int rotationAngle = int.Parse(rotationAngleText);
+                int range = int.Parse(rangeText);
+
+                if (sectorWidth >= 0 && 
+                    sectorWidth <= _originalBitmap.Width && 
+                    Math.Abs(rotationAngle) >= 0 && Math.Abs(rotationAngle) <= 360 && 
+                    range >= Colors.MIN_PIXEL_VALUE && 
+                    range <= Colors.MAX_PIXEL_VALUE)
+                {
+                    int[,] mask = Effect.GenerateEdgeDetectionMask(_originalBitmap.Width, _originalBitmap.Height, sectorWidth, rotationAngle);
+                    Bitmap bitmap = new Bitmap(_originalBitmap.Width, _originalBitmap.Height);
+                    for (int i = 0; i < bitmap.Width; i++)
+                        for (int j = 0; j < bitmap.Height; j++)
+                        {
+                            if (mask[i, j] == Colors.MIN_PIXEL_VALUE)
+                                bitmap.SetPixel(i, j, Color.Black);
+                            else
+                                bitmap.SetPixel(i, j, Color.White);
+                        }
+
+                    bitmap.Save("detMask.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+                    Complex[][] filteredData = FourierUtil.HighPassEdgeDetectionFilter(mask, _originalComplexData, range);
+                    _processedComplexData = filteredData;
+                }
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            
+           
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        private void PhaseSpectrumFilterButton_Click(object sender, EventArgs e)
+        {
+            string kComponentText = kComponentTextBox.Text;
+            string lComponentText = lComponentTextBox.Text;
+            if (!string.IsNullOrEmpty(kComponentText) && !string.IsNullOrEmpty(lComponentText))
+            {
+                int kComponent = int.Parse(kComponentText);
+                int lComponent = int.Parse(lComponentText);
+
+                Complex[][] filteredData = FourierUtil.PhaseSpectrumFilter(_originalComplexData, kComponent, lComponent);
+                _processedComplexData = filteredData;
+            }
+            else
+            {
+                _processedComplexData = FourierUtil.CopyComplexArray(_originalComplexData);
+            }
+
+            Bitmap resultBitmap = Effect.IfftTransform(_processedComplexData);
+            SetProcessedBitmap(resultBitmap);
+        }
+
+        private void RegionSplittingAndMergingSegmentation_Click(object sender, EventArgs e)
+        {
+            string thresholdText = thresholdTextBox.Text;
+            string minPixelsForRegionText = minPixelsTextBox.Text;
+            if (!string.IsNullOrEmpty(thresholdText) && !string.IsNullOrEmpty(minPixelsForRegionText))
+            {
+                int threshold = int.Parse(thresholdText);
+                int minPixelsForRegion = int.Parse(minPixelsForRegionText);
+
+                Bitmap resultBitmap = Effect.SegmentationRegionSplittingAndMerging(_originalBitmap, threshold, minPixelsForRegion);
+                SetProcessedBitmap(resultBitmap);
+            }
+            else
+            {
+                SetProcessedBitmap(_originalBitmap);
+            }
+
+            
+            
+        }
+
+        private void MaskUse_Click(object sender, EventArgs e)
+        {
+            Bitmap result = Effect.Cut(_originalBitmap);
+            SetProcessedBitmap(result);
         }
     }
 }

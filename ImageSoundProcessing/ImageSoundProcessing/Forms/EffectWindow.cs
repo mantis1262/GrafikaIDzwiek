@@ -1,5 +1,6 @@
 ﻿using ImageSoundProcessing.Factories;
 using ImageSoundProcessing.Helpers;
+using ImageSoundProcessing.Model;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -183,6 +184,44 @@ namespace ImageSoundProcessing.Forms
                         {
                             Bitmap resultBitmap = Effect.uolisaFilter(_bitmap);
                             ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.Show();
+                            Close();
+                            break;
+                        }
+                    case "FFT":
+                        {
+                            Complex[][] complexData = Effect.FftTransform(_bitmap);
+                            Bitmap resultBitmap = Effect.IfftTransform(complexData);
+                            ProcessedImageWindow form = FormFactory.CreateProcessedImageForm(resultBitmap);
+                            form.SetControlProperties("powerSpectrumButtom");
+                            form.SetControlProperties("phaseSpectrumButton");
+                            form.SetControlProperties("lowPassFilterButton");
+                            form.SetControlProperties("highPassFilterButton");
+                            form.SetControlProperties("bandPassFilterButton");
+                            form.SetControlProperties("bandCutFilterButton");
+                            form.SetControlProperties("highPassEdgeDetectionFilterButton");
+                            form.SetControlProperties("phaseSpectrumFilterButton");
+                            form.SetControlProperties("regionSplittingAndMergingSegmentation");
+                            form.SetControlProperties("MaskUse");
+                            form.SetControlProperties("filterRangeLabel");
+                            form.SetControlProperties("filterRangeLabel2");
+                            form.SetControlProperties("kComponentLabel");
+                            form.SetControlProperties("lComponentLabel");
+                            form.SetControlProperties("thresholdLabel");
+                            form.SetControlProperties("minimumPixelsForRegionLabel");
+                            form.SetControlProperties("sectorWidthLabel");
+                            form.SetControlProperties("rotationLabel");
+                            form.SetControlProperties("filterRangeTextBox");
+                            form.SetControlProperties("filterRangeTextBox2");
+                            form.SetControlProperties("kComponentTextBox");
+                            form.SetControlProperties("lComponentTextBox");
+                            form.SetControlProperties("thresholdTextBox");
+                            form.SetControlProperties("minPixelsTextBox");
+                            form.SetControlProperties("sectorWidthTextBox");
+                            form.SetControlProperties("rotationTextBox");
+
+                            form.SetOriginalComplexData(complexData);
+                            form.SetProcessedComplexData(complexData);
                             form.Show();
                             Close();
                             break;
