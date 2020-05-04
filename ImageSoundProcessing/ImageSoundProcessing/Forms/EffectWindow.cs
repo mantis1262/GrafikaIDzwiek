@@ -202,6 +202,7 @@ namespace ImageSoundProcessing.Forms
                             form.SetControlProperties("highPassEdgeDetectionFilterButton");
                             form.SetControlProperties("phaseSpectrumFilterButton");
                             form.SetControlProperties("regionSplittingAndMergingSegmentation");
+                            form.SetControlProperties("MaskUse");
                             form.SetControlProperties("filterRangeLabel");
                             form.SetControlProperties("filterRangeLabel2");
                             form.SetControlProperties("kComponentLabel");

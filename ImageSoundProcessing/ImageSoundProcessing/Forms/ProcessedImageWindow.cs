@@ -148,6 +148,11 @@ namespace ImageSoundProcessing
                         phaseSpectrumFilterButton.Visible = true;
                         break;
                     }
+                case "MaskUse":
+                    {
+                        MaskUse.Visible = true;
+                        break;
+                    }
                 case "regionSplittingAndMergingSegmentation":
                     {
                         regionSplittingAndMergingSegmentation.Visible = true;
