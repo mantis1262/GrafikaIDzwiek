@@ -44,6 +44,14 @@ namespace Sound
                 freq[i] = i * sampleRate / result.Length;
                 Histogram.Series["Value"].Points.AddXY(freq[i], value[i]);
             }
+
+            double[] autocorelation = audioHelper.Autocorrelation(value);
+            double localMaxIndex = audioHelper.extrema(autocorelation,autocorelation.Length);
+            double frequenties = audioHelper.sampleRate / localMaxIndex;
+
+            MessageBox.Show(frequenties.ToString());
+
+
         }
     }
 }
