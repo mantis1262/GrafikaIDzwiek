@@ -54,12 +54,16 @@
     <Compile Include="CharWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CharWindow.Designer.cs" />
+    <Compile Include="CharWindow.Designer.cs">
+      <DependentUpon>CharWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\AudioHelper.cs" />
     <Compile Include="Helpers\Path.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CharWindow.resx" />
+    <EmbeddedResource Include="CharWindow.resx">
+      <DependentUpon>CharWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
