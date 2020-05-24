@@ -46,7 +46,7 @@ namespace Sound
                 value[i] = result[i] / sampleRate;
                 time[i] = i / sampleRate;
                 freq[i] = i * sampleRate / result.Length;
-                Histogram.Series["Signal"].Points.AddXY(freq[i], value[i]);
+                Histogram.Series["Signal"].Points.AddXY(time[i], value[i]);
             }
 
             //Time domain
@@ -67,9 +67,9 @@ namespace Sound
 
             for (int i = 0; i < result.Count(); i++)
             {
-                corealationChar.Histogram.Series["corelation"].Points.AddXY(i, autocorelation[i]);
+                corealationChar.Histogram.Series["corelation"].Points.AddXY(time[i], autocorelation[i]);
             }
-
+            
             corealationChar.Show();
             MessageBox.Show(frequenties.ToString("0.0"));
             //
@@ -98,21 +98,10 @@ namespace Sound
 
             for (int i = 0; i < result.Count(); i++)
             {
-                ceptral.Histogram.Series["ceptral"].Points.AddXY(i, FFTComplex2[i].Magnitude);
+                ceptral.Histogram.Series["ceptral"].Points.AddXY(freq[i], FFTComplex2[i].Magnitude);
             }
 
             ceptral.Show();
-
-
-            double[][] d = new double[2][];
-            d[0] = new double[result.Length];
-            d[1] = new double[result.Length];
-            for (int i = 0; i < FFTComplex2.Length; ++i)
-            {
-                //power cepstrum
-                //d[0][i]=Math.pow(csignal[i].abs(),2);
-                d[0][i] = FFTComplex2[i].Magnitude;
-            }
 
         }
     }

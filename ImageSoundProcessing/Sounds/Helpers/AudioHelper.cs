@@ -15,7 +15,7 @@ namespace Sound.Helpers
     {
         public int sampleRate = 0;
 
-        private const int WinodwSize = 2048;
+        private const int WinodwSize = 4096;
 
         public Tuple<double[], int, TimeSpan> openWav(string filename)
         {
