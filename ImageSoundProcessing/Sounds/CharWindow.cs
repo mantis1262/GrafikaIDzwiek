@@ -46,10 +46,10 @@ namespace Sound
             }
 
             double[] autocorelation = audioHelper.Autocorrelation(result);
-            int localMaxIndex = (int)audioHelper.findLocalMax(autocorelation);
-            int frequenties = audioHelper.sampleRate / localMaxIndex;
+            double localMaxIndex = audioHelper.findLocalMax(autocorelation);
+            double frequenties = audioHelper.sampleRate / localMaxIndex;
 
-            MessageBox.Show(frequenties.ToString());
+            MessageBox.Show(frequenties.ToString("0.0"));
 
 
         }

@@ -16,9 +16,6 @@ namespace Sound.Helpers
         public int sampleRate = 0;
 
         private const int WinodwSize = 2048;
-        private const int K = 30;
-        private const int Dis = 100;
-        private const int F = 10;
 
         public Tuple<double[], int, TimeSpan> openWav(string filename, out short[] sampleBuffer)
         {
@@ -65,19 +62,6 @@ namespace Sound.Helpers
         }
 
 
-        public int extrema(double[] a, int n)
-        {
-            int count = 0;
-
-            for (int i = 1; i < n - 1; i++)
-            {
-                if (a[i] > a[i - 1] && a[i] > a[i + 1])
-                    count += 1;
-            }
-
-            return count;
-        }
-
         public double findLocalMax(double[] data)
         {
             double globalMax = data[0];
@@ -85,7 +69,7 @@ namespace Sound.Helpers
             long localMaxIndex = int.MaxValue;
             double localMin = globalMax;
 
-            Boolean falling = true;
+            bool falling = true;
             for (int i = 1; i < data.Length; i++)
             {
                 double cur = data[i];
@@ -115,7 +99,7 @@ namespace Sound.Helpers
                 }
             }
 
-            return int.MaxValue;
+            return localMaxIndex;
             }
 
         public double[] TriangleWindow(double[] data)
