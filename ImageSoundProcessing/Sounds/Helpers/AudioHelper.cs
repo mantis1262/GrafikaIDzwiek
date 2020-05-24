@@ -17,9 +17,10 @@ namespace Sound.Helpers
 
         private const int WinodwSize = 2048;
 
-        public Tuple<double[], int, TimeSpan> openWav(string filename, out short[] sampleBuffer)
+        public Tuple<double[], int, TimeSpan> openWav(string filename)
         {
             TimeSpan time = new TimeSpan();
+            short[] sampleBuffer;
             using (WaveFileReader reader = new WaveFileReader(filename))
             {
                 sampleRate = reader.WaveFormat.SampleRate;
@@ -61,6 +62,27 @@ namespace Sound.Helpers
             return result;    
         }
 
+
+        public Complex[] SignalToComplex(double[] data)
+        {
+            Complex[] resultComplex = new Complex[data.Length];
+            for (int z = 0; z < data.Length; z++)
+            {
+                resultComplex[z] = data[z];
+            }
+            return resultComplex;
+        }
+
+        public Complex[] HammingWindow(Complex[] complexData )
+        {
+            int N = complexData.Length;
+            Complex[] complexResult = new Complex[N];
+            double arg = (2 * Math.PI) / ((double)N - 1.0);
+
+            for (int i = 0; i < N; ++i)
+                complexResult[i] = complexData[i].Real * (0.54 - 0.46 * Math.Cos(arg * (double)i));
+            return complexResult;
+        }
 
         public double findLocalMax(double[] data)
         {
@@ -128,7 +150,7 @@ namespace Sound.Helpers
             return ((reversedN << count) & ((1 << bits) - 1));
         }
 
-        public static Complex[] FFT(Complex[] buffer)
+        public Complex[] FFT(Complex[] buffer)
         {
 
             int bits = (int)Math.Log(buffer.Length, 2);
