@@ -27,7 +27,7 @@ namespace Sound
         {
             AudioHelper audioHelper = new AudioHelper();
 
-
+            //Wycztywanie pliku
             Tuple<double[], int, TimeSpan> wave = audioHelper.openWav(Path.GetSoundPath());
             double[] result = wave.Item1;
             double sampleRate = Convert.ToDouble(wave.Item2);
@@ -50,12 +50,11 @@ namespace Sound
             }
 
             //Time domain
-
             double[] autocorelation = audioHelper.Autocorrelation(result);
             double localMaxIndex = audioHelper.findLocalMax(autocorelation);
             double frequenties = audioHelper.sampleRate / localMaxIndex;
 
-
+            // Rysownie wykresu autokorelacji
             CharWindow corealationChar = new CharWindow();
             corealationChar.button1.Visible = false;
             corealationChar.Histogram.Series.Clear();
@@ -79,15 +78,28 @@ namespace Sound
             Complex[] complex = audioHelper.SignalToComplex(result);
             Complex[] ComplexWindow = audioHelper.HammingWindow(complex);
 
+            // Pierwszy Furier
             Complex[] FFTComplex = audioHelper.FFT(ComplexWindow);
-
-            for (int i = 0; i < FFTComplex.Length; ++i)
+            for (int i = 0; i < FFTComplex.Length/2; ++i)
                 FFTComplex[i] = new Complex(10.0 * Math.Log10(FFTComplex[i].Magnitude + 1), 0);
+            //Pobranie połowy próbek
+            Complex[] FFTCompelxDiv2 = new Complex[FFTComplex.Length / 2];
+            for(int i = 0; i< FFTCompelxDiv2.Length; i++)
+            {
+                FFTCompelxDiv2[i] = FFTComplex[i];
+            }
 
-            Complex[] FFTComplex2 = audioHelper.FFT(FFTComplex);
+            //Drugi Furier
+            Complex[] FFTComplex2 = audioHelper.FFT(FFTCompelxDiv2);
+            //Pobranie połowy próbek
+            Complex[] FFTCompelx2Div2 = new Complex[FFTComplex2.Length / 2];
+            for (int i = 0; i < FFTCompelx2Div2.Length; i++)
+            {
+                FFTCompelx2Div2[i] = FFTComplex2[i];
+            }
 
-
-             CharWindow ceptral = new CharWindow();
+            //Rysowanie wykresu ceptral
+            CharWindow ceptral = new CharWindow();
             ceptral.button1.Visible = false;
             ceptral.Histogram.Series.Clear();
             ceptral.Histogram.Series.Add("ceptral");
@@ -96,9 +108,9 @@ namespace Sound
             ceptral.Histogram.Series["ceptral"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             ceptral.Histogram.Series["ceptral"].MarkerSize = 2;
 
-            for (int i = 0; i < result.Count(); i++)
+            for (int i = 0; i < FFTCompelx2Div2.Count(); i++)
             {
-                ceptral.Histogram.Series["ceptral"].Points.AddXY(freq[i], FFTComplex2[i].Magnitude);
+                ceptral.Histogram.Series["ceptral"].Points.AddXY(freq[i], FFTCompelx2Div2[i].Magnitude/audioHelper.sampleRate);
             }
 
             ceptral.Show();
