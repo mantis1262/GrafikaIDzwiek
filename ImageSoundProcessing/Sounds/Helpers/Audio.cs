@@ -11,39 +11,40 @@ using System.Windows.Forms;
 
 namespace Sound.Helpers
 {
-    class AudioHelper
+    public class AudioHelper
     {
-        public int sampleRate = 0;
+        public const int ChunkSize = 44100;
+        public int SampleRate;
+        public int FramesNumber;
+        public double[] Data;
+        public TimeSpan TotalTime;
 
-        private const int WinodwSize = 4096;
-
-        public Tuple<double[], int, TimeSpan> openWav(string filename)
+        public void OpenWav(string filename)
         {
-            TimeSpan time = new TimeSpan();
             short[] sampleBuffer;
             using (WaveFileReader reader = new WaveFileReader(filename))
             {
-                sampleRate = reader.WaveFormat.SampleRate;
-                time = reader.TotalTime;
+                SampleRate = reader.WaveFormat.SampleRate;
+                FramesNumber = (int)reader.SampleCount * reader.WaveFormat.Channels;
+                TotalTime = reader.TotalTime;
                 byte[] buffer = new byte[reader.Length];
                 int read = reader.Read(buffer, 0, buffer.Length);
                 sampleBuffer = new short[read / 2];
                 Buffer.BlockCopy(buffer, 0, sampleBuffer, 0, read);
             }
 
-            double[] result = new double[WinodwSize];
+            double[] result = new double[ChunkSize];
             int i = 0;
             foreach (short tmp in sampleBuffer)
             {
                 result[i] = sampleBuffer[i];
                 i++;
-                if (i == WinodwSize)
+                if (i == ChunkSize)
                     break;
             }
 
-            return new Tuple<double[], int, TimeSpan>(result, sampleRate, time);
+            Data = result;
         }
-
 
         public double[] Autocorrelation(double[] data)
         {
@@ -62,29 +63,7 @@ namespace Sound.Helpers
             return result;    
         }
 
-
-        public Complex[] SignalToComplex(double[] data)
-        {
-            Complex[] resultComplex = new Complex[data.Length];
-            for (int z = 0; z < data.Length; z++)
-            {
-                resultComplex[z] = data[z];
-            }
-            return resultComplex;
-        }
-
-        public Complex[] HammingWindow(Complex[] complexData )
-        {
-            int N = complexData.Length;
-            Complex[] complexResult = new Complex[N];
-            double arg = (2 * Math.PI) / ((double)N - 1.0);
-
-            for (int i = 0; i < N; ++i)
-                complexResult[i] = complexData[i].Real * (0.54 - 0.46 * Math.Cos(arg * (double)i));
-            return complexResult;
-        }
-
-        public double findLocalMax(double[] data)
+        public double FindLocalMax(double[] data)
         {
             double globalMax = data[0];
             double tempLocalMax = 0;
@@ -122,7 +101,29 @@ namespace Sound.Helpers
             }
 
             return localMaxIndex;
+        }
+
+        public Complex[] SignalToComplex(double[] data)
+        {
+            Complex[] resultComplex = new Complex[data.Length];
+            for (int z = 0; z < data.Length; z++)
+            {
+                resultComplex[z] = data[z];
             }
+            return resultComplex;
+        }
+
+        public Complex[] HammingWindow(Complex[] complexData )
+        {
+            int N = complexData.Length;
+            Complex[] complexResult = new Complex[N];
+            double arg = (2 * Math.PI) / ((double)N - 1.0);
+
+            for (int i = 0; i < N; ++i)
+                complexResult[i] = complexData[i].Real * (0.54 - 0.46 * Math.Cos(arg * (double)i));
+            return complexResult;
+        }
+  
 
         public double[] TriangleWindow(double[] data)
         {
@@ -132,6 +133,18 @@ namespace Sound.Helpers
                 result[i] = data[i] * (1 - (i * 1.0) / data.Length);
             }
             return result;
+        }
+
+        public int MakePowerOf2(int windowWidth)
+        {
+            int powerOfTwo = 2;
+
+            while (windowWidth > powerOfTwo)
+            {
+                powerOfTwo *= 2;
+            }
+
+            return powerOfTwo;
         }
 
         public static int BitReverse(int n, int bits)
@@ -152,7 +165,6 @@ namespace Sound.Helpers
 
         public Complex[] FFT(Complex[] buffer)
         {
-
             int bits = (int)Math.Log(buffer.Length, 2);
             for (int j = 1; j < buffer.Length; j++)
             {
@@ -165,9 +177,6 @@ namespace Sound.Helpers
                 buffer[j] = buffer[swapPos];
                 buffer[swapPos] = temp;
             }
-
-
-
 
             for (int N = 2; N <= buffer.Length; N <<= 1)
             {
@@ -209,5 +218,10 @@ namespace Sound.Helpers
 
                 return buffer;
         }
+
+        //public double[] Cepstrum(double[] data)
+        //{
+
+        //}
     }
 }
