@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sound.Helpers;
 using System.Numerics;
+using Sounds.Helpers;
 
 namespace Sound
 {
@@ -25,12 +26,12 @@ namespace Sound
 
         private void button1_Click(object sender, EventArgs e)
         {
-            AudioHelper audio = new AudioHelper();
+            AudioContainer audio = new AudioContainer();
 
             //Wycztywanie pliku
             audio.OpenWav(Path.GetSoundPath());
-            double[] result = audio.Data;
-            double sampleRate = Convert.ToDouble(audio.SampleRate);
+            int[] result = SoundUtil.ChunkIntArray(audio.data, audio.chunkSize)[0];
+            double sampleRate = Convert.ToDouble(audio.sampleRate);
             Histogram.Series.Clear();
             Histogram.Series.Add("Signal");
             this.Text = "Signal";
@@ -50,9 +51,9 @@ namespace Sound
             }
 
             //Time domain
-            double[] autocorelation = audio.Autocorrelation(result);
-            double localMaxIndex = audio.FindLocalMax(autocorelation);
-            double frequenties = audio.SampleRate / localMaxIndex;
+            Tuple<List<long[]>, List<int>> autocorelationResult = audio.Autocorrelation();
+            long[] correlation = autocorelationResult.Item1[0];
+            int frequency = autocorelationResult.Item2[0];
 
             // Rysownie wykresu autokorelacji
             CharWindow corealationChar = new CharWindow();
@@ -64,13 +65,13 @@ namespace Sound
             corealationChar.Histogram.Series["corelation"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             corealationChar.Histogram.Series["corelation"].MarkerSize = 2;
 
-            for (int i = 0; i < result.Count(); i++)
+            for (int i = 0; i < result.Length; i++)
             {
-                corealationChar.Histogram.Series["corelation"].Points.AddXY(time[i], autocorelation[i]);
+                corealationChar.Histogram.Series["corelation"].Points.AddXY(time[i], correlation[i]);
             }
             
             corealationChar.Show();
-            MessageBox.Show(frequenties.ToString("0.0"));
+            MessageBox.Show(frequency.ToString());
 
 
             ////Frqudency domian

@@ -1,5 +1,7 @@
 using NAudio.Wave;
+using Sounds.Helpers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,69 +13,76 @@ using System.Windows.Forms;
 
 namespace Sound.Helpers
 {
-    public class AudioHelper
+    public class AudioContainer
     {
-        public const int ChunkSize = 44100;
-        public int SampleRate;
-        public int FramesNumber;
-        public double[] Data;
-        public TimeSpan TotalTime;
+        public int chunkSize = 4096;
+        public int sampleRate;
+        public int framesNumber;
+        public int[] data;
+        public TimeSpan totalTime;
 
         public void OpenWav(string filename)
         {
             short[] sampleBuffer;
             using (WaveFileReader reader = new WaveFileReader(filename))
             {
-                SampleRate = reader.WaveFormat.SampleRate;
-                FramesNumber = (int)reader.SampleCount * reader.WaveFormat.Channels;
-                TotalTime = reader.TotalTime;
+                sampleRate = reader.WaveFormat.SampleRate;
+                framesNumber = (int)reader.SampleCount * reader.WaveFormat.Channels;
+                totalTime = reader.TotalTime;
                 byte[] buffer = new byte[reader.Length];
                 int read = reader.Read(buffer, 0, buffer.Length);
                 sampleBuffer = new short[read / 2];
                 Buffer.BlockCopy(buffer, 0, sampleBuffer, 0, read);
             }
 
-            double[] result = new double[ChunkSize];
-            int i = 0;
-            foreach (short tmp in sampleBuffer)
+            int[] result = new int[sampleBuffer.Length];
+            for (int i = 0; i < result.Length; i++)
             {
                 result[i] = sampleBuffer[i];
-                i++;
-                if (i == ChunkSize)
-                    break;
             }
 
-            Data = result;
+            data = result;
         }
 
-        public double[] Autocorrelation(double[] data)
+        public Tuple<List<long[]>, List<int>> Autocorrelation()
         {
-            double[] result = new double[data.Length];
+            int[][] parts = SoundUtil.ChunkIntArray(data, chunkSize);
+            List<long[]> autoCorrelations = new List<long[]>();
+            List<int> frequencies = new List<int>();
 
-            for (int m = 1; m < result.Length; m++)
+            foreach (int[] buffer in parts)
             {
-                double sum = 0;
-                for (int n = 0; n < result.Length - m; n++)
+                long[] autocorrelation = new long[buffer.Length];
+                for (int m = 1; m < autocorrelation.Length; m++)
                 {
-                    sum += data[n] * data[n + m];
+                    long sum = 0;
+                    for (int n = 0; n < autocorrelation.Length - m; n++)
+                    {
+                        sum += buffer[n] * buffer[n + m];
+                    }
+                    autocorrelation[m - 1] = sum;
                 }
-                result[m - 1] = sum;
+
+                long localMaxIndex = FindLocalMax(autocorrelation);
+                int frequency = (int)(sampleRate / localMaxIndex);
+                autoCorrelations.Add(autocorrelation);
+                frequencies.Add(frequency);
             }
 
-            return result;    
+            return new Tuple<List<long[]>, List<int>>(autoCorrelations, frequencies);   
         }
 
-        public double FindLocalMax(double[] data)
+        private long FindLocalMax(long[] autocorrelation)
         {
-            double globalMax = data[0];
+            double globalMax = autocorrelation[0];
             double tempLocalMax = 0;
-            long localMaxIndex = int.MaxValue;
+            int localMaxIndex = int.MaxValue;
             double localMin = globalMax;
 
             bool falling = true;
-            for (int i = 1; i < data.Length; i++)
+            for (int i = 1; i < autocorrelation.Length; i++)
             {
-                double cur = data[i];
+                double cur = autocorrelation[i];
                 if (falling)
                 {
                     if (cur < localMin)
@@ -103,7 +112,7 @@ namespace Sound.Helpers
             return localMaxIndex;
         }
 
-        public Complex[] SignalToComplex(double[] data)
+        public Complex[] SignalToComplex(int[] data)
         {
             Complex[] resultComplex = new Complex[data.Length];
             for (int z = 0; z < data.Length; z++)
@@ -135,40 +144,13 @@ namespace Sound.Helpers
             return result;
         }
 
-        public int MakePowerOf2(int windowWidth)
-        {
-            int powerOfTwo = 2;
-
-            while (windowWidth > powerOfTwo)
-            {
-                powerOfTwo *= 2;
-            }
-
-            return powerOfTwo;
-        }
-
-        public static int BitReverse(int n, int bits)
-        {
-            int reversedN = n;
-            int count = bits - 1;
-
-            n >>= 1;
-            while (n > 0)
-            {
-                reversedN = (reversedN << 1) | (n & 1);
-                count--;
-                n >>= 1;
-            }
-
-            return ((reversedN << count) & ((1 << bits) - 1));
-        }
 
         public Complex[] FFT(Complex[] buffer)
         {
             int bits = (int)Math.Log(buffer.Length, 2);
             for (int j = 1; j < buffer.Length; j++)
             {
-                int swapPos = BitReverse(j, bits);
+                int swapPos = SoundUtil.BitReverse(j, bits);
                 if (swapPos <= j)
                 {
                     continue;
