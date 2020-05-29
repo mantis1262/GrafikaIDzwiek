@@ -58,6 +58,7 @@
       <DependentUpon>CharWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AudioContainer.cs" />
+    <Compile Include="Helpers\Complex.cs" />
     <Compile Include="Helpers\SoundUtil.cs" />
     <Compile Include="Helpers\Path.cs" />
     <Compile Include="Program.cs" />

@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sound.Helpers;
-using System.Numerics;
 using Sounds.Helpers;
 
 namespace Sound
@@ -30,7 +29,7 @@ namespace Sound
 
             //Wycztywanie pliku
             audio.OpenWav(Path.GetSoundPath());
-            int[] result = SoundUtil.ChunkIntArray(audio.data, audio.chunkSize)[0];
+            int[] result = SoundUtil.ChunkArray(audio.data, audio.chunkSize)[0];
             double sampleRate = Convert.ToDouble(audio.sampleRate);
             Histogram.Series.Clear();
             Histogram.Series.Add("Signal");
@@ -73,24 +72,25 @@ namespace Sound
             corealationChar.Show();
             MessageBox.Show(frequency.ToString());
 
+            List<int> frequenciesFreq = audio.Cepstrum();
 
-            ////Frqudency domian
-            //Complex[] complex = audioHelper.SignalToComplex(result);
-            //Complex[] ComplexWindow = audioHelper.HammingWindow(complex);
+            //Frequency domain
+            //Complex[] complex = SoundUtil.SignalToComplex(result);
+            //Complex[] ComplexWindow = SoundUtil.HammingWindow(complex);
 
             //// Pierwszy Furier
-            //Complex[] FFTComplex = audioHelper.FFT(ComplexWindow);
-            //for (int i = 0; i < FFTComplex.Length/2; ++i)
-            //    FFTComplex[i] = new Complex(10.0 * Math.Log10(FFTComplex[i].Magnitude + 1), 0);
+            //Complex[] FFTComplex = SoundUtil.FftDit1d(ComplexWindow);
+            //for (int i = 0; i < FFTComplex.Length / 2; ++i)
+            //    FFTComplex[i] = new Complex(10.0f * (float)Math.Log10(FFTComplex[i].Modulus() + 1), 0);
             ////Pobranie połowy próbek
             //Complex[] FFTCompelxDiv2 = new Complex[FFTComplex.Length / 2];
-            //for(int i = 0; i< FFTCompelxDiv2.Length; i++)
+            //for (int i = 0; i < FFTCompelxDiv2.Length; i++)
             //{
             //    FFTCompelxDiv2[i] = FFTComplex[i];
             //}
 
             ////Drugi Furier
-            //Complex[] FFTComplex2 = audioHelper.FFT(FFTCompelxDiv2);
+            //Complex[] FFTComplex2 = SoundUtil.FftDit1d(FFTCompelxDiv2);
             ////Pobranie połowy próbek
             //Complex[] FFTCompelx2Div2 = new Complex[FFTComplex2.Length / 2];
             //for (int i = 0; i < FFTCompelx2Div2.Length; i++)
