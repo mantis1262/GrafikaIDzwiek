@@ -169,13 +169,7 @@ namespace Sounds.Helpers
             // base case
             if (N == 1)
             {
-                result[0] = input[0];
-
-                if (Complex.IsNaN(result[0]))
-                {
-                    return new[] { new Complex(0, 0) };
-                }
-                return result;
+                return new Complex[] { input[0] };
             }
 
             // radix 2 Cooley-Tukey FFT

@@ -126,7 +126,6 @@ namespace Sound.Helpers
             foreach (int[] buffer in parts)
             {
                 Complex[] complexSound = SoundUtil.SignalToComplex(buffer);
-                double arg = (2 * Math.PI) / ((double)N - 1.0);
 
                 //hammming window
                 Complex[] complexWindows = SoundUtil.HammingWindow(complexSound);
