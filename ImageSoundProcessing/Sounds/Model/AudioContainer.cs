@@ -28,7 +28,7 @@ namespace Sound.Model
             short[] sampleBuffer;
             using (WaveFileReader reader = new WaveFileReader(filename))
             {
-                fileName = filename;
+                fileName = Path.GetFileName(filename);
                 sampleRate = reader.WaveFormat.SampleRate;
                 framesNumber = (int)reader.SampleCount * reader.WaveFormat.Channels;
                 totalTime = reader.TotalTime;

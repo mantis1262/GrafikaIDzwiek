@@ -1,4 +1,5 @@
-﻿using Sounds.Model;
+﻿using NAudio.Wave;
+using Sounds.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,78 +93,6 @@ namespace Sounds.Helpers
             return maxPeriodIndex;
         }
 
-        //public static int BitReverse(int n, int bits)
-        //{
-        //    int reversedN = n;
-        //    int count = bits - 1;
-
-        //    n >>= 1;
-        //    while (n > 0)
-        //    {
-        //        reversedN = (reversedN << 1) | (n & 1);
-        //        count--;
-        //        n >>= 1;
-        //    }
-
-        //    return ((reversedN << count) & ((1 << bits) - 1));
-        //}
-
-        //public static Complex[] FFT(Complex[] buffer)
-        //{
-        //    int bits = (int)Math.Log(buffer.Length, 2);
-        //    for (int j = 1; j < buffer.Length; j++)
-        //    {
-        //        int swapPos = BitReverse(j, bits);
-        //        if (swapPos <= j)
-        //        {
-        //            continue;
-        //        }
-        //        var temp = buffer[j];
-        //        buffer[j] = buffer[swapPos];
-        //        buffer[swapPos] = temp;
-        //    }
-
-        //    for (int N = 2; N <= buffer.Length; N <<= 1)
-        //    {
-        //        for (int i = 0; i < buffer.Length; i += N)
-        //        {
-        //            for (int k = 0; k < N / 2; k++)
-        //            {
-
-        //                int evenIndex = i + k;
-        //                int oddIndex = i + k + (N / 2);
-
-
-        //                Complex even = new Complex(0, 0);
-
-        //                Complex odd = new Complex(0, 0);
-
-        //                if (oddIndex < buffer.Length)
-        //                {
-        //                    odd = buffer[oddIndex];
-        //                }
-        //                if (evenIndex < buffer.Length)
-        //                {
-        //                    even = buffer[evenIndex];
-        //                }
-
-        //                double term = -2 * Math.PI * k / (double)N;
-        //                Complex exp = new Complex((float)Math.Cos(term), (float)Math.Sin(term)) * odd;
-        //                if (evenIndex < buffer.Length)
-        //                {
-        //                    buffer[evenIndex] = even + exp;
-        //                }
-        //                if (oddIndex < buffer.Length)
-        //                {
-        //                    buffer[oddIndex] = even - exp;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return buffer;
-        //}
-
         public static Complex[] SignalToComplex(int[] data)
         {
             Complex[] resultComplex = new Complex[data.Length];
@@ -238,6 +167,46 @@ namespace Sounds.Helpers
             }
 
             return result;
+        }
+
+        public static void SaveSound(string fileName, int totalFrames, int sampleRate, int chunkSize, List<int> frequencies)
+        {
+            string resultFileName = "result_" + fileName;
+            WaveFormat waveFormat = new WaveFormat(sampleRate: sampleRate, channels: 1);
+            using (WaveFileWriter writer = new WaveFileWriter(resultFileName, waveFormat))
+            {
+                int prevFreq = 0;
+                int curSoundLength = 1;
+                for (int i = 0; i < frequencies.Count; i++)
+                {
+                    int frequency = frequencies[i];
+                    if (prevFreq == 0)
+                    {
+                        prevFreq = frequency;
+                    }
+                    else
+                    {
+                        if (frequency == 0 && i != frequencies.Count - 1)
+                        {
+                            curSoundLength++;
+                        }
+                        else
+                        {
+                            int bufSize = chunkSize * curSoundLength;
+                            float[] buffer = new float[bufSize];
+                            float L1 = (float)sampleRate / prevFreq;
+                            for (int j = 0; j < bufSize; j++)
+                            {
+                                buffer[j] = (float)Math.Sin(2 * Math.PI * j / L1);
+                            }
+                            writer.WriteSamples(buffer, 0, bufSize);
+
+                            curSoundLength = 1;
+                            prevFreq = frequency;
+                        }
+                    }
+                }
+            }
         }
     }
 }

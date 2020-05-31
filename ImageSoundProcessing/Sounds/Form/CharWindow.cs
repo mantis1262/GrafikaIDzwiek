@@ -56,7 +56,7 @@ namespace Sound
             {
                 _audio.OpenWav(path);
                 RefreshChart();
-                pathLabel.Text = Path.GetFileName(path);
+                pathLabel.Text = _audio.fileName;
                 chunkSizeBox.Text = DEFAULT_CHUNK_SIZE.ToString();
             }
             actionStateLabel.Text = "";
@@ -84,14 +84,16 @@ namespace Sound
             {
                 actionStateLabel.Text = "PROCESSING";
                 List<int> frequencies = _audio.Autocorrelation();
+                List<int> frequenciesFiltered = frequencies.Where(freq => freq > 0).Distinct().ToList();
                 string freqText = "";
 
-                foreach (int freq in frequencies.Distinct())
+                foreach (int freq in frequenciesFiltered)
                 {
                     freqText += freq.ToString() + ", ";
                 }
 
                 actionStateLabel.Text = "";
+                SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequenciesFiltered);
                 MessageBox.Show(freqText, "Autocorrelation frequencies");
             }
         }
@@ -102,14 +104,16 @@ namespace Sound
             {
                 actionStateLabel.Text = "PROCESSING";
                 List<int> frequencies = _audio.Cepstrum();
+                List<int> frequenciesFiltered = frequencies.Where(freq => freq > 0).Distinct().ToList();
                 string freqText = "";
 
-                foreach (int freq in frequencies)
+                foreach (int freq in frequenciesFiltered)
                 {
                     freqText += freq.ToString() + ", ";
                 }
 
                 actionStateLabel.Text = "";
+                SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequenciesFiltered);
                 MessageBox.Show(freqText, "Cepstrum frequencies");
             }
         }
