@@ -45,6 +45,9 @@ namespace Sound
                 time[i] = i / sampleRate;
                 Histogram.Series["Signal"].Points.AddXY(time[i], value[i]);
             }
+
+            Histogram.ChartAreas[0].AxisX.Title = "Time";
+            Histogram.ChartAreas[0].AxisY.Title = "Sample value";
         }
 
         private void loadFileButton_Click(object sender, EventArgs e)

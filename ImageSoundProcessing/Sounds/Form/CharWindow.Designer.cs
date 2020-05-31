@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.Histogram = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.loadFileButton = new System.Windows.Forms.Button();
             this.autocorrelationButton = new System.Windows.Forms.Button();
@@ -44,29 +44,31 @@
             // 
             // Histogram
             // 
-            chartArea5.AxisX.IsLabelAutoFit = false;
-            chartArea5.AxisX.ScaleBreakStyle.Enabled = true;
-            chartArea5.CursorX.AutoScroll = false;
-            chartArea5.CursorX.IsUserEnabled = true;
-            chartArea5.Name = "ChartArea1";
-            this.Histogram.ChartAreas.Add(chartArea5);
-            this.Histogram.Location = new System.Drawing.Point(16, 63);
-            this.Histogram.Margin = new System.Windows.Forms.Padding(4);
+            chartArea1.AxisX.IsLabelAutoFit = false;
+            chartArea1.AxisX.ScaleBreakStyle.Enabled = true;
+            chartArea1.AxisX.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            chartArea1.AxisY.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            chartArea1.CursorX.AutoScroll = false;
+            chartArea1.CursorX.IsUserEnabled = true;
+            chartArea1.Name = "ChartArea1";
+            this.Histogram.ChartAreas.Add(chartArea1);
+            this.Histogram.Location = new System.Drawing.Point(12, 51);
             this.Histogram.Name = "Histogram";
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series5.Name = "Value";
-            this.Histogram.Series.Add(series5);
-            this.Histogram.Size = new System.Drawing.Size(1547, 697);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series1.Name = "Value";
+            this.Histogram.Series.Add(series1);
+            this.Histogram.Size = new System.Drawing.Size(1160, 566);
             this.Histogram.TabIndex = 0;
             this.Histogram.Text = "Histogram";
             // 
             // loadFileButton
             // 
             this.loadFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.loadFileButton.Location = new System.Drawing.Point(32, 12);
+            this.loadFileButton.Location = new System.Drawing.Point(24, 10);
+            this.loadFileButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(144, 40);
+            this.loadFileButton.Size = new System.Drawing.Size(108, 32);
             this.loadFileButton.TabIndex = 2;
             this.loadFileButton.Text = "Load File";
             this.loadFileButton.UseVisualStyleBackColor = true;
@@ -75,9 +77,10 @@
             // autocorrelationButton
             // 
             this.autocorrelationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.autocorrelationButton.Location = new System.Drawing.Point(980, 12);
+            this.autocorrelationButton.Location = new System.Drawing.Point(735, 10);
+            this.autocorrelationButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.autocorrelationButton.Name = "autocorrelationButton";
-            this.autocorrelationButton.Size = new System.Drawing.Size(199, 40);
+            this.autocorrelationButton.Size = new System.Drawing.Size(149, 32);
             this.autocorrelationButton.TabIndex = 3;
             this.autocorrelationButton.Text = "Autocorrelation";
             this.autocorrelationButton.UseVisualStyleBackColor = true;
@@ -87,27 +90,30 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label1.Location = new System.Drawing.Point(446, 20);
+            this.label1.Location = new System.Drawing.Point(334, 16);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(110, 25);
+            this.label1.Size = new System.Drawing.Size(87, 20);
             this.label1.TabIndex = 5;
             this.label1.Text = "Chunk size";
             // 
             // chunkSizeBox
             // 
             this.chunkSizeBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.chunkSizeBox.Location = new System.Drawing.Point(562, 20);
+            this.chunkSizeBox.Location = new System.Drawing.Point(422, 16);
+            this.chunkSizeBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chunkSizeBox.Name = "chunkSizeBox";
-            this.chunkSizeBox.Size = new System.Drawing.Size(121, 30);
+            this.chunkSizeBox.Size = new System.Drawing.Size(92, 26);
             this.chunkSizeBox.TabIndex = 6;
             this.chunkSizeBox.Text = "44100";
             // 
             // applyChunkButton
             // 
             this.applyChunkButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.applyChunkButton.Location = new System.Drawing.Point(689, 17);
+            this.applyChunkButton.Location = new System.Drawing.Point(517, 14);
+            this.applyChunkButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.applyChunkButton.Name = "applyChunkButton";
-            this.applyChunkButton.Size = new System.Drawing.Size(75, 35);
+            this.applyChunkButton.Size = new System.Drawing.Size(56, 28);
             this.applyChunkButton.TabIndex = 8;
             this.applyChunkButton.Text = "Apply";
             this.applyChunkButton.UseVisualStyleBackColor = true;
@@ -116,9 +122,10 @@
             // cepstrumButton
             // 
             this.cepstrumButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.cepstrumButton.Location = new System.Drawing.Point(1219, 12);
+            this.cepstrumButton.Location = new System.Drawing.Point(914, 10);
+            this.cepstrumButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cepstrumButton.Name = "cepstrumButton";
-            this.cepstrumButton.Size = new System.Drawing.Size(202, 40);
+            this.cepstrumButton.Size = new System.Drawing.Size(152, 32);
             this.cepstrumButton.TabIndex = 9;
             this.cepstrumButton.Text = "Cepstrum";
             this.cepstrumButton.UseVisualStyleBackColor = true;
@@ -128,10 +135,11 @@
             // 
             this.pathLabel.AutoSize = true;
             this.pathLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.pathLabel.Location = new System.Drawing.Point(191, 20);
-            this.pathLabel.MaximumSize = new System.Drawing.Size(250, 0);
+            this.pathLabel.Location = new System.Drawing.Point(143, 16);
+            this.pathLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.pathLabel.MaximumSize = new System.Drawing.Size(188, 0);
             this.pathLabel.Name = "pathLabel";
-            this.pathLabel.Size = new System.Drawing.Size(53, 25);
+            this.pathLabel.Size = new System.Drawing.Size(44, 20);
             this.pathLabel.TabIndex = 12;
             this.pathLabel.Text = "FILE";
             // 
@@ -139,19 +147,20 @@
             // 
             this.actionStateLabel.AutoSize = true;
             this.actionStateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.actionStateLabel.Location = new System.Drawing.Point(792, 20);
+            this.actionStateLabel.Location = new System.Drawing.Point(594, 16);
+            this.actionStateLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.actionStateLabel.Name = "actionStateLabel";
-            this.actionStateLabel.Size = new System.Drawing.Size(79, 25);
+            this.actionStateLabel.Size = new System.Drawing.Size(60, 20);
             this.actionStateLabel.TabIndex = 13;
             this.actionStateLabel.Text = "STATE";
             this.actionStateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // CharWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1579, 922);
+            this.ClientSize = new System.Drawing.Size(1184, 749);
             this.Controls.Add(this.actionStateLabel);
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.cepstrumButton);
@@ -161,7 +170,6 @@
             this.Controls.Add(this.autocorrelationButton);
             this.Controls.Add(this.loadFileButton);
             this.Controls.Add(this.Histogram);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "CharWindow";
             this.Text = "CharWindow";
             ((System.ComponentModel.ISupportInitialize)(this.Histogram)).EndInit();
