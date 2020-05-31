@@ -77,16 +77,21 @@ namespace Sounds.Helpers
 
         public static int MaxFromPeriods(IList<int> pperiod, double[] dd)
         {
-            int maxPeriodIndex = pperiod[0];
-            double maxValue = dd[maxPeriodIndex];
+            int maxPeriodIndex = 0;
 
-            for (int i = 1; i < pperiod.Count; i++)
+            if (pperiod.Count > 0)
             {
-                int period = pperiod[i];
-                if (dd[period] > maxValue)
+                maxPeriodIndex = pperiod[0];
+                double maxValue = dd[maxPeriodIndex];
+
+                for (int i = 1; i < pperiod.Count; i++)
                 {
-                    maxValue = dd[period];
-                    maxPeriodIndex = period;
+                    int period = pperiod[i];
+                    if (dd[period] > maxValue)
+                    {
+                        maxValue = dd[period];
+                        maxPeriodIndex = period;
+                    }
                 }
             }
 
