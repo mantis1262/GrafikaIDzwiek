@@ -18,6 +18,7 @@ namespace Sound.Helpers
         public int sampleRate;
         public int framesNumber;
         public int[] data;
+        public float[] dataFloat;
         public TimeSpan totalTime;
 
         public void OpenWav(string filename)
@@ -41,6 +42,29 @@ namespace Sound.Helpers
             }
 
             data = result;
+        }
+
+        public void OpenWavFloat(string filename)
+        {
+            short[] sampleBuffer;
+            using (WaveFileReader reader = new WaveFileReader(filename))
+            {
+                sampleRate = reader.WaveFormat.SampleRate;
+                framesNumber = (int)reader.SampleCount * reader.WaveFormat.Channels;
+                totalTime = reader.TotalTime;
+                byte[] buffer = new byte[reader.Length];
+                int read = reader.Read(buffer, 0, buffer.Length);
+                sampleBuffer = new short[read / 2];
+                Buffer.BlockCopy(buffer, 0, sampleBuffer, 0, read);
+            }
+
+            float[] result = new float[sampleBuffer.Length];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = sampleBuffer[i] / 32768.0f;
+            }
+
+            dataFloat = result;
         }
 
         public Tuple<List<long[]>, List<int>> Autocorrelation()
@@ -117,21 +141,19 @@ namespace Sound.Helpers
             int windowWidth = framesNumber;
             int N = SoundUtil.MakePowerOf2(windowWidth);
             List<int> frequencies = new List<int>();
-            int[][] parts = new int[1][];
+            float[][] parts = new float[1][];
 
             chunkSize = SoundUtil.MakePowerOf2(chunkSize);
             N = chunkSize;
-            parts = SoundUtil.ChunkArrayPowerOf2(data, chunkSize);
+            parts = SoundUtil.ChunkArrayPowerOf2(dataFloat, chunkSize);
 
-            foreach (int[] buffer in parts)
+            foreach (float[] buffer in parts)
             {
                 Complex[] complexSound = SoundUtil.SignalToComplex(buffer);
 
                 //hammming window
                 Complex[] complexWindows = SoundUtil.HammingWindow(complexSound);
                 Complex[] fftComplex = SoundUtil.FftDit1d(complexWindows);
-
-                fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
 
                 //cepstrum rzeczywiste i zespolone
                 for (int i = 0; i < fftComplex.Length; ++i)
@@ -140,7 +162,7 @@ namespace Sound.Helpers
                 }
 
                 fftComplex = SoundUtil.FftDit1d(fftComplex);
-                fftComplex.Take(fftComplex.Length / 2).ToArray();
+                fftComplex = fftComplex.Take(fftComplex.Length / 4).ToArray();
 
                 double[][] d = new double[2][];
                 d[0] = new double[N];

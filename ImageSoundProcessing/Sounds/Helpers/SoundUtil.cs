@@ -38,6 +38,26 @@ namespace Sounds.Helpers
             return result;
         }
 
+        public static float[][] ChunkArrayPowerOf2(float[] array, int chunkSize)
+        {
+            int arrayLength = array.Length;
+            int numOfChunks = arrayLength / chunkSize + 1;
+            float[][] result = new float[numOfChunks][];
+            int arrayIndex = 0;
+            for (int i = 0; i < numOfChunks; i++)
+            {
+                result[i] = new float[chunkSize];
+                for (int j = 0; j < chunkSize; j++)
+                {
+                    if (arrayIndex >= arrayLength)
+                        break;
+                    result[i][j] = array[arrayIndex];
+                    arrayIndex++;
+                }
+            }
+            return result;
+        }
+
         public static int MakePowerOf2(int windowWidth)
         {
             int powerOfTwo = 2;
@@ -46,7 +66,6 @@ namespace Sounds.Helpers
             {
                 powerOfTwo *= 2;
             }
-            powerOfTwo /= 2;
 
             return powerOfTwo;
         }
@@ -140,6 +159,16 @@ namespace Sounds.Helpers
         //}
 
         public static Complex[] SignalToComplex(int[] data)
+        {
+            Complex[] resultComplex = new Complex[data.Length];
+            for (int i = 0; i < data.Length; i++)
+            {
+                resultComplex[i] = new Complex(data[i], 0.0f);
+            }
+            return resultComplex;
+        }
+
+        public static Complex[] SignalToComplex(float[] data)
         {
             Complex[] resultComplex = new Complex[data.Length];
             for (int i = 0; i < data.Length; i++)
