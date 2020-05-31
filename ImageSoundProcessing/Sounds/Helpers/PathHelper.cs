@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Sound.Helpers
 {
-    public static class Path
+    public static class PathHelper
     {
         public static string GetImagePath()
         {

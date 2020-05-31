@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Sounds.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,7 +9,11 @@ namespace Sounds.Helpers
 {
     public static class SoundUtil
     {
-        public static int[][] ChunkArray(int [] array, int chunkSize)
+        public static int[] ExtractFirstChunk(int[] array, int chunkSize)
+        {
+            return array.Take(chunkSize).ToArray();
+        }
+        public static int[][] ChunkArray(int[] array, int chunkSize)
         {
             int arrayLength = array.Length;
             int numOfChunks = arrayLength / chunkSize;

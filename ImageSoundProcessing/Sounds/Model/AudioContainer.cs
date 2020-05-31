@@ -1,5 +1,6 @@
 using NAudio.Wave;
 using Sounds.Helpers;
+using Sounds.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,15 +11,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Sound.Helpers
+namespace Sound.Model
 {
     public class AudioContainer
     {
+        public string fileName;
         public int chunkSize = 44100;
         public int sampleRate;
         public int framesNumber;
         public int[] data;
-        public float[] dataFloat;
+        public float[] dataNormalized;
         public TimeSpan totalTime;
 
         public void OpenWav(string filename)
@@ -26,6 +28,7 @@ namespace Sound.Helpers
             short[] sampleBuffer;
             using (WaveFileReader reader = new WaveFileReader(filename))
             {
+                fileName = filename;
                 sampleRate = reader.WaveFormat.SampleRate;
                 framesNumber = (int)reader.SampleCount * reader.WaveFormat.Channels;
                 totalTime = reader.TotalTime;
@@ -36,38 +39,19 @@ namespace Sound.Helpers
             }
 
             int[] result = new int[sampleBuffer.Length];
+            float[] resultNormalized = new float[sampleBuffer.Length];
+
             for (int i = 0; i < result.Length; i++)
             {
                 result[i] = sampleBuffer[i];
+                resultNormalized[i] = sampleBuffer[i] / 32768.0f;
             }
 
             data = result;
+            dataNormalized = resultNormalized;
         }
 
-        public void OpenWavFloat(string filename)
-        {
-            short[] sampleBuffer;
-            using (WaveFileReader reader = new WaveFileReader(filename))
-            {
-                sampleRate = reader.WaveFormat.SampleRate;
-                framesNumber = (int)reader.SampleCount * reader.WaveFormat.Channels;
-                totalTime = reader.TotalTime;
-                byte[] buffer = new byte[reader.Length];
-                int read = reader.Read(buffer, 0, buffer.Length);
-                sampleBuffer = new short[read / 2];
-                Buffer.BlockCopy(buffer, 0, sampleBuffer, 0, read);
-            }
-
-            float[] result = new float[sampleBuffer.Length];
-            for (int i = 0; i < result.Length; i++)
-            {
-                result[i] = sampleBuffer[i] / 32768.0f;
-            }
-
-            dataFloat = result;
-        }
-
-        public Tuple<List<long[]>, List<int>> Autocorrelation()
+        public List<int> Autocorrelation()
         {
             int[][] parts = SoundUtil.ChunkArray(data, chunkSize);
             List<long[]> autoCorrelations = new List<long[]>();
@@ -92,7 +76,7 @@ namespace Sound.Helpers
                 frequencies.Add(frequency);
             }
 
-            return new Tuple<List<long[]>, List<int>>(autoCorrelations, frequencies);   
+            return frequencies;   
         }
 
         private long FindLocalMax(long[] autocorrelation)
@@ -145,7 +129,7 @@ namespace Sound.Helpers
 
             chunkSize = SoundUtil.MakePowerOf2(chunkSize);
             N = chunkSize;
-            parts = SoundUtil.ChunkArrayPowerOf2(dataFloat, chunkSize);
+            parts = SoundUtil.ChunkArrayPowerOf2(dataNormalized, chunkSize);
 
             foreach (float[] buffer in parts)
             {

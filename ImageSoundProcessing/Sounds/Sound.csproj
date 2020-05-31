@@ -51,19 +51,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CharWindow.cs">
+    <Compile Include="Form\CharWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CharWindow.Designer.cs">
+    <Compile Include="Form\CharWindow.Designer.cs">
       <DependentUpon>CharWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\AudioContainer.cs" />
-    <Compile Include="Helpers\Complex.cs" />
+    <Compile Include="Model\AudioContainer.cs" />
+    <Compile Include="Model\Complex.cs" />
     <Compile Include="Helpers\SoundUtil.cs" />
-    <Compile Include="Helpers\Path.cs" />
+    <Compile Include="Helpers\PathHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CharWindow.resx">
+    <EmbeddedResource Include="Form\CharWindow.resx">
       <DependentUpon>CharWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
