@@ -18,6 +18,7 @@ namespace Sound.Helpers
         public int sampleRate;
         public int framesNumber;
         public int[] data;
+        public float[] dataFloat;
         public TimeSpan totalTime;
 
         public void OpenWav(string filename)
@@ -41,6 +42,29 @@ namespace Sound.Helpers
             }
 
             data = result;
+        }
+
+        public void OpenWavFloat(string filename)
+        {
+            short[] sampleBuffer;
+            using (WaveFileReader reader = new WaveFileReader(filename))
+            {
+                sampleRate = reader.WaveFormat.SampleRate;
+                framesNumber = (int)reader.SampleCount * reader.WaveFormat.Channels;
+                totalTime = reader.TotalTime;
+                byte[] buffer = new byte[reader.Length];
+                int read = reader.Read(buffer, 0, buffer.Length);
+                sampleBuffer = new short[read / 2];
+                Buffer.BlockCopy(buffer, 0, sampleBuffer, 0, read);
+            }
+
+            float[] result = new float[sampleBuffer.Length];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = sampleBuffer[i] / 32768.0f;
+            }
+
+            dataFloat = result;
         }
 
         public Tuple<List<long[]>, List<int>> Autocorrelation()
@@ -117,21 +141,19 @@ namespace Sound.Helpers
             int windowWidth = framesNumber;
             int N = SoundUtil.MakePowerOf2(windowWidth);
             List<int> frequencies = new List<int>();
-            int[][] parts = new int[1][];
+            float[][] parts = new float[1][];
 
             chunkSize = SoundUtil.MakePowerOf2(chunkSize);
             N = chunkSize;
-            parts = SoundUtil.ChunkArrayPowerOf2(data, chunkSize);
+            parts = SoundUtil.ChunkArrayPowerOf2(dataFloat, chunkSize);
 
-            foreach (int[] buffer in parts)
+            foreach (float[] buffer in parts)
             {
                 Complex[] complexSound = SoundUtil.SignalToComplex(buffer);
 
                 //hammming window
                 Complex[] complexWindows = SoundUtil.HammingWindow(complexSound);
                 Complex[] fftComplex = SoundUtil.FftDit1d(complexWindows);
-
-                fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
 
                 //cepstrum rzeczywiste i zespolone
                 for (int i = 0; i < fftComplex.Length; ++i)
@@ -140,7 +162,7 @@ namespace Sound.Helpers
                 }
 
                 fftComplex = SoundUtil.FftDit1d(fftComplex);
-                fftComplex.Take(fftComplex.Length / 2).ToArray();
+                fftComplex = fftComplex.Take(fftComplex.Length / 4).ToArray();
 
                 double[][] d = new double[2][];
                 d[0] = new double[N];
@@ -179,9 +201,9 @@ namespace Sound.Helpers
 
                 //odrzucanie wysokich ale peakow ale nie stromych
                 //musza opadac w obu kierunkach - nisko
-                for (int index = 0; index < pperiod.Count; index++)
+                for (int index = 0; index < pperiod.Count;)
                 {
-                    int i = index, j = 0, k = 0;
+                    int i = pperiod[index], j = 0, k = 0;
 
                     //szukamy najni¿szego wartosci na zboczu lewym
                     while (i - j - 1 >= 0)
@@ -209,18 +231,20 @@ namespace Sound.Helpers
                     else
                     {
                         d[1][i] = dd[i];
+                        index++;
                     }
                 }
 
                 //progowanie co do najwiêkszego peaku
-                int max_ind = SoundUtil.MaxIndexFromList(pperiod);
+                int max_ind = SoundUtil.MaxFromPeriods(pperiod, dd);
 
-                for (int index = 0; index < pperiod.Count; index++)
+                for (int index = 0; index < pperiod.Count;)
                 {
                     int num = pperiod[index];
                     if (dd[num] > dd[max_ind] * 0.4)
                     {
                         d[1][num] = dd[num];
+                        index++;
                     }
                     else
                     {
@@ -229,21 +253,25 @@ namespace Sound.Helpers
                 }
 
                 int max_b, max_a;
-                max_b = SoundUtil.MaxIndexFromList(pperiod);
+                max_b = SoundUtil.MaxFromPeriods(pperiod, dd);
 
                 int a = 0, b = 0;
                 while (pperiod.Count > 1)
                 {
-                    for (int i = 0; i < pperiod.Count; i++)
+                    for (int i = 0; i < pperiod.Count;)
                     {
                         if (pperiod[i] == max_b)
                         {
                             pperiod.RemoveAt(i);
                             break;
                         }
+                        else
+                        {
+                            i++;
+                        }
                     }
 
-                    max_a = SoundUtil.MaxIndexFromList(pperiod);
+                    max_a = SoundUtil.MaxFromPeriods(pperiod, dd);
                     a = max_a; b = max_b;
 
                     if (a > b)
@@ -253,11 +281,13 @@ namespace Sound.Helpers
                         b = tmp;
                     }
 
-                    for (int i = 0; i < pperiod.Count; i++)
+                    for (int i = 0; i < pperiod.Count;)
                     {
                         int num = pperiod[i];
                         if (num < a || num > b)
                             pperiod.RemoveAt(i);
+                        else
+                            i++;
                     }
 
                     max_b = max_a;
