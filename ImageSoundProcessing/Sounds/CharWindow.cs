@@ -77,6 +77,12 @@ namespace Sound
             AudioContainer audioCepstrum = new AudioContainer();
             audioCepstrum.OpenWavFloat(path);
             List<int> frequenciesFreq = audioCepstrum.Cepstrum();
+            string freqDomain = "";
+            foreach (int freq in frequenciesFreq)
+            {
+                freqDomain += freq.ToString() + ", ";
+            }
+            MessageBox.Show(freqDomain, "Freq domain");
 
             //Frequency domain
             //Complex[] complex = SoundUtil.SignalToComplex(result);

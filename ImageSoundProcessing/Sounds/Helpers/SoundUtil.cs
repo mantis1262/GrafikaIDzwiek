@@ -70,20 +70,22 @@ namespace Sounds.Helpers
             return powerOfTwo;
         }
 
-        public static int MaxIndexFromList(IList<int> list)
+        public static int MaxFromPeriods(IList<int> pperiod, double[] dd)
         {
-            int max = list[0], index = 0;
+            int maxPeriodIndex = pperiod[0];
+            double maxValue = dd[maxPeriodIndex];
 
-            for (int i = 1; i < list.Count; i++)
+            for (int i = 1; i < pperiod.Count; i++)
             {
-                if (list[i] > max)
+                int period = pperiod[i];
+                if (dd[period] > maxValue)
                 {
-                    max = list[i];
-                    index = i;
+                    maxValue = dd[period];
+                    maxPeriodIndex = period;
                 }
             }
 
-            return index;
+            return maxPeriodIndex;
         }
 
         //public static int BitReverse(int n, int bits)

@@ -201,9 +201,9 @@ namespace Sound.Helpers
 
                 //odrzucanie wysokich ale peakow ale nie stromych
                 //musza opadac w obu kierunkach - nisko
-                for (int index = 0; index < pperiod.Count; index++)
+                for (int index = 0; index < pperiod.Count;)
                 {
-                    int i = index, j = 0, k = 0;
+                    int i = pperiod[index], j = 0, k = 0;
 
                     //szukamy najni¿szego wartosci na zboczu lewym
                     while (i - j - 1 >= 0)
@@ -231,18 +231,20 @@ namespace Sound.Helpers
                     else
                     {
                         d[1][i] = dd[i];
+                        index++;
                     }
                 }
 
                 //progowanie co do najwiêkszego peaku
-                int max_ind = SoundUtil.MaxIndexFromList(pperiod);
+                int max_ind = SoundUtil.MaxFromPeriods(pperiod, dd);
 
-                for (int index = 0; index < pperiod.Count; index++)
+                for (int index = 0; index < pperiod.Count;)
                 {
                     int num = pperiod[index];
                     if (dd[num] > dd[max_ind] * 0.4)
                     {
                         d[1][num] = dd[num];
+                        index++;
                     }
                     else
                     {
@@ -251,21 +253,25 @@ namespace Sound.Helpers
                 }
 
                 int max_b, max_a;
-                max_b = SoundUtil.MaxIndexFromList(pperiod);
+                max_b = SoundUtil.MaxFromPeriods(pperiod, dd);
 
                 int a = 0, b = 0;
                 while (pperiod.Count > 1)
                 {
-                    for (int i = 0; i < pperiod.Count; i++)
+                    for (int i = 0; i < pperiod.Count;)
                     {
                         if (pperiod[i] == max_b)
                         {
                             pperiod.RemoveAt(i);
                             break;
                         }
+                        else
+                        {
+                            i++;
+                        }
                     }
 
-                    max_a = SoundUtil.MaxIndexFromList(pperiod);
+                    max_a = SoundUtil.MaxFromPeriods(pperiod, dd);
                     a = max_a; b = max_b;
 
                     if (a > b)
@@ -275,11 +281,13 @@ namespace Sound.Helpers
                         b = tmp;
                     }
 
-                    for (int i = 0; i < pperiod.Count; i++)
+                    for (int i = 0; i < pperiod.Count;)
                     {
                         int num = pperiod[i];
                         if (num < a || num > b)
                             pperiod.RemoveAt(i);
+                        else
+                            i++;
                     }
 
                     max_b = max_a;
