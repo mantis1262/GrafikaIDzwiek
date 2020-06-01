@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessing", "ImageProcessing\ImageProcessing.csproj", "{B85F82B3-A9F7-4F1E-991B-9EAA50CB19C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessing", "ImageSoundProcessing\ImageProcessing.csproj", "{B85F82B3-A9F7-4F1E-991B-9EAA50CB19C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundProcessing", "Sounds\SoundProcessing.csproj", "{D2BE9EB2-390B-4CEC-BF7C-971EBC69D4AA}"
 EndProject
