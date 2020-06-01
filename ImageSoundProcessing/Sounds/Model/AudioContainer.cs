@@ -44,7 +44,7 @@ namespace Sound.Model
             for (int i = 0; i < result.Length; i++)
             {
                 result[i] = sampleBuffer[i];
-                resultNormalized[i] = sampleBuffer[i] / 32768.0f;
+                resultNormalized[i] = sampleBuffer[i] / (short.MaxValue + 1);
             }
 
             data = result;
@@ -53,24 +53,32 @@ namespace Sound.Model
 
         public List<int> Autocorrelation()
         {
+            // dzielimy dane na kawa³ki wg chunkSize
             int[][] parts = SoundUtil.ChunkArray(data, chunkSize);
             List<long[]> autoCorrelations = new List<long[]>();
             List<int> frequencies = new List<int>();
 
-            foreach (int[] buffer in parts)
+            // analizujemy chunki
+            foreach (int[] part in parts)
             {
-                long[] autocorrelation = new long[buffer.Length];
+                // bufor na wyliczenia wartoœci autokorelacji
+                long[] autocorrelation = new long[part.Length];
+
+                // liczymy wartoœci autokorelacji
                 for (int m = 1; m < autocorrelation.Length; m++)
                 {
                     long sum = 0;
                     for (int n = 0; n < autocorrelation.Length - m; n++)
                     {
-                        sum += buffer[n] * buffer[n + m];
+                        sum += part[n] * part[n + m];
                     }
                     autocorrelation[m - 1] = sum;
                 }
 
+                // szukamy lokalnego maksimum
                 long localMaxIndex = FindLocalMax(autocorrelation);
+
+                // czêstotliwoœæ podstawow¹ wyliczamy jako iloraz czêstotliwoœci próbkowania i czasu lokalnego maximum
                 int frequency = (int)(sampleRate / localMaxIndex);
                 autoCorrelations.Add(autocorrelation);
                 frequencies.Add(frequency);
@@ -81,34 +89,49 @@ namespace Sound.Model
 
         private long FindLocalMax(long[] autocorrelation)
         {
+            // jako pocz¹tkowe globalne maximum ustawiamy pierwszy element wyników autokorelacji
             double globalMax = autocorrelation[0];
             double tempLocalMax = 0;
             int localMaxIndex = int.MaxValue;
+            // na pocz¹tku lokalne minimum jest równe globalnemu maksimum
             double localMin = globalMax;
 
+            // flaga okreœlaj¹ca czy zbocze jest opadaj¹ce
             bool falling = true;
             for (int i = 1; i < autocorrelation.Length; i++)
             {
-                double cur = autocorrelation[i];
+                // pobieramy bie¿ac¹ wartosæ autokorelacji
+                double current = autocorrelation[i];
+
+                // weryfikujemy czy zbocze opada
                 if (falling)
                 {
-                    if (cur < localMin)
+                    // sprawdzamy czy bie¿¹ca wartoœæ autokorelacji jest mniejsza od lokalnego minimum
+                    if (current < localMin)
                     {
-                        localMin = cur;
+                        // lokalnym minimum staje siê bie¿¹ca wartoœci¹ autokorelacji
+                        localMin = current;
                     }
-                    else if ((globalMax - localMin) * 0.95 > globalMax - cur)
+                    // je¿eli ró¿nica miêdzy globalnym maximum a bie¿¹c¹ wartoœci¹ autokorelacji
+                    // jest mniejsza od przyjêtej tolerancji ró¿nicy miêdzy globalnym maksimum a lokalnym minimum
+                    // wtedy wykrywamy zbocze rosn¹ce a za tymczasowym lokalnym maksimum staje siê bie¿¹ca wartosæ autokorelacji
+                    else if (globalMax - current < (globalMax - localMin) * 0.95)
                     {
                         falling = false;
-                        tempLocalMax = cur;
+                        tempLocalMax = current;
                     }
                 }
                 else
                 {
-                    if (cur > tempLocalMax)
+                    // sprawdzamy czy bie¿¹ca wartoœæ autokorelacji jest wiêksza od tymczasowego lokalnego maksimum
+                    if (current > tempLocalMax)
                     {
-                        tempLocalMax = cur;
+                        // tymczasowym lokalnym maksimum staje siê bie¹¿a wartoœæ autkorelacji
+                        tempLocalMax = current;
                         localMaxIndex = i;
                     }
+                    // je¿eli tymczasowe maksimum lokalne (z tolerancj¹) jest wiêksze od globalnego maksimum
+                    // znaleziono lokalne maksimum
                     else if (1.05 * tempLocalMax > globalMax)
                     {
                         return localMaxIndex;
