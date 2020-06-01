@@ -184,13 +184,13 @@ namespace Sound.Model
                 dataArray[0] = new double[chunkSize];
                 dataArray[1] = new double[chunkSize];
 
-                for (int i = 0; i < fftComplex.Length; ++i)
+                for (int i = 0; i < fftComplex.Length; i++)
                 {
                     dataArray[0][i] = fftComplex[i].Modulus();
                 }
 
                 double[] data = dataArray[0];
-                List<int> pperiod = new List<int>();
+                List<int> LocalMax = new List<int>();
                 int range = 10;
 
                 for (int i = range; i < data.Length - range; i++)
@@ -205,13 +205,13 @@ namespace Sound.Model
 
                     if (bigger == (range * 2) - 1)
                     {
-                        pperiod.Add(i);
+                        LocalMax.Add(i);
                     }
                 }
 
-                for (int index = 0; index < pperiod.Count;)
+                for (int index = 0; index < LocalMax.Count;)
                 {
-                    int i = pperiod[index], j = 0, k = 0;
+                    int i = LocalMax[index], j = 0, k = 0;
 
                     while (i - j - 1 >= 0)
                     {
@@ -232,7 +232,7 @@ namespace Sound.Model
                     double maxmin = Math.Max(data[i - j], data[i + k]);
                     if (maxmin > data[i] * 0.2)
                     {
-                        pperiod.RemoveAt(index);
+                        LocalMax.RemoveAt(index);
                     }
                     else
                     {
@@ -241,11 +241,11 @@ namespace Sound.Model
                     }
                 }
 
-                int max_ind = SoundUtil.MaxFromPeriods(pperiod, data);
+                int max_ind = SoundUtil.MaxFromPeriods(LocalMax, data);
 
-                for (int index = 0; index < pperiod.Count;)
+                for (int index = 0; index < LocalMax.Count;)
                 {
-                    int num = pperiod[index];
+                    int num = LocalMax[index];
                     if (data[num] > data[max_ind] * 0.4)
                     {
                         dataArray[1][num] = data[num];
@@ -253,21 +253,21 @@ namespace Sound.Model
                     }
                     else
                     {
-                        pperiod.RemoveAt(index);
+                        LocalMax.RemoveAt(index);
                     }
                 }
 
                 int max_b, max_a;
-                max_b = SoundUtil.MaxFromPeriods(pperiod, data);
+                max_b = SoundUtil.MaxFromPeriods(LocalMax, data);
 
                 int a = 0, b = 0;
-                while (pperiod.Count > 1)
+                while (LocalMax.Count > 1)
                 {
-                    for (int i = 0; i < pperiod.Count;)
+                    for (int i = 0; i < LocalMax.Count;)
                     {
-                        if (pperiod[i] == max_b)
+                        if (LocalMax[i] == max_b)
                         {
-                            pperiod.RemoveAt(i);
+                            LocalMax.RemoveAt(i);
                             break;
                         }
                         else
@@ -276,7 +276,7 @@ namespace Sound.Model
                         }
                     }
 
-                    max_a = SoundUtil.MaxFromPeriods(pperiod, data);
+                    max_a = SoundUtil.MaxFromPeriods(LocalMax, data);
                     a = max_a; b = max_b;
 
                     if (a > b)
@@ -286,11 +286,11 @@ namespace Sound.Model
                         b = tmp;
                     }
 
-                    for (int i = 0; i < pperiod.Count;)
+                    for (int i = 0; i < LocalMax.Count;)
                     {
-                        int num = pperiod[i];
+                        int num = LocalMax[i];
                         if (num < a || num > b)
-                            pperiod.RemoveAt(i);
+                            LocalMax.RemoveAt(i);
                         else
                             i++;
                     }
@@ -299,9 +299,9 @@ namespace Sound.Model
                 }
 
                 max_ind = Math.Abs(b - a);
-                if (max_ind == 0 && pperiod.Count == 1)
+                if (max_ind == 0 && LocalMax.Count == 1)
                 {
-                    max_ind = pperiod[0];
+                    max_ind = LocalMax[0];
                 }
 
                 int frequency = (int)(sampleRate / (double)max_ind);
