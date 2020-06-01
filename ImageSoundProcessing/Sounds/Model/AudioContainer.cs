@@ -165,7 +165,7 @@ namespace Sound.Model
                 Complex[] complexWindows = SoundUtil.HammingWindow(complexSound);
                 // Transformata furiera i wziecie po³owy danych.
                 Complex[] fftComplex = SoundUtil.FFT(complexWindows);
-                fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
+             //   fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
 
 
                 spectrum = new Complex[fftComplex.Length];
@@ -178,32 +178,35 @@ namespace Sound.Model
 
                 //Transformata furiera na wynikach z pierwszej transformaty, w celu uzyskania cepstrum.
                 fftComplex = SoundUtil.FFT(fftComplex);
-                fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
+                fftComplex = fftComplex.Take(fftComplex.Length / 4).ToArray();
                 cepstrum = fftComplex;
                 double[][] dataArray = new double[2][];
                 dataArray[0] = new double[chunkSize];
                 dataArray[1] = new double[chunkSize];
 
-                for (int i = 0; i < fftComplex.Length; i++)
+                for (int i = 0; i < fftComplex.Length; ++i)
                 {
                     dataArray[0][i] = fftComplex[i].Modulus();
                 }
 
-                double[] data = dataArray[0];
+                double[] dat = dataArray[0];
                 List<int> LocalMaxIndex = new List<int>();
+                //promieñ w którym badamy czy wartoœc jest maksem lokalnym
                 int range = 10;
-
-                for (int i = range; i < data.Length - range; i++)
+                
+               
+                for (int i = range; i < dat.Length - range; i++)
                 {
-                    int bigger = 0;
-
+                    int biggerValue = 0;
+                    // Badamy otoczenie próbki
                     for (int j = i - range; j < i + range; ++j)
                     {
-                        if (data[j] <= data[i] && i != j)
-                            bigger++;
+                        
+                        if (dat[j] <= dat[i] && i != j)
+                            biggerValue++;
                     }
-
-                    if (bigger == (range * 2) - 1)
+                    //jeœ³i w otoczeniu nie ma mniejszych wartoœci dodajemy numer próbki do tablicy loakalnych maksów
+                    if (biggerValue == (range * 2) - 1)
                     {
                         LocalMaxIndex.Add(i);
                     }
@@ -215,40 +218,40 @@ namespace Sound.Model
 
                     while (i - j - 1 >= 0)
                     {
-                        if ((data[i - j - 1] <= data[i - j]))
+                        if ((dat[i - j - 1] <= dat[i - j]))
                             ++j;
                         else
                             break;
                     }
 
-                    while (((i + k + 1) < data.Length))
+                    while (((i + k + 1) < dat.Length))
                     {
-                        if ((data[i + k + 1] <= data[i + k]))
+                        if ((dat[i + k + 1] <= dat[i + k]))
                             ++k;
                         else
                             break;
                     }
 
-                    double maxmin = Math.Max(data[i - j], data[i + k]);
-                    if (maxmin > data[i] * 0.2)
+                    double maxmin = Math.Max(dat[i - j], dat[i + k]);
+                    if (maxmin > dat[i] * 0.2)
                     {
                         LocalMaxIndex.RemoveAt(index);
                     }
                     else
                     {
-                        dataArray[1][i] = data[i];
+                        dataArray[1][i] = dat[i];
                         index++;
                     }
                 }
 
-                int max_ind = SoundUtil.MaxFromPeriods(LocalMaxIndex, data);
+                int max_ind = SoundUtil.MaxFromPeriods(LocalMaxIndex, dat);
 
                 for (int index = 0; index < LocalMaxIndex.Count;)
                 {
                     int num = LocalMaxIndex[index];
-                    if (data[num] > data[max_ind] * 0.4)
+                    if (dat[num] > dat[max_ind] * 0.4)
                     {
-                        dataArray[1][num] = data[num];
+                        dataArray[1][num] = dat[num];
                         index++;
                     }
                     else
@@ -258,7 +261,7 @@ namespace Sound.Model
                 }
 
                 int max_b, max_a;
-                max_b = SoundUtil.MaxFromPeriods(LocalMaxIndex, data);
+                max_b = SoundUtil.MaxFromPeriods(LocalMaxIndex, dat);
 
                 int a = 0, b = 0;
                 while (LocalMaxIndex.Count > 1)
@@ -276,7 +279,7 @@ namespace Sound.Model
                         }
                     }
 
-                    max_a = SoundUtil.MaxFromPeriods(LocalMaxIndex, data);
+                    max_a = SoundUtil.MaxFromPeriods(LocalMaxIndex, dat);
                     a = max_a; b = max_b;
 
                     if (a > b)
