@@ -148,117 +148,107 @@ namespace Sound.Model
         public List<int> Cepstrum()
         {
             int chunkSize = this.chunkSize;
-            int windowWidth = framesNumber;
-            int N = SoundUtil.MakePowerOf2(windowWidth);
             List<int> frequencies = new List<int>();
             float[][] parts = new float[1][];
 
+            //Ustawiamy chunkSize jako potêge 2
             chunkSize = SoundUtil.MakePowerOf2(chunkSize);
-            N = chunkSize;
+            //Dzielmy dŸwiêk na fragmenty.
             parts = SoundUtil.ChunkArrayPowerOf2(dataNormalized, chunkSize);
 
             foreach (float[] buffer in parts)
             {
+                //Tworzymy z sygna³u dane zespolone
                 Complex[] complexSound = SoundUtil.SignalToComplex(buffer);
 
-                //hammming window
+                //Podajemy dane operacji okienkowania Hamminga
                 Complex[] complexWindows = SoundUtil.HammingWindow(complexSound);
-                Complex[] fftComplex = SoundUtil.FftDit1d(complexWindows);
+                // Transformata furiera i wziecie po³owy danych.
+                Complex[] fftComplex = SoundUtil.FFT(complexWindows);
                 fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
 
 
                 spectrum = new Complex[fftComplex.Length];
                 fftComplex.CopyTo(spectrum, 0);
 
-                //cepstrum rzeczywiste i zespolone
                 for (int i = 0; i < fftComplex.Length; ++i)
                 {
                     fftComplex[i] = new Complex(10.0f * (float)Math.Log10(fftComplex[i].Modulus() + 1), 0);
                 }
 
-                fftComplex = SoundUtil.FftDit1d(fftComplex);
+                //Transformata furiera na wynikach z pierwszej transformaty, w celu uzyskania cepstrum.
+                fftComplex = SoundUtil.FFT(fftComplex);
                 fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
                 cepstrum = fftComplex;
-                double[][] d = new double[2][];
-                d[0] = new double[N];
-                d[1] = new double[N];
+                double[][] dataArray = new double[2][];
+                dataArray[0] = new double[chunkSize];
+                dataArray[1] = new double[chunkSize];
 
                 for (int i = 0; i < fftComplex.Length; ++i)
                 {
-                    //power cepstrum
-                    d[0][i] = fftComplex[i].Modulus();
+                    dataArray[0][i] = fftComplex[i].Modulus();
                 }
 
-                double[] dd = d[0];
+                double[] data = dataArray[0];
                 List<int> pperiod = new List<int>();
-
-                //RANGE
                 int range = 10;
 
-                for (int i = range; i < dd.Length - range; i++)
+                for (int i = range; i < data.Length - range; i++)
                 {
                     int bigger = 0;
 
-                    //sprawdz czy jest to ,,dolina o zboczu wysokim na ,,range''
-                    //sprawdzamy wysokoœæ, ale nie stromoœæ zbocza - peaki s¹ ostre
                     for (int j = i - range; j < i + range; ++j)
                     {
-                        if (dd[j] <= dd[i] && i != j)
+                        if (data[j] <= data[i] && i != j)
                             bigger++;
                     }
 
-                    //sprawdz czy zbocza sa tak wysokie jak to zalozylismy
                     if (bigger == (range * 2) - 1)
                     {
                         pperiod.Add(i);
                     }
                 }
 
-                //odrzucanie wysokich ale peakow ale nie stromych
-                //musza opadac w obu kierunkach - nisko
                 for (int index = 0; index < pperiod.Count;)
                 {
                     int i = pperiod[index], j = 0, k = 0;
 
-                    //szukamy najni¿szego wartosci na zboczu lewym
                     while (i - j - 1 >= 0)
                     {
-                        if ((dd[i - j - 1] <= dd[i - j]))
+                        if ((data[i - j - 1] <= data[i - j]))
                             ++j;
                         else
                             break;
                     }
 
-                    //szukamy najnizszej wartosci na zboczu prawym
-                    while (((i + k + 1) < dd.Length))
+                    while (((i + k + 1) < data.Length))
                     {
-                        if ((dd[i + k + 1] <= dd[i + k]))
+                        if ((data[i + k + 1] <= data[i + k]))
                             ++k;
                         else
                             break;
                     }
 
-                    double maxmin = Math.Max(dd[i - j], dd[i + k]);
-                    if (maxmin > dd[i] * 0.2)
+                    double maxmin = Math.Max(data[i - j], data[i + k]);
+                    if (maxmin > data[i] * 0.2)
                     {
                         pperiod.RemoveAt(index);
                     }
                     else
                     {
-                        d[1][i] = dd[i];
+                        dataArray[1][i] = data[i];
                         index++;
                     }
                 }
 
-                //progowanie co do najwiêkszego peaku
-                int max_ind = SoundUtil.MaxFromPeriods(pperiod, dd);
+                int max_ind = SoundUtil.MaxFromPeriods(pperiod, data);
 
                 for (int index = 0; index < pperiod.Count;)
                 {
                     int num = pperiod[index];
-                    if (dd[num] > dd[max_ind] * 0.4)
+                    if (data[num] > data[max_ind] * 0.4)
                     {
-                        d[1][num] = dd[num];
+                        dataArray[1][num] = data[num];
                         index++;
                     }
                     else
@@ -268,7 +258,7 @@ namespace Sound.Model
                 }
 
                 int max_b, max_a;
-                max_b = SoundUtil.MaxFromPeriods(pperiod, dd);
+                max_b = SoundUtil.MaxFromPeriods(pperiod, data);
 
                 int a = 0, b = 0;
                 while (pperiod.Count > 1)
@@ -286,7 +276,7 @@ namespace Sound.Model
                         }
                     }
 
-                    max_a = SoundUtil.MaxFromPeriods(pperiod, dd);
+                    max_a = SoundUtil.MaxFromPeriods(pperiod, data);
                     a = max_a; b = max_b;
 
                     if (a > b)

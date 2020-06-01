@@ -31,17 +31,6 @@ namespace Sounds.Helpers
             return result;
         }
 
-        public static int[][] ChunkArrayPowerOf2(int[] array, int chunkSize)
-        {
-            int arrayLength = array.Length;
-            int numOfChunks = arrayLength / chunkSize;
-            int[][] result = new int[numOfChunks][];
-            for (int i = 0; i < numOfChunks; i++)
-            {
-                result[i] = array.Skip(i * chunkSize).Take(chunkSize).ToArray();
-            }
-            return result;
-        }
 
         public static float[][] ChunkArrayPowerOf2(float[] array, int chunkSize)
         {
@@ -63,11 +52,11 @@ namespace Sounds.Helpers
             return result;
         }
 
-        public static int MakePowerOf2(int windowWidth)
+        public static int MakePowerOf2(int value)
         {
             int powerOfTwo = 2;
 
-            while (windowWidth > powerOfTwo)
+            while (value > powerOfTwo)
             {
                 powerOfTwo *= 2;
             }
@@ -98,16 +87,6 @@ namespace Sounds.Helpers
             return maxPeriodIndex;
         }
 
-        public static Complex[] SignalToComplex(int[] data)
-        {
-            Complex[] resultComplex = new Complex[data.Length];
-            for (int i = 0; i < data.Length; i++)
-            {
-                resultComplex[i] = new Complex(data[i], 0.0f);
-            }
-            return resultComplex;
-        }
-
         public static Complex[] SignalToComplex(float[] data)
         {
             Complex[] resultComplex = new Complex[data.Length];
@@ -129,19 +108,17 @@ namespace Sounds.Helpers
             return complexResult;
         }
 
-        public static Complex[] FftDit1d(Complex[] input)
+        public static Complex[] FFT(Complex[] input)
         {
             int N = input.Length;
             float omega = (float)(-2.0 * Math.PI / N);
             Complex[] result = new Complex[N];
 
-            // base case
             if (N == 1)
             {
                 return new Complex[] { input[0] };
             }
 
-            // radix 2 Cooley-Tukey FFT
             if (N % 2 != 0)
             {
                 throw new ArgumentException("N has to be the power of 2.");
@@ -156,8 +133,8 @@ namespace Sounds.Helpers
                 oddInput[i] = input[2 * i + 1];
             }
 
-            Complex[] even = FftDit1d(evenInput);
-            Complex[] odd = FftDit1d(oddInput);
+            Complex[] even = FFT(evenInput);
+            Complex[] odd = FFT(oddInput);
 
             for (int k = 0; k < N / 2; k++)
             {
