@@ -188,34 +188,28 @@ namespace Sound.Model
                 // bierzemy 1/4 wyników bo po ka¿dym FFT po³owa wyników jest taka sama a FFT wykonujemy 2 razy
                 fftComplex = fftComplex.Take(fftComplex.Length / 4).ToArray();
 
-                // pierwszy wymiar bedzie zawieraæ modu³y wartoœci z FFT
-                // drugi wymiar bêdzie zawieraæ ...
-                double[][] dataArray = new double[2][];
-                dataArray[0] = new double[chunkSize];
-                dataArray[1] = new double[chunkSize];
+                // modu³y wartoœci z FFT
+                double[] dataArray = new double[chunkSize];
 
                 // zapisanie modu³ów wartoœci z FFT do pierwszego wymiaru bufora
                 for (int i = 0; i < fftComplex.Length; ++i)
                 {
-                    dataArray[0][i] = fftComplex[i].Modulus();
+                    dataArray[i] = fftComplex[i].Modulus();
                 }
 
-                double[] dat = dataArray[0];
                 List<int> localMaxIndexes = new List<int>();
                 //promieñ, zakres w którym badamy czy wartoœæ jest maksimum lokalnym
                 int range = 1;
                           
-                for (int i = range; i < dat.Length - range; i++)
+                for (int i = range; i < dataArray.Length - range; i++)
                 {
                     int biggerValue = 0;
                     // badamy otoczenie punktu
-                    // sprawdz czy jest to ,,dolina o zboczu wysokim na ,,range''
-                    // sprawdzamy wysokoœæ, ale nie stromoœæ zbocza - peaki s¹ ostre
                     for (int j = i - range; j < i + range; ++j)
                     { 
                         // je¿eli bie¿¹ca wartoœæ z otoczenia jest mniejsza od punktu,
                         // który sprawdzamy wtedy zliczamy je
-                        if (dat[j] <= dat[i] && i != j)
+                        if (dataArray[j] <= dataArray[i] && i != j)
                             biggerValue++;
                     }
 
@@ -237,16 +231,16 @@ namespace Sound.Model
                     // w której zmienia siê omnotonicznoœæ
                     while ((i - leftIndexOffset - 1) >= 0)
                     {
-                        if ((dat[i - leftIndexOffset - 1] <= dat[i - leftIndexOffset]))
+                        if ((dataArray[i - leftIndexOffset - 1] <= dataArray[i - leftIndexOffset]))
                             ++leftIndexOffset;
                         else break;
                     }
 
                     // badamy prawe zbocze w poszukiwaniu najwy¿szej wartoœci
                     // w której zmienia siê omnotonicznoœæ
-                    while ((i + rightIndexOffset + 1) < dat.Length)
+                    while ((i + rightIndexOffset + 1) < dataArray.Length)
                     {
-                        if ((dat[i + rightIndexOffset + 1] <= dat[i + rightIndexOffset]))
+                        if ((dataArray[i + rightIndexOffset + 1] <= dataArray[i + rightIndexOffset]))
                             ++rightIndexOffset;
                         else
                             break;
@@ -254,34 +248,30 @@ namespace Sound.Model
 
                     // progowanie co do najwiêkszego peaku
                     // wybieramy punktu o wiêkszej wartoœci spoœród znalezionych po lewej i prawej stronoe
-                    double maxmin = Math.Max(dat[i - leftIndexOffset], dat[i + rightIndexOffset]);
+                    double maxmin = Math.Max(dataArray[i - leftIndexOffset], dataArray[i + rightIndexOffset]);
 
                     // porównujemy wartoœæ maksymaln¹ minimów z wczeœniej znalezionych punktów i porówujemy je z lokalnym maksem
                     // je¿eli najwiêksza wartoœæ minimalna jest wiêksza od bie¿¹co rozpatrywanego poziomu maksimum
-                    if (maxmin > dat[i] * 0.2)
+                    if (maxmin > dataArray[i] * 0.2)
                     {
                         // wtedy usuwamy to maksimum
                         localMaxIndexes.RemoveAt(index);
                     }
                     else
                     {
-                        // w przeciwnym zapamiêtujemy wartoœæ w drugim wymiarze bufora
-                        dataArray[1][i] = dat[i];
                         index++;
                     }
                 }
 
                 // szukanie pozycji maksymalnej wartoœci z listy lokalnych maksimów
-                int max_ind = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dat);
+                int max_ind = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dataArray);
 
                 // przeszukanie listy maksimów w celu usuniêcia tych znajduj¹cych siê ponad progiem
                 for (int index = 0; index < localMaxIndexes.Count;)
                 {
                     // je¿eli bie¿¹ca wartoœæ lokalnego maksimum z listy jest ponad progiem znalezionej wartoœci maksymalnej na liœcie
-                    if (dat[localMaxIndexes[index]] > dat[max_ind] * 0.4)
+                    if (dataArray[localMaxIndexes[index]] > dataArray[max_ind] * 0.4)
                     {
-                        // wtedy zapamiêtujemy wartoœæ w drugim wymiarze bufora
-                        dataArray[1][localMaxIndexes[index]] = dat[localMaxIndexes[index]];
                         index++;
                     }
                     else
@@ -295,7 +285,7 @@ namespace Sound.Model
                 int max_b, max_a;
 
                 // szukanie pozycji maksymalnej wartoœci z listy lokalnych maksimów
-                max_b = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dat);
+                max_b = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dataArray);
 
                 int a = 0, b = 0;
                 while (localMaxIndexes.Count > 1)
@@ -304,7 +294,7 @@ namespace Sound.Model
                     localMaxIndexes.Remove(max_b);
 
                     // szukanie pozycji maksymalnej wartoœci z listy lokalnych maksimów
-                    max_a = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dat);
+                    max_a = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dataArray);
 
                     // zapamiêtanie wczeœniej pozycji wczeœniej usuniêtego maksimum
                     // i tego znaleziono po nim
