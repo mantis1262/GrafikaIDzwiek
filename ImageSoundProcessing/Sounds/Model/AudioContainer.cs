@@ -135,7 +135,7 @@ namespace Sound.Model
                         localMaxIndex = i;
                     }
                     // je¿eli tymczasowe maksimum lokalne (z tolerancj¹) jest wiêksze od globalnego maksimum
-                    // znaleziono lokalne maksimum
+                    // znaleziono indeks lokalnego maksimum
                     else if (1.05 * tempLocalMax > globalMax)
                     {
                         return localMaxIndex;
