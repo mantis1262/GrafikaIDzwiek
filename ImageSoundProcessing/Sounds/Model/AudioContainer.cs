@@ -205,7 +205,7 @@ namespace Sound.Model
                         if (dat[j] <= dat[i] && i != j)
                             biggerValue++;
                     }
-                    //jeœ³i w otoczeniu nie ma mniejszych wartoœci dodajemy numer próbki do tablicy loakalnych maksów
+                    //jeœli w otoczeniu nie ma mniejszych wartoœci dodajemy numer próbki do tablicy lokalnych maksów
                     if (biggerValue == (range * 2) - 1)
                     {
                         LocalMaxIndex.Add(i);
@@ -215,7 +215,7 @@ namespace Sound.Model
                 for (int index = 0; index < LocalMaxIndex.Count;)
                 {
                     int i = LocalMaxIndex[index], j = 0, k = 0;
-
+                    //badamy lewe zboczê w poszukiawniu próbki w której zmienia siê omnotonicznoœc
                     while (i - j - 1 >= 0)
                     {
                         if ((dat[i - j - 1] <= dat[i - j]))
@@ -223,7 +223,7 @@ namespace Sound.Model
                         else
                             break;
                     }
-
+                    //badamy prawe zbocze w poszukiawniu próbki w której zmienia siê omnotonicznoœc
                     while (((i + k + 1) < dat.Length))
                     {
                         if ((dat[i + k + 1] <= dat[i + k]))
@@ -231,7 +231,7 @@ namespace Sound.Model
                         else
                             break;
                     }
-
+                    // prównujemy wartosæ makymaln¹ z wczêsniej znalezionych próbek i porówujemy je z lokalnym makesm
                     double maxmin = Math.Max(dat[i - j], dat[i + k]);
                     if (maxmin > dat[i] * 0.2)
                     {
@@ -248,10 +248,9 @@ namespace Sound.Model
 
                 for (int index = 0; index < LocalMaxIndex.Count;)
                 {
-                    int num = LocalMaxIndex[index];
-                    if (dat[num] > dat[max_ind] * 0.4)
+                    if (dat[LocalMaxIndex[index]] > dat[max_ind] * 0.4)
                     {
-                        dataArray[1][num] = dat[num];
+                        dataArray[1][LocalMaxIndex[index]] = dat[LocalMaxIndex[index]];
                         index++;
                     }
                     else

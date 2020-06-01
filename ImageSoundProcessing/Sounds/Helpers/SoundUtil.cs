@@ -64,27 +64,27 @@ namespace Sounds.Helpers
             return powerOfTwo;
         }
 
-        public static int MaxFromPeriods(IList<int> pperiod, double[] dd)
+        public static int MaxFromPeriods(IList<int> localMaxList, double[] dat)
         {
-            int maxPeriodIndex = 0;
+            int localMaxIndex = 0;
 
-            if (pperiod.Count > 0)
+            if (localMaxList.Count > 0)
             {
-                maxPeriodIndex = pperiod[0];
-                double maxValue = dd[maxPeriodIndex];
+                localMaxIndex = localMaxList[0];
+                double maxValue = dat[localMaxIndex];
 
-                for (int i = 1; i < pperiod.Count; i++)
+                for (int i = 1; i < localMaxList.Count; i++)
                 {
-                    int period = pperiod[i];
-                    if (dd[period] > maxValue)
+                    int index = localMaxList[i];
+                    if (dat[index] > maxValue)
                     {
-                        maxValue = dd[period];
-                        maxPeriodIndex = period;
+                        maxValue = dat[index];
+                        localMaxIndex = index;
                     }
                 }
             }
 
-            return maxPeriodIndex;
+            return localMaxIndex;
         }
 
         public static Complex[] SignalToComplex(float[] data)
