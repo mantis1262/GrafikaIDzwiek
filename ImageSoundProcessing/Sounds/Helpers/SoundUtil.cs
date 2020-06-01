@@ -64,21 +64,21 @@ namespace Sounds.Helpers
             return powerOfTwo;
         }
 
-        public static int MaxFromPeriods(IList<int> localMaxList, double[] dat)
+        public static int MaxFromLocalMaxList(IList<int> localMaxList, double[] data)
         {
             int localMaxIndex = 0;
 
             if (localMaxList.Count > 0)
             {
                 localMaxIndex = localMaxList[0];
-                double maxValue = dat[localMaxIndex];
+                double maxValue = data[localMaxIndex];
 
                 for (int i = 1; i < localMaxList.Count; i++)
                 {
                     int index = localMaxList[i];
-                    if (dat[index] > maxValue)
+                    if (data[index] > maxValue)
                     {
-                        maxValue = dat[index];
+                        maxValue = data[index];
                         localMaxIndex = index;
                     }
                 }

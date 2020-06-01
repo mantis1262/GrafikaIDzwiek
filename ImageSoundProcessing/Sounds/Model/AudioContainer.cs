@@ -24,7 +24,7 @@ namespace Sound.Model
         public TimeSpan totalTime;
         public List<long[]> autoCorrelations;
         public Complex[] cepstrum;
-        public Complex[] spectrum;
+        public Complex[] fftDataForSpectrumChart;
 
         public void OpenWav(string filename)
         {
@@ -81,7 +81,8 @@ namespace Sound.Model
                 // szukamy lokalnego maksimum
                 long localMaxIndex = FindLocalMax(autocorrelation);
 
-                // czêstotliwoœæ podstawow¹ wyliczamy jako iloraz czêstotliwoœci próbkowania i czasu lokalnego maximum
+                // czêstotliwoœæ podstawow¹ wyliczamy jako iloraz czêstotliwoœci próbkowania
+                // i indeksu lokalnego maksimum
                 int frequency = (int)(sampleRate / localMaxIndex);
                 autoCorrelations.Add(autocorrelation);
                 frequencies.Add(frequency);
@@ -149,138 +150,167 @@ namespace Sound.Model
         {
             int chunkSize = this.chunkSize;
             List<int> frequencies = new List<int>();
-            float[][] parts = new float[1][];
+            float[][] parts;
 
-            //Ustawiamy chunkSize jako potêge 2
+            // ustawiamy chunkSize jako potêge 2 dla póŸniejszego FFT
             chunkSize = SoundUtil.MakePowerOf2(chunkSize);
-            //Dzielmy dŸwiêk na fragmenty.
+            // dzielimy pobrane próbki dŸwiêku na fragmenty
             parts = SoundUtil.ChunkArrayPowerOf2(dataNormalized, chunkSize);
 
             foreach (float[] buffer in parts)
             {
-                //Tworzymy z sygna³u dane zespolone
+                // konwertujemy dane wejœciowe spróbkowanego sygna³u na postaæ zespolon¹
                 Complex[] complexSound = SoundUtil.SignalToComplex(buffer);
 
-                //Podajemy dane operacji okienkowania Hamminga
+                // przepuszczamy dane przez okno Hamminga
                 Complex[] complexWindows = SoundUtil.HammingWindow(complexSound);
-                // Transformata furiera i wziecie po³owy danych.
+
+                // pierwsze FFT
                 Complex[] fftComplex = SoundUtil.FFT(complexWindows);
-             //   fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
 
+                // zapamiêtujemy wynik pierwszego FFT w celu wyœwietlenia wykresu
+                fftDataForSpectrumChart = new Complex[fftComplex.Length];
+                fftComplex.CopyTo(fftDataForSpectrumChart, 0);
 
-                spectrum = new Complex[fftComplex.Length];
-                fftComplex.CopyTo(spectrum, 0);
-
+                // przepuszczamy modu³ widma przez logarytm
                 for (int i = 0; i < fftComplex.Length; ++i)
                 {
                     fftComplex[i] = new Complex(10.0f * (float)Math.Log10(fftComplex[i].Modulus() + 1), 0);
                 }
 
-                //Transformata furiera na wynikach z pierwszej transformaty, w celu uzyskania cepstrum.
+                // drugie FFT, w celu uzyskania cepstrum
                 fftComplex = SoundUtil.FFT(fftComplex);
+
+                // zapamiêtujemy wynik cepstrum w celu wyœwietlenia wykresu
+                cepstrum = new Complex[fftComplex.Length];
+                fftComplex.CopyTo(cepstrum, 0);
+
+                // bierzemy 1/4 wyników bo po ka¿dym FFT po³owa wyników jest taka sama a FFT wykonujemy 2 razy
                 fftComplex = fftComplex.Take(fftComplex.Length / 4).ToArray();
-                cepstrum = fftComplex;
+
+                // pierwszy wymiar bedzie zawieraæ modu³y wartoœci z FFT
+                // drugi wymiar bêdzie zawieraæ ...
                 double[][] dataArray = new double[2][];
                 dataArray[0] = new double[chunkSize];
                 dataArray[1] = new double[chunkSize];
 
+                // zapisanie modu³ów wartoœci z FFT do pierwszego wymiaru bufora
                 for (int i = 0; i < fftComplex.Length; ++i)
                 {
                     dataArray[0][i] = fftComplex[i].Modulus();
                 }
 
                 double[] dat = dataArray[0];
-                List<int> LocalMaxIndex = new List<int>();
-                //promieñ w którym badamy czy wartoœc jest maksem lokalnym
-                int range = 10;
-                
-               
+                List<int> localMaxIndexes = new List<int>();
+                //promieñ, zakres w którym badamy czy wartoœæ jest maksimum lokalnym
+                int range = 1;
+                          
                 for (int i = range; i < dat.Length - range; i++)
                 {
                     int biggerValue = 0;
-                    // Badamy otoczenie próbki
+                    // badamy otoczenie punktu
+                    // sprawdz czy jest to ,,dolina o zboczu wysokim na ,,range''
+                    // sprawdzamy wysokoœæ, ale nie stromoœæ zbocza - peaki s¹ ostre
                     for (int j = i - range; j < i + range; ++j)
-                    {
-                        
+                    { 
+                        // je¿eli bie¿¹ca wartoœæ z otoczenia jest mniejsza od punktu,
+                        // który sprawdzamy wtedy zliczamy je
                         if (dat[j] <= dat[i] && i != j)
                             biggerValue++;
                     }
-                    //jeœli w otoczeniu nie ma mniejszych wartoœci dodajemy numer próbki do tablicy lokalnych maksów
+
+                    // jeœli w otoczeniu nie ma mniejszych wartoœci to 
+                    // dodajemy numer wartoœci do tablicy lokalnych maksimów
                     if (biggerValue == (range * 2) - 1)
                     {
-                        LocalMaxIndex.Add(i);
+                        localMaxIndexes.Add(i);
                     }
                 }
 
-                for (int index = 0; index < LocalMaxIndex.Count;)
+                // odrzucanie wysokich wartoœci ale nie stromych
+                // musza opadaæ w obu kierunkach
+                for (int index = 0; index < localMaxIndexes.Count;)
                 {
-                    int i = LocalMaxIndex[index], j = 0, k = 0;
-                    //badamy lewe zboczê w poszukiawniu próbki w której zmienia siê omnotonicznoœc
-                    while (i - j - 1 >= 0)
+                    int i = localMaxIndexes[index], leftIndexOffset = 0, rightIndexOffset = 0;
+
+                    // badamy lewe zbocze w poszukiwaniu wartoœci najni¿szej wartoœci,
+                    // w której zmienia siê omnotonicznoœæ
+                    while ((i - leftIndexOffset - 1) >= 0)
                     {
-                        if ((dat[i - j - 1] <= dat[i - j]))
-                            ++j;
+                        if ((dat[i - leftIndexOffset - 1] <= dat[i - leftIndexOffset]))
+                            ++leftIndexOffset;
+                        else break;
+                    }
+
+                    // badamy prawe zbocze w poszukiwaniu najwy¿szej wartoœci
+                    // w której zmienia siê omnotonicznoœæ
+                    while ((i + rightIndexOffset + 1) < dat.Length)
+                    {
+                        if ((dat[i + rightIndexOffset + 1] <= dat[i + rightIndexOffset]))
+                            ++rightIndexOffset;
                         else
                             break;
                     }
-                    //badamy prawe zbocze w poszukiawniu próbki w której zmienia siê omnotonicznoœc
-                    while (((i + k + 1) < dat.Length))
-                    {
-                        if ((dat[i + k + 1] <= dat[i + k]))
-                            ++k;
-                        else
-                            break;
-                    }
-                    // prównujemy wartosæ makymaln¹ z wczêsniej znalezionych próbek i porówujemy je z lokalnym makesm
-                    double maxmin = Math.Max(dat[i - j], dat[i + k]);
+
+                    // progowanie co do najwiêkszego peaku
+                    // wybieramy punktu o wiêkszej wartoœci spoœród znalezionych po lewej i prawej stronoe
+                    double maxmin = Math.Max(dat[i - leftIndexOffset], dat[i + rightIndexOffset]);
+
+                    // porównujemy wartoœæ maksymaln¹ minimów z wczeœniej znalezionych punktów i porówujemy je z lokalnym maksem
+                    // je¿eli najwiêksza wartoœæ minimalna jest wiêksza od bie¿¹co rozpatrywanego poziomu maksimum
                     if (maxmin > dat[i] * 0.2)
                     {
-                        LocalMaxIndex.RemoveAt(index);
+                        // wtedy usuwamy to maksimum
+                        localMaxIndexes.RemoveAt(index);
                     }
                     else
                     {
+                        // w przeciwnym zapamiêtujemy wartoœæ w drugim wymiarze bufora
                         dataArray[1][i] = dat[i];
                         index++;
                     }
                 }
 
-                int max_ind = SoundUtil.MaxFromPeriods(LocalMaxIndex, dat);
+                // szukanie pozycji maksymalnej wartoœci z listy lokalnych maksimów
+                int max_ind = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dat);
 
-                for (int index = 0; index < LocalMaxIndex.Count;)
+                // przeszukanie listy maksimów w celu usuniêcia tych znajduj¹cych siê ponad progiem
+                for (int index = 0; index < localMaxIndexes.Count;)
                 {
-                    if (dat[LocalMaxIndex[index]] > dat[max_ind] * 0.4)
+                    // je¿eli bie¿¹ca wartoœæ lokalnego maksimum z listy jest ponad progiem znalezionej wartoœci maksymalnej na liœcie
+                    if (dat[localMaxIndexes[index]] > dat[max_ind] * 0.4)
                     {
-                        dataArray[1][LocalMaxIndex[index]] = dat[LocalMaxIndex[index]];
+                        // wtedy zapamiêtujemy wartoœæ w drugim wymiarze bufora
+                        dataArray[1][localMaxIndexes[index]] = dat[localMaxIndexes[index]];
                         index++;
                     }
                     else
                     {
-                        LocalMaxIndex.RemoveAt(index);
+                        // w przeciwnym wypadku usuwamy maksimum z listy
+                        localMaxIndexes.RemoveAt(index);
                     }
                 }
 
+                // zmienne maj¹ce zapamiêtaæ dwa indeksy z listy maksimów
                 int max_b, max_a;
-                max_b = SoundUtil.MaxFromPeriods(LocalMaxIndex, dat);
+
+                // szukanie pozycji maksymalnej wartoœci z listy lokalnych maksimów
+                max_b = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dat);
 
                 int a = 0, b = 0;
-                while (LocalMaxIndex.Count > 1)
+                while (localMaxIndexes.Count > 1)
                 {
-                    for (int i = 0; i < LocalMaxIndex.Count;)
-                    {
-                        if (LocalMaxIndex[i] == max_b)
-                        {
-                            LocalMaxIndex.RemoveAt(i);
-                            break;
-                        }
-                        else
-                        {
-                            i++;
-                        }
-                    }
+                    // usuwamy wczeœniej zapamiêtane maksimum z listy
+                    localMaxIndexes.Remove(max_b);
 
-                    max_a = SoundUtil.MaxFromPeriods(LocalMaxIndex, dat);
+                    // szukanie pozycji maksymalnej wartoœci z listy lokalnych maksimów
+                    max_a = SoundUtil.MaxFromLocalMaxList(localMaxIndexes, dat);
+
+                    // zapamiêtanie wczeœniej pozycji wczeœniej usuniêtego maksimum
+                    // i tego znaleziono po nim
                     a = max_a; b = max_b;
 
+                    // je¿eli indeksy maksimów nie s¹ w kolejnoœci rosn¹æ zamieniamy je
                     if (a > b)
                     {
                         int tmp = a;
@@ -288,24 +318,34 @@ namespace Sound.Model
                         b = tmp;
                     }
 
-                    for (int i = 0; i < LocalMaxIndex.Count;)
+                    for (int i = 0; i < localMaxIndexes.Count;)
                     {
-                        int num = LocalMaxIndex[i];
+                        int num = localMaxIndexes[i];
+
+                        // je¿eli indeks bie¿¹cego maksimum z listy jest poza przedzia³em
+                        // wyznaczonym przez poprzednie zapisane maksima
                         if (num < a || num > b)
-                            LocalMaxIndex.RemoveAt(i);
+                            // usuwamy indeks maksimum z listy
+                            localMaxIndexes.RemoveAt(i);
                         else
                             i++;
                     }
 
+                    // najstarszey zapamiêtany indeks maksimum zastêpujemy kolejnym maksimmum po nim
                     max_b = max_a;
                 }
 
+                // wyliczamy ró¿nicê miêdzy znalezionymi indeksami maksimów
                 max_ind = Math.Abs(b - a);
-                if (max_ind == 0 && LocalMaxIndex.Count == 1)
+
+                // je¿eli lokalnym maksimum z listy jest pierwszy indeks i jedyny indeks na liœcie
+                if (max_ind == 0 && localMaxIndexes.Count == 1)
                 {
-                    max_ind = LocalMaxIndex[0];
+                    max_ind = localMaxIndexes[0];
                 }
 
+                // czêstotliwoœæ podstawowa wyliczana jest jako iloraz czêstotliwoœci próbkowania
+                // i pozycji maksimum (która tak naprawde wyznacza okres)
                 int frequency = (int)(sampleRate / (double)max_ind);
                 frequencies.Add(frequency);
             }

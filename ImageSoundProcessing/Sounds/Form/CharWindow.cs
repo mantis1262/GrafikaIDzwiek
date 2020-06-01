@@ -92,7 +92,7 @@ namespace Sound
 
                 foreach (int freq in frequenciesFiltered)
                 {
-                    freqText += freq.ToString() + ", ";
+                    freqText += freq.ToString() + " Hz (T = " + (1.0f / freq) + " s), ";
                 }
 
                 actionStateLabel.Text = "";
@@ -109,7 +109,7 @@ namespace Sound
                 autoCorelation.Text = "AutoCorelation";
                 autoCorelation.Histogram.Series["AutoCorelation"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
                 autoCorelation.Histogram.Series["AutoCorelation"].MarkerSize = 2;
-                autoCorelation.Histogram.ChartAreas[0].AxisX.Title = "Time";
+                autoCorelation.Histogram.ChartAreas[0].AxisX.Title = "Index";
                 autoCorelation.Histogram.ChartAreas[0].AxisY.Title = "AutoCorelation value";
 
                 for (int i = 0; i < _audio.autoCorrelations[0].Count(); i++)
@@ -118,13 +118,6 @@ namespace Sound
                 }
 
                 autoCorelation.Show();
-
-
-                foreach (int freq in frequenciesFiltered)
-                {
-                    freqText += freq.ToString() + ", ";
-
-                }
 
                 SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequenciesFiltered);
                 MessageBox.Show(freqText, "Autocorrelation frequencies");
@@ -142,7 +135,7 @@ namespace Sound
 
                 foreach (int freq in frequenciesFiltered)
                 {
-                    freqText += freq.ToString() + ", ";
+                    freqText += freq.ToString() + " Hz (T = " + (1.0f / freq) + " s), ";
                 }
 
                 actionStateLabel.Text = "";
@@ -160,7 +153,7 @@ namespace Sound
                 Cepstrum.Text = "Cepstrum";
                 Cepstrum.Histogram.Series["Cepstrum"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
                 Cepstrum.Histogram.Series["Cepstrum"].MarkerSize = 2;
-                Cepstrum.Histogram.ChartAreas[0].AxisX.Title = "Time";
+                Cepstrum.Histogram.ChartAreas[0].AxisX.Title = "Index";
                 Cepstrum.Histogram.ChartAreas[0].AxisY.Title = "Cepstrum value";
 
                 for (int i = 0; i < _audio.cepstrum.Count(); i++)
@@ -169,7 +162,6 @@ namespace Sound
                 }
 
                 Cepstrum.Show();
-
 
                 CharWindow Spectrum = new CharWindow();
                 Spectrum.applyChunkButton.Visible = false;
@@ -184,17 +176,17 @@ namespace Sound
                 Spectrum.Text = "Spectrum";
                 Spectrum.Histogram.Series["Spectrum"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
                 Spectrum.Histogram.Series["Spectrum"].MarkerSize = 2;
-                Spectrum.Histogram.ChartAreas[0].AxisX.Title = "Time";
+                Spectrum.Histogram.ChartAreas[0].AxisX.Title = "Index";
                 Spectrum.Histogram.ChartAreas[0].AxisY.Title = "Spectrum value";
 
 
-                float[] time = new float[_audio.spectrum.Length];
+                float[] time = new float[_audio.fftDataForSpectrumChart.Length];
 
-                for (int i = 0; i < _audio.spectrum.Count(); i++)
+                for (int i = 0; i < _audio.fftDataForSpectrumChart.Count(); i++)
                 {
                     time[i] = i / _audio.sampleRate;
 
-                    Spectrum.Histogram.Series["Spectrum"].Points.AddXY(i, _audio.spectrum[i].Modulus());
+                    Spectrum.Histogram.Series["Spectrum"].Points.AddXY(i, _audio.fftDataForSpectrumChart[i].Modulus());
                 }
 
                 Spectrum.Show();
