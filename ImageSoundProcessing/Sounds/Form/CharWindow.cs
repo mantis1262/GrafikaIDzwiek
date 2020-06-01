@@ -96,6 +96,36 @@ namespace Sound
                 }
 
                 actionStateLabel.Text = "";
+                CharWindow autoCorelation = new CharWindow();
+                autoCorelation.applyChunkButton.Visible = false;
+                autoCorelation.autocorrelationButton.Visible = false;
+                autoCorelation.cepstrumButton.Visible = false;
+                autoCorelation.label1.Visible = false;
+                autoCorelation.pathLabel.Visible = false;
+                autoCorelation.chunkSizeBox.Visible = false;
+                autoCorelation.loadFileButton.Visible = false;
+
+                autoCorelation.Histogram.Series.Add("AutoCorelation");
+                autoCorelation.Text = "AutoCorelation";
+                autoCorelation.Histogram.Series["AutoCorelation"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+                autoCorelation.Histogram.Series["AutoCorelation"].MarkerSize = 2;
+                autoCorelation.Histogram.ChartAreas[0].AxisX.Title = "Time";
+                autoCorelation.Histogram.ChartAreas[0].AxisY.Title = "AutoCorelation value";
+
+                for (int i = 0; i < _audio.autoCorrelations[0].Count(); i++)
+                {
+                    autoCorelation.Histogram.Series["AutoCorelation"].Points.AddXY(i, _audio.autoCorrelations[0][i] / (32768.0f * 32768.0f * 100));
+                }
+
+                autoCorelation.Show();
+
+
+                foreach (int freq in frequenciesFiltered)
+                {
+                    freqText += freq.ToString() + ", ";
+
+                }
+
                 SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequenciesFiltered);
                 MessageBox.Show(freqText, "Autocorrelation frequencies");
             }
@@ -116,6 +146,59 @@ namespace Sound
                 }
 
                 actionStateLabel.Text = "";
+
+                CharWindow Cepstrum = new CharWindow();
+                Cepstrum.applyChunkButton.Visible = false;
+                Cepstrum.autocorrelationButton.Visible = false;
+                Cepstrum.cepstrumButton.Visible = false;
+                Cepstrum.label1.Visible = false;
+                Cepstrum.pathLabel.Visible = false;
+                Cepstrum.chunkSizeBox.Visible = false;
+                Cepstrum.loadFileButton.Visible = false;
+
+                Cepstrum.Histogram.Series.Add("Cepstrum");
+                Cepstrum.Text = "Cepstrum";
+                Cepstrum.Histogram.Series["Cepstrum"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+                Cepstrum.Histogram.Series["Cepstrum"].MarkerSize = 2;
+                Cepstrum.Histogram.ChartAreas[0].AxisX.Title = "Time";
+                Cepstrum.Histogram.ChartAreas[0].AxisY.Title = "Cepstrum value";
+
+                for (int i = 0; i < _audio.cepstrum.Count(); i++)
+                {
+                    Cepstrum.Histogram.Series["Cepstrum"].Points.AddXY(i, _audio.cepstrum[i].Modulus());
+                }
+
+                Cepstrum.Show();
+
+
+                CharWindow Spectrum = new CharWindow();
+                Spectrum.applyChunkButton.Visible = false;
+                Spectrum.autocorrelationButton.Visible = false;
+                Spectrum.cepstrumButton.Visible = false;
+                Spectrum.label1.Visible = false;
+                Spectrum.pathLabel.Visible = false;
+                Spectrum.chunkSizeBox.Visible = false;
+                Spectrum.loadFileButton.Visible = false;
+
+                Spectrum.Histogram.Series.Add("Spectrum");
+                Spectrum.Text = "Spectrum";
+                Spectrum.Histogram.Series["Spectrum"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+                Spectrum.Histogram.Series["Spectrum"].MarkerSize = 2;
+                Spectrum.Histogram.ChartAreas[0].AxisX.Title = "Time";
+                Spectrum.Histogram.ChartAreas[0].AxisY.Title = "Spectrum value";
+
+
+                float[] time = new float[_audio.spectrum.Length];
+
+                for (int i = 0; i < _audio.spectrum.Count(); i++)
+                {
+                    time[i] = i / _audio.sampleRate;
+
+                    Spectrum.Histogram.Series["Spectrum"].Points.AddXY(i, _audio.spectrum[i].Modulus());
+                }
+
+                Spectrum.Show();
+
                 SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequenciesFiltered);
                 MessageBox.Show(freqText, "Cepstrum frequencies");
             }

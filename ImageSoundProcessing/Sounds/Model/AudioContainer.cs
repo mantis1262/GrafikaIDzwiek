@@ -22,6 +22,9 @@ namespace Sound.Model
         public int[] data;
         public float[] dataNormalized;
         public TimeSpan totalTime;
+        public List<long[]> autoCorrelations;
+        public Complex[] cepstrum;
+        public Complex[] spectrum;
 
         public void OpenWav(string filename)
         {
@@ -55,7 +58,7 @@ namespace Sound.Model
         {
             // dzielimy dane na kawa³ki wg chunkSize
             int[][] parts = SoundUtil.ChunkArray(data, chunkSize);
-            List<long[]> autoCorrelations = new List<long[]>();
+            autoCorrelations = new List<long[]>();
             List<int> frequencies = new List<int>();
 
             // analizujemy chunki
@@ -161,6 +164,11 @@ namespace Sound.Model
                 //hammming window
                 Complex[] complexWindows = SoundUtil.HammingWindow(complexSound);
                 Complex[] fftComplex = SoundUtil.FftDit1d(complexWindows);
+                fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
+
+
+                spectrum = new Complex[fftComplex.Length];
+                fftComplex.CopyTo(spectrum, 0);
 
                 //cepstrum rzeczywiste i zespolone
                 for (int i = 0; i < fftComplex.Length; ++i)
@@ -169,8 +177,8 @@ namespace Sound.Model
                 }
 
                 fftComplex = SoundUtil.FftDit1d(fftComplex);
-                fftComplex = fftComplex.Take(fftComplex.Length / 4).ToArray();
-
+                fftComplex = fftComplex.Take(fftComplex.Length / 2).ToArray();
+                cepstrum = fftComplex;
                 double[][] d = new double[2][];
                 d[0] = new double[N];
                 d[1] = new double[N];

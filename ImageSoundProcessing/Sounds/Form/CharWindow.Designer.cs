@@ -58,7 +58,7 @@
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             series1.Name = "Value";
             this.Histogram.Series.Add(series1);
-            this.Histogram.Size = new System.Drawing.Size(1160, 566);
+            this.Histogram.Size = new System.Drawing.Size(1557, 782);
             this.Histogram.TabIndex = 0;
             this.Histogram.Text = "Histogram";
             // 
@@ -66,7 +66,7 @@
             // 
             this.loadFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.loadFileButton.Location = new System.Drawing.Point(24, 10);
-            this.loadFileButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.loadFileButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadFileButton.Name = "loadFileButton";
             this.loadFileButton.Size = new System.Drawing.Size(108, 32);
             this.loadFileButton.TabIndex = 2;
@@ -78,7 +78,7 @@
             // 
             this.autocorrelationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.autocorrelationButton.Location = new System.Drawing.Point(735, 10);
-            this.autocorrelationButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.autocorrelationButton.Margin = new System.Windows.Forms.Padding(2);
             this.autocorrelationButton.Name = "autocorrelationButton";
             this.autocorrelationButton.Size = new System.Drawing.Size(149, 32);
             this.autocorrelationButton.TabIndex = 3;
@@ -101,7 +101,7 @@
             // 
             this.chunkSizeBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.chunkSizeBox.Location = new System.Drawing.Point(422, 16);
-            this.chunkSizeBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.chunkSizeBox.Margin = new System.Windows.Forms.Padding(2);
             this.chunkSizeBox.Name = "chunkSizeBox";
             this.chunkSizeBox.Size = new System.Drawing.Size(92, 26);
             this.chunkSizeBox.TabIndex = 6;
@@ -111,7 +111,7 @@
             // 
             this.applyChunkButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.applyChunkButton.Location = new System.Drawing.Point(517, 14);
-            this.applyChunkButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.applyChunkButton.Margin = new System.Windows.Forms.Padding(2);
             this.applyChunkButton.Name = "applyChunkButton";
             this.applyChunkButton.Size = new System.Drawing.Size(56, 28);
             this.applyChunkButton.TabIndex = 8;
@@ -123,7 +123,7 @@
             // 
             this.cepstrumButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.cepstrumButton.Location = new System.Drawing.Point(914, 10);
-            this.cepstrumButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cepstrumButton.Margin = new System.Windows.Forms.Padding(2);
             this.cepstrumButton.Name = "cepstrumButton";
             this.cepstrumButton.Size = new System.Drawing.Size(152, 32);
             this.cepstrumButton.TabIndex = 9;
@@ -160,7 +160,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1184, 749);
+            this.ClientSize = new System.Drawing.Size(1581, 840);
             this.Controls.Add(this.actionStateLabel);
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.cepstrumButton);
