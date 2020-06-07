@@ -156,7 +156,7 @@ namespace Sound
                 Cepstrum.Histogram.ChartAreas[0].AxisX.Title = "Index";
                 Cepstrum.Histogram.ChartAreas[0].AxisY.Title = "Cepstrum value";
 
-                for (int i = 0; i < _audio.cepstrum.Count(); i++)
+                for (int i = 0; i < _audio.cepstrum.Count() / 2; i++)
                 {
                     Cepstrum.Histogram.Series["Cepstrum"].Points.AddXY(i, _audio.cepstrum[i].Modulus());
                 }
@@ -182,7 +182,7 @@ namespace Sound
 
                 float[] time = new float[_audio.fftDataForSpectrumChart.Length];
 
-                for (int i = 0; i < _audio.fftDataForSpectrumChart.Count(); i++)
+                for (int i = 0; i < _audio.fftDataForSpectrumChart.Count() / 2; i++)
                 {
                     time[i] = i / _audio.sampleRate;
 
