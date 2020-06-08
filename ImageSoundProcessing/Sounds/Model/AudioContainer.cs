@@ -199,7 +199,7 @@ namespace Sound.Model
 
                 List<int> localMaxIndexes = new List<int>();
                 //promieñ, zakres w którym badamy czy wartoœæ jest maksimum lokalnym
-                int range = 1;
+                int range = 10;
                           
                 for (int i = range; i < dataArray.Length - range; i++)
                 {

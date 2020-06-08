@@ -87,10 +87,9 @@ namespace Sound
             {
                 actionStateLabel.Text = "PROCESSING";
                 List<int> frequencies = _audio.Autocorrelation();
-                List<int> frequenciesFiltered = frequencies.Where(freq => freq > 0).Distinct().ToList();
                 string freqText = "";
 
-                foreach (int freq in frequenciesFiltered)
+                foreach (int freq in frequencies)
                 {
                     freqText += freq.ToString() + " Hz (T = " + (1.0f / freq) + " s), ";
                 }
@@ -119,7 +118,7 @@ namespace Sound
 
                 autoCorelation.Show();
 
-                SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequenciesFiltered);
+                SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequencies);
                 MessageBox.Show(freqText, "Autocorrelation frequencies");
             }
         }
@@ -130,10 +129,9 @@ namespace Sound
             {
                 actionStateLabel.Text = "PROCESSING";
                 List<int> frequencies = _audio.Cepstrum();
-                List<int> frequenciesFiltered = frequencies.Where(freq => freq > 0).Distinct().ToList();
                 string freqText = "";
 
-                foreach (int freq in frequenciesFiltered)
+                foreach (int freq in frequencies)
                 {
                     freqText += freq.ToString() + " Hz (T = " + (1.0f / freq) + " s), ";
                 }
@@ -191,7 +189,7 @@ namespace Sound
 
                 Spectrum.Show();
 
-                SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequenciesFiltered);
+                SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequencies);
                 MessageBox.Show(freqText, "Cepstrum frequencies");
             }
         }
