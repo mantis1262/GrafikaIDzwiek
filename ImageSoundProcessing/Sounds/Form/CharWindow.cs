@@ -11,6 +11,7 @@ using Sound.Helpers;
 using Sound.Model;
 using Sounds.Helpers;
 using System.IO;
+using Sounds;
 
 namespace Sound
 {
@@ -192,6 +193,12 @@ namespace Sound
                 SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequencies);
                 MessageBox.Show(freqText, "Cepstrum frequencies");
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FilterForm filterForm = new FilterForm(_audio);
+            filterForm.Show();
         }
     }
 }

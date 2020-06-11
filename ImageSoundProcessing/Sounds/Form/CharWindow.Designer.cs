@@ -39,6 +39,7 @@
             this.cepstrumButton = new System.Windows.Forms.Button();
             this.pathLabel = new System.Windows.Forms.Label();
             this.actionStateLabel = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Histogram)).BeginInit();
             this.SuspendLayout();
             // 
@@ -155,12 +156,24 @@
             this.actionStateLabel.Text = "STATE";
             this.actionStateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.button1.Location = new System.Drawing.Point(1099, 10);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(110, 32);
+            this.button1.TabIndex = 14;
+            this.button1.Text = "Filter";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // CharWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1581, 840);
+            this.ClientSize = new System.Drawing.Size(1364, 749);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.actionStateLabel);
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.cepstrumButton);
@@ -189,5 +202,6 @@
         private System.Windows.Forms.Button cepstrumButton;
         private System.Windows.Forms.Label pathLabel;
         private System.Windows.Forms.Label actionStateLabel;
+        private System.Windows.Forms.Button button1;
     }
 }
