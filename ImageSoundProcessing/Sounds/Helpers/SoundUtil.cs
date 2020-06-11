@@ -151,6 +151,81 @@ namespace Sounds.Helpers
             return result;
         }
 
+        public static double[] lowPassFilter(int chunkFrequency, double samplingFrequency, double[] windowData)
+        {
+
+            double[] result = new double[windowData.Length];
+            windowData.CopyTo(result, 0);
+            int resultLenght = result.Length;
+
+            double[] lowPassFilterArr = new double[resultLenght];
+
+            for (int k = 0; k < result.Length; ++k)
+            {
+                if (k == (resultLenght - 1) / 2)
+                {
+                    lowPassFilterArr[k] = 2 * chunkFrequency / samplingFrequency;
+                }
+                else
+                {
+                    lowPassFilterArr[k] = Math.Sin(
+                                           (2 * Math.PI * chunkFrequency / samplingFrequency) * (double)(k - (resultLenght - 1) / 2)) / 
+                                           (Math.PI * (double)(k - (resultLenght - 1) / 2)
+                                          );
+                }
+                result[k] *= lowPassFilterArr[k];
+            }
+            return result;
+        }
+
+        public static double[] Splot(double[] signalData, double[] impulseData)
+        {
+            double[] result = new double[signalData.Length];
+            for (int n = 0; n < signalData.Length; n++)
+            {
+                result[n] = 0;
+                for (int k = 0; k < impulseData.Length; k++)
+                {
+                    if (n - k < 0)
+                        continue;
+                    if (n - k > signalData.Length)
+                        continue;
+                    result[n] += signalData[n - k] * impulseData[k]; 
+                }
+            }
+            return result;
+        }
+
+        private static double[] HammingFunc(int windowSize)
+        {
+            double[] windowData = new double[windowSize];
+            for (int i = 0; i < windowData.Length; ++i)
+            {
+                windowData[i] = 0.5D - 0.46D * Math.Cos(2 * Math.PI * i / (windowData.Length - 1.0D));
+            }
+            return windowData;
+        }
+
+        private static double[] RectangularFunc(int windowSize)
+        {
+            double[] windowData = new double[windowSize];
+            for (int i = 0; i < windowData.Length; ++i)
+            {
+                windowData[i] = 1;
+            }
+            return windowData;
+        }
+
+        private static double[] HannFunc(int windowSize)
+        {
+            double[] windowData = new double[windowSize];
+            for (int i = 0; i < windowData.Length; ++i)
+            {
+                windowData[i] = 0.5D * (1.0D - Math.Cos(2 * Math.PI * i / (windowData.Length - 1.0D))) * 2.0D;
+            }
+            return windowData;
+        }
+
         public static void SaveSound(string fileName, int totalFrames, int sampleRate, int chunkSize, List<int> frequencies)
         {
             string resultFileName = "result_" + fileName;
