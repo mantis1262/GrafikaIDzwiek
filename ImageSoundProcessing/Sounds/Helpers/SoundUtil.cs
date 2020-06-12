@@ -196,7 +196,7 @@ namespace Sounds.Helpers
             return result;
         }
 
-        private static double[] HammingFunc(int windowSize)
+        public static double[] HammingFunc(int windowSize)
         {
             double[] windowData = new double[windowSize];
             for (int i = 0; i < windowData.Length; ++i)
@@ -206,7 +206,7 @@ namespace Sounds.Helpers
             return windowData;
         }
 
-        private static double[] RectangularFunc(int windowSize)
+        public static double[] RectangularFunc(int windowSize)
         {
             double[] windowData = new double[windowSize];
             for (int i = 0; i < windowData.Length; ++i)
@@ -216,7 +216,7 @@ namespace Sounds.Helpers
             return windowData;
         }
 
-        private static double[] HannFunc(int windowSize)
+        public static double[] HannFunc(int windowSize)
         {
             double[] windowData = new double[windowSize];
             for (int i = 0; i < windowData.Length; ++i)
@@ -224,6 +224,25 @@ namespace Sounds.Helpers
                 windowData[i] = 0.5D * (1.0D - Math.Cos(2 * Math.PI * i / (windowData.Length - 1.0D))) * 2.0D;
             }
             return windowData;
+        }
+
+        public static double[] AddZerosCasual(int howMany, double[] data)
+        {
+            double[] result = new double[data.Length + howMany];
+            data.CopyTo(result, 0);
+            return result;
+        }
+        public static double[] AddZerosNotCasual(int howMany, double[] data)
+        {
+            double[] result = new double[data.Length + howMany];
+            for(int i = 0; i<data.Length; i++)
+            {
+                if (i < data.Length / 2)
+                    result[result.Length - data.Length / 2 + i] = data[i];
+                else
+                    result[i - data.Length / 2] = data[i];
+            }
+            return result;
         }
 
         public static void SaveSound(string fileName, int totalFrames, int sampleRate, int chunkSize, List<int> frequencies)

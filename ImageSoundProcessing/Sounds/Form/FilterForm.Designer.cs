@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.windowType = new System.Windows.Forms.CheckedListBox();
+            this.windowType = new System.Windows.Forms.ListBox();
             this.WindowSizeLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.WindowSize = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.causal = new System.Windows.Forms.Button();
+            this.notCausal = new System.Windows.Forms.Button();
             this.R = new System.Windows.Forms.TextBox();
             this.L = new System.Windows.Forms.TextBox();
             this.Fc = new System.Windows.Forms.TextBox();
@@ -45,13 +45,14 @@
             // 
             this.windowType.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.windowType.FormattingEnabled = true;
+            this.windowType.ItemHeight = 20;
             this.windowType.Items.AddRange(new object[] {
             "Rectangular",
             "Von Hanna",
             "Hamming"});
             this.windowType.Location = new System.Drawing.Point(24, 12);
             this.windowType.Name = "windowType";
-            this.windowType.Size = new System.Drawing.Size(132, 67);
+            this.windowType.Size = new System.Drawing.Size(132, 64);
             this.windowType.TabIndex = 2;
             // 
             // WindowSizeLabel
@@ -102,23 +103,28 @@
             this.label1.TabIndex = 7;
             this.label1.Text = "Cut frequency";
             // 
-            // button1
+            // causal
             // 
-            this.button1.Location = new System.Drawing.Point(346, 13);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(132, 66);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Przyczynowy";
-            this.button1.UseVisualStyleBackColor = true;
+            this.causal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.causal.Location = new System.Drawing.Point(346, 13);
+            this.causal.Name = "causal";
+            this.causal.Size = new System.Drawing.Size(132, 66);
+            this.causal.TabIndex = 8;
+            this.causal.Text = "causal ";
+            this.causal.UseVisualStyleBackColor = true;
+            this.causal.Click += new System.EventHandler(this.causal_Click);
             // 
-            // button2
+            // notCausal
             // 
-            this.button2.Location = new System.Drawing.Point(544, 13);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(162, 66);
-            this.button2.TabIndex = 9;
-            this.button2.Text = "Nieprzyczynowy";
-            this.button2.UseVisualStyleBackColor = true;
+            this.notCausal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.notCausal.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.notCausal.Location = new System.Drawing.Point(544, 13);
+            this.notCausal.Name = "notCausal";
+            this.notCausal.Size = new System.Drawing.Size(162, 66);
+            this.notCausal.TabIndex = 9;
+            this.notCausal.Text = "not causal";
+            this.notCausal.UseVisualStyleBackColor = true;
+            this.notCausal.Click += new System.EventHandler(this.notCausal_Click);
             // 
             // R
             // 
@@ -144,7 +150,7 @@
             this.Fc.Size = new System.Drawing.Size(100, 26);
             this.Fc.TabIndex = 12;
             // 
-            // Zad4
+            // FilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -152,15 +158,15 @@
             this.Controls.Add(this.Fc);
             this.Controls.Add(this.L);
             this.Controls.Add(this.R);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.notCausal);
+            this.Controls.Add(this.causal);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.WindowSize);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.WindowSizeLabel);
             this.Controls.Add(this.windowType);
-            this.Name = "Zad4";
+            this.Name = "FilterForm";
             this.Text = "Zad4";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -169,14 +175,14 @@
 
         #endregion
 
-        private System.Windows.Forms.CheckedListBox windowType;
+        private System.Windows.Forms.ListBox windowType;
         private System.Windows.Forms.Label WindowSizeLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox WindowSize;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button causal;
+        private System.Windows.Forms.Button notCausal;
         private System.Windows.Forms.TextBox R;
         private System.Windows.Forms.TextBox L;
         private System.Windows.Forms.TextBox Fc;
