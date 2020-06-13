@@ -3,6 +3,7 @@ using Sounds.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,6 +28,20 @@ namespace Sounds.Helpers
             for (int i = 0; i < numOfChunks; i++)
             {
                 result[i] = array.Skip(i * chunkSize).Take(chunkSize).ToArray();
+            }
+            return result;
+        }
+
+
+        public static double[][] MovedSignal(double[][] data, int hopSize)
+        {
+            double[][] result = new double[data.Length][];
+            int i = 0;
+            foreach(double[] part in data)
+            {
+                result[i] = new double[data[0].Length + 2 * hopSize];
+                part.CopyTo(result[i], result[0].Length / 2 - part.Length / 2);
+                i++;
             }
             return result;
         }
@@ -97,6 +112,16 @@ namespace Sounds.Helpers
             return resultComplex;
         }
 
+        public static Complex[] SignalToComplex(double[] data)
+        {
+            Complex[] resultComplex = new Complex[data.Length];
+            for (int i = 0; i < data.Length; i++)
+            {
+                resultComplex[i] = new Complex((float)data[i], 0.0f);
+            }
+            return resultComplex;
+        }
+
         public static Complex[] HammingWindow(Complex[] complexData)
         {
             int N = complexData.Length;
@@ -107,6 +132,8 @@ namespace Sounds.Helpers
                 complexResult[i] = new Complex(complexData[i].Real * (0.54f - 0.46f * (float)Math.Cos(arg * i)), 0.0f);
             return complexResult;
         }
+
+
 
         public static Complex[] FFT(Complex[] input)
         {
@@ -243,6 +270,78 @@ namespace Sounds.Helpers
                     result[i - data.Length / 2] = data[i];
             }
             return result;
+        }
+
+        public static double[] STFT(int R, double[] wnd, double[] data)
+        {
+            int N = data.Length;
+            Complex [] input = SoundUtil.SignalToComplex(data);
+            Complex [] output = new Complex[N];
+            double [] amplitude = new double[N];
+            double [] frequencies = new double[N / 2];
+
+            for (int k = 0; k < N; ++k)
+            {
+                double sumReal = 0.0D;
+                double sumImag = 0.0D;
+                for (int n = 0; n < N; ++n)
+                {
+                    for (int m = 0; m < wnd.Length; ++m)
+                    {
+                        if (n - m + R < 0 || n - m + R >= N)
+                        {
+                            sumReal += 0.0D;
+                            sumImag += 0.0D;
+                        }
+                        else
+                        {
+                            double angle = -2 * Math.PI * (double)n * (double)k / (double)N;
+                            sumReal += input[n - m + R].Real * wnd[m] * Math.Cos(angle);
+                            sumImag += input[n - m + R].Real * wnd[m] * Math.Sin(angle);
+                        }
+                    }
+                }
+                output[k] = new Complex((float)(sumReal * 2.0f / N), (float)(sumImag * 2.0f / N));
+
+                if (k < N / 2)
+                {
+                    frequencies[k] = (double)(N * k);
+                }
+            }
+            for (int i = 0; i < output.Length; ++i)
+            {
+                amplitude[i] = output[i].Modulus();
+            }
+
+            return frequencies;
+            
+        }
+
+
+        public static Complex[] ISTFT(double[] windowData, double[] stft)
+        {
+            int N = stft.Length;
+            Complex[] input = new Complex[N];
+            Complex[] output = new Complex[N];
+            for(int i = 0; i< N; i++)
+            {
+                input[i] = new Complex(0, 1);
+            }
+            int samplesFrequency = N;
+            for (int n = 0; n < N; ++n)
+            {
+                double sumReal = 0.0D;
+                foreach (double v in windowData)
+                {
+                    for (int k = 0; k < samplesFrequency; ++k)
+                    {
+                        double angle = 2 * Math.PI * k * n / N;
+                        sumReal += stft[k] * Math.Sin(angle) + input[k].Imaginary * Math.Cos(angle);
+                    }
+                    output[n] =new Complex((float)(100.0f * sumReal / (N * v)),0);
+                }
+            }
+            return output;
         }
 
         public static void SaveSound(string fileName, int totalFrames, int sampleRate, int chunkSize, List<int> frequencies)

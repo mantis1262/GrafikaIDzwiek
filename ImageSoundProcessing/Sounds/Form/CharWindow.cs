@@ -97,13 +97,7 @@ namespace Sound
 
                 actionStateLabel.Text = "";
                 CharWindow autoCorelation = new CharWindow();
-                autoCorelation.applyChunkButton.Visible = false;
-                autoCorelation.autocorrelationButton.Visible = false;
-                autoCorelation.cepstrumButton.Visible = false;
-                autoCorelation.label1.Visible = false;
-                autoCorelation.pathLabel.Visible = false;
-                autoCorelation.chunkSizeBox.Visible = false;
-                autoCorelation.loadFileButton.Visible = false;
+                autoCorelation.setPropert();
 
                 autoCorelation.Histogram.Series.Add("AutoCorelation");
                 autoCorelation.Text = "AutoCorelation";
@@ -140,13 +134,7 @@ namespace Sound
                 actionStateLabel.Text = "";
 
                 CharWindow Cepstrum = new CharWindow();
-                Cepstrum.applyChunkButton.Visible = false;
-                Cepstrum.autocorrelationButton.Visible = false;
-                Cepstrum.cepstrumButton.Visible = false;
-                Cepstrum.label1.Visible = false;
-                Cepstrum.pathLabel.Visible = false;
-                Cepstrum.chunkSizeBox.Visible = false;
-                Cepstrum.loadFileButton.Visible = false;
+                Cepstrum.setPropert();
 
                 Cepstrum.Histogram.Series.Add("Cepstrum");
                 Cepstrum.Text = "Cepstrum";
@@ -163,13 +151,7 @@ namespace Sound
                 Cepstrum.Show();
 
                 CharWindow Spectrum = new CharWindow();
-                Spectrum.applyChunkButton.Visible = false;
-                Spectrum.autocorrelationButton.Visible = false;
-                Spectrum.cepstrumButton.Visible = false;
-                Spectrum.label1.Visible = false;
-                Spectrum.pathLabel.Visible = false;
-                Spectrum.chunkSizeBox.Visible = false;
-                Spectrum.loadFileButton.Visible = false;
+                Spectrum.setPropert();
 
                 Spectrum.Histogram.Series.Add("Spectrum");
                 Spectrum.Text = "Spectrum";
@@ -199,6 +181,20 @@ namespace Sound
         {
             FilterForm filterForm = new FilterForm(_audio);
             filterForm.Show();
+        }
+
+        public void setPropert()
+        {
+            applyChunkButton.Visible = false;
+            autocorrelationButton.Visible = false;
+            cepstrumButton.Visible = false;
+            label1.Visible = false;
+            pathLabel.Visible = false;
+            chunkSizeBox.Visible = false;
+            loadFileButton.Visible = false;
+            button1.Visible = false;
+
+
         }
     }
 }
