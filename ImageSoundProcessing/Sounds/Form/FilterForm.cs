@@ -68,8 +68,8 @@ namespace Sounds
                     winParts[i][j] = parts[i][j] * windowData[j];
 
                 }
-                winParts[i] = SoundUtil.MovedSignal(winParts[i], hopSize);
-                winParts[i] = SoundUtil.AddZerosCasual(2 * hopSize + filterSize + 1, winParts[i]);
+               // winParts[i] = SoundUtil.MovedSignal(winParts[i], hopSize);
+                winParts[i] = SoundUtil.AddZerosCasual(filterSize - 1, winParts[i]);
             }
 
             // okno dla filtru
@@ -87,8 +87,7 @@ namespace Sounds
             }
 
             double[] filterData = SoundUtil.lowPassFilter(fc, 44100, windowData);
-            filterData = SoundUtil.MovedSignal(filterData, hopSize);
-            filterData = SoundUtil.AddZerosCasual(winParts[0].Length - filterData.Length, filterData);
+            filterData = SoundUtil.AddZerosCasual(windowSize - 1, filterData);
             #region filterChar
             CharWindow autoCorelation = new CharWindow();
             autoCorelation.setPropert();
@@ -108,13 +107,13 @@ namespace Sounds
             autoCorelation.Show();
             #endregion
 
-            Complex[] filterComplex = SoundUtil.FFT(SoundUtil.SignalToComplex(filterData));
+            Complex[] filterComplex = SoundUtil.FFT2(SoundUtil.SignalToComplex(filterData), hopSize);
             Complex[] resultComplex = new Complex[filterComplex.Length];
             List<int> result = new List<int>();
             foreach (double[] part in winParts)
             {
 
-                Complex[] signalPartComplex = SoundUtil.FFT(SoundUtil.SignalToComplex(part));
+                Complex[] signalPartComplex = SoundUtil.FFT2(SoundUtil.SignalToComplex(part), hopSize);
 
                 for (int i = 0; i < part.Length; i++)
                     resultComplex[i] = signalPartComplex[i] * filterComplex[i];
@@ -123,7 +122,7 @@ namespace Sounds
                     result.Add((int)(complex.Real));
             }
 
-            SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, 44100, 2 * windowSize, result);
+            SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, 44100, windowSize, result);
 
         }
 
@@ -165,8 +164,8 @@ namespace Sounds
                     winParts[i][j] = parts[i][j] * windowData[j];
                     
                 }
-                winParts[i] = SoundUtil.MovedSignal(winParts[i], hopSize);
-                winParts[i] = SoundUtil.AddZerosNotCasual(2* hopSize + filterSize + 1, winParts[i]);
+             //   winParts[i] = SoundUtil.MovedSignal(winParts[i], hopSize);
+                winParts[i] = SoundUtil.AddZerosNotCasual(filterSize - 1, winParts[i]);
             }
 
             // okno dla filtru
@@ -184,8 +183,8 @@ namespace Sounds
             }
 
             double[] filterData = SoundUtil.lowPassFilter(fc, 44100, windowData);
-            filterData = SoundUtil.MovedSignal(filterData, hopSize);
-            filterData = SoundUtil.AddZerosNotCasual(winParts[0].Length - filterData.Length, filterData);
+         //   filterData = SoundUtil.MovedSignal(filterData, hopSize);
+            filterData = SoundUtil.AddZerosNotCasual(windowSize - 1, filterData);
             #region filterChar
             CharWindow autoCorelation = new CharWindow();
             autoCorelation.setPropert();
@@ -220,7 +219,7 @@ namespace Sounds
                     result.Add((int)(complex.Real));
             }
 
-            SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, 44100, 2*windowSize, result);
+            SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, 441000, windowSize, result);
         }
     }
 }

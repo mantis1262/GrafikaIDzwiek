@@ -232,14 +232,15 @@ namespace Sounds.Helpers
 
         public static double[] AddZerosCasual(int howMany, double[] data)
         {
-            double[] result = new double[data.Length + howMany];
+            
+            double[] result = new double[MakePowerOf2(data.Length + howMany)];
             data.CopyTo(result, 0);
             return result;
         }
         public static double[] AddZerosNotCasual(int howMany, double[] data)
         {
-            double[] result = new double[data.Length + howMany];
-            for(int i = 0; i<data.Length; i++)
+            double[] result = new double[MakePowerOf2(data.Length + howMany)];
+            for (int i = 0; i<data.Length; i++)
             {
                 if (i < data.Length / 2)
                     result[result.Length - data.Length / 2 + i] = data[i];
@@ -288,7 +289,7 @@ namespace Sounds.Helpers
             return result;
         }
 
-        public static Complex[] FFT2(Complex[] input)
+        public static Complex[] FFT2(Complex[] input, int R)
         {
             int N = input.Length;
             float omega = (float)(-2.0 * Math.PI / N);
@@ -309,8 +310,17 @@ namespace Sounds.Helpers
 
             for (int i = 0; i < N / 2; i++)
             {
-                evenInput[i] = input[2 * i];
-                oddInput[i] = input[2 * i + 1];
+                if (2 * i + R < 0 || 2 * i + R > N)
+                {
+                    evenInput[i] = new Complex(0, 0);
+                    oddInput[i] = new Complex(0, 0);
+                }
+                else
+                {
+
+                    evenInput[i] = input[2 * i + R];
+                    oddInput[i] = input[2 * i + 1 + R];
+                }
             }
 
             Complex[] even = FFT(evenInput);
