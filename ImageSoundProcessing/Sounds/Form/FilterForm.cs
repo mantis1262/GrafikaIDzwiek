@@ -1,4 +1,5 @@
-﻿using Sound;
+﻿using NAudio.Wave;
+using Sound;
 using Sound.Model;
 using Sounds.Helpers;
 using Sounds.Model;
@@ -58,7 +59,7 @@ namespace Sounds
             }
 
 
-            int[][] parts = SoundUtil.ChunkArray(_audio.data, windowSize);
+            double[][] parts = SoundUtil.ChunkArrayWithHop(_audio.dataNormalized, windowSize, hopSize);
             double[][] winParts = new double[parts.Length][];
             for (int i = 0; i < parts.Length; i++)
             {
@@ -89,40 +90,79 @@ namespace Sounds
             double[] filterData = SoundUtil.lowPassFilter(fc, 44100, windowData);
             filterData = SoundUtil.AddZerosCasual(windowSize - 1, filterData);
             #region filterChar
-            CharWindow autoCorelation = new CharWindow();
-            autoCorelation.setPropert();
+            CharWindow WindowCharm = new CharWindow();
+            WindowCharm.setPropert();
 
-            autoCorelation.Histogram.Series.Add("AutoCorelation");
-            autoCorelation.Text = "Window";
-            autoCorelation.Histogram.Series["AutoCorelation"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            autoCorelation.Histogram.Series["AutoCorelation"].MarkerSize = 2;
-            autoCorelation.Histogram.ChartAreas[0].AxisX.Title = "Index";
-            autoCorelation.Histogram.ChartAreas[0].AxisY.Title = "Window value";
+            WindowCharm.Histogram.Series.Add("WindowCharm");
+            WindowCharm.Text = "WindowCharm";
+            WindowCharm.Histogram.Series["WindowCharm"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            WindowCharm.Histogram.Series["WindowCharm"].MarkerSize = 2;
+            WindowCharm.Histogram.ChartAreas[0].AxisX.Title = "Index";
+            WindowCharm.Histogram.ChartAreas[0].AxisY.Title = "Window value";
 
             for (int i = 0; i < filterData.Count(); i++)
             {
-                autoCorelation.Histogram.Series["AutoCorelation"].Points.AddXY(i, filterData[i]);
+                WindowCharm.Histogram.Series["WindowCharm"].Points.AddXY(i, filterData[i]);
             }
 
-            autoCorelation.Show();
+            WindowCharm.Show();
             #endregion
 
-            Complex[] filterComplex = SoundUtil.FFT2(SoundUtil.SignalToComplex(filterData), hopSize);
+            Complex[] filterComplex = SoundUtil.FFT(SoundUtil.SignalToComplex(filterData));
             Complex[] resultComplex = new Complex[filterComplex.Length];
-            List<int> result = new List<int>();
+            List<float[]> resultIFurier = new List<float[]>();
             foreach (double[] part in winParts)
             {
-
-                Complex[] signalPartComplex = SoundUtil.FFT2(SoundUtil.SignalToComplex(part), hopSize);
+                List<float> resultPart = new List<float>();
+                Complex[] signalPartComplex = SoundUtil.FFT(SoundUtil.SignalToComplex(part));
 
                 for (int i = 0; i < part.Length; i++)
                     resultComplex[i] = signalPartComplex[i] * filterComplex[i];
                 resultComplex = SoundUtil.IFFT(resultComplex);
                 foreach (Complex complex in resultComplex)
-                    result.Add((int)(complex.Real));
+                {
+                    resultPart.Add((int)(complex.Real));
+                }
+                resultIFurier.Add(resultPart.ToArray());
             }
 
-            SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, 44100, windowSize, result);
+
+            float[] resultSignal = new float[_audio.dataNormalized.Length];
+            int totalStep = 0;
+
+            foreach (float[] window in resultIFurier)
+            {
+                for (int i = 0; i < window.Length; i++)
+                {
+                    if (i + totalStep < resultSignal.Length)
+                        resultSignal[i + totalStep] += window[i];
+                }
+
+                totalStep += hopSize;
+            }
+
+
+
+            #region filterChar
+            CharWindow resultSignalChar = new CharWindow();
+            resultSignalChar.setPropert();
+
+            resultSignalChar.Histogram.Series.Add("WindowCharm");
+            resultSignalChar.Text = "SignalChar";
+            resultSignalChar.Histogram.Series["WindowCharm"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            resultSignalChar.Histogram.Series["WindowCharm"].MarkerSize = 2;
+            resultSignalChar.Histogram.ChartAreas[0].AxisX.Title = "Index";
+            resultSignalChar.Histogram.ChartAreas[0].AxisY.Title = "signal value";
+
+            for (int i = 0; i < resultSignal.Count(); i++)
+            {
+                resultSignalChar.Histogram.Series["WindowCharm"].Points.AddXY(i, resultSignal[i]);
+            }
+
+            resultSignalChar.Show();
+            #endregion
+
+            SoundUtil.SaveSound(_audio.fileName, _audio.sampleRate, resultSignal.ToList());
 
         }
 
@@ -154,17 +194,17 @@ namespace Sounds
             }
 
 
-            int[][] parts = SoundUtil.ChunkArray(_audio.data, windowSize);
+            double[][] parts = SoundUtil.ChunkArrayWithHop(_audio.dataNormalized, windowSize, hopSize);
             double[][] winParts = new double[parts.Length][];
-            for(int i = 0; i< parts.Length; i++)
+            for (int i = 0; i < parts.Length; i++)
             {
                 winParts[i] = new double[parts[0].Length];
                 for (int j = 0; j < parts[i].Length; j++)
                 {
                     winParts[i][j] = parts[i][j] * windowData[j];
-                    
+
                 }
-             //   winParts[i] = SoundUtil.MovedSignal(winParts[i], hopSize);
+                // winParts[i] = SoundUtil.MovedSignal(winParts[i], hopSize);
                 winParts[i] = SoundUtil.AddZerosNotCasual(filterSize - 1, winParts[i]);
             }
 
@@ -183,43 +223,81 @@ namespace Sounds
             }
 
             double[] filterData = SoundUtil.lowPassFilter(fc, 44100, windowData);
-         //   filterData = SoundUtil.MovedSignal(filterData, hopSize);
             filterData = SoundUtil.AddZerosNotCasual(windowSize - 1, filterData);
             #region filterChar
-            CharWindow autoCorelation = new CharWindow();
-            autoCorelation.setPropert();
+            CharWindow WindowCharm = new CharWindow();
+            WindowCharm.setPropert();
 
-            autoCorelation.Histogram.Series.Add("AutoCorelation");
-            autoCorelation.Text = "Window";
-            autoCorelation.Histogram.Series["AutoCorelation"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            autoCorelation.Histogram.Series["AutoCorelation"].MarkerSize = 2;
-            autoCorelation.Histogram.ChartAreas[0].AxisX.Title = "Index";
-            autoCorelation.Histogram.ChartAreas[0].AxisY.Title = "Window value";
+            WindowCharm.Histogram.Series.Add("WindowCharm");
+            WindowCharm.Text = "WindowCharm";
+            WindowCharm.Histogram.Series["WindowCharm"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            WindowCharm.Histogram.Series["WindowCharm"].MarkerSize = 2;
+            WindowCharm.Histogram.ChartAreas[0].AxisX.Title = "Index";
+            WindowCharm.Histogram.ChartAreas[0].AxisY.Title = "Window value";
 
             for (int i = 0; i < filterData.Count(); i++)
             {
-                autoCorelation.Histogram.Series["AutoCorelation"].Points.AddXY(i,filterData[i]);
+                WindowCharm.Histogram.Series["WindowCharm"].Points.AddXY(i, filterData[i]);
             }
 
-            autoCorelation.Show();
+            WindowCharm.Show();
             #endregion
 
             Complex[] filterComplex = SoundUtil.FFT(SoundUtil.SignalToComplex(filterData));
             Complex[] resultComplex = new Complex[filterComplex.Length];
-            List<int> result = new List<int>();
-            foreach(double[] part in winParts)
+            List<float[]> resultIFurier = new List<float[]>();
+            foreach (double[] part in winParts)
             {
-
-                Complex [] signalPartComplex = SoundUtil.FFT(SoundUtil.SignalToComplex(part));
+                List<float> resultPart = new List<float>();
+                Complex[] signalPartComplex = SoundUtil.FFT(SoundUtil.SignalToComplex(part));
 
                 for (int i = 0; i < part.Length; i++)
                     resultComplex[i] = signalPartComplex[i] * filterComplex[i];
                 resultComplex = SoundUtil.IFFT(resultComplex);
                 foreach (Complex complex in resultComplex)
-                    result.Add((int)(complex.Real));
+                {
+                    resultPart.Add((int)(complex.Real));
+                }
+                resultIFurier.Add(resultPart.ToArray());
             }
 
-            SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, 441000, windowSize, result);
+
+            float[] resultSignal = new float[_audio.dataNormalized.Length];
+            int totalStep = 0;
+
+            foreach (float[] window in resultIFurier)
+            {
+                for (int i = 0; i < window.Length; i++)
+                {
+                    if (i + totalStep < resultSignal.Length)
+                        resultSignal[i + totalStep] += window[i];
+                }
+
+                totalStep += hopSize;
+            }
+
+
+
+            #region filterChar
+            CharWindow resultSignalChar = new CharWindow();
+            resultSignalChar.setPropert();
+
+            resultSignalChar.Histogram.Series.Add("WindowCharm");
+            resultSignalChar.Text = "SignalChar";
+            resultSignalChar.Histogram.Series["WindowCharm"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            resultSignalChar.Histogram.Series["WindowCharm"].MarkerSize = 2;
+            resultSignalChar.Histogram.ChartAreas[0].AxisX.Title = "Index";
+            resultSignalChar.Histogram.ChartAreas[0].AxisY.Title = "signal value";
+
+            for (int i = 0; i < resultSignal.Count(); i++)
+            {
+                resultSignalChar.Histogram.Series["WindowCharm"].Points.AddXY(i, resultSignal[i]);
+            }
+
+            resultSignalChar.Show();
+            #endregion
+
+            SoundUtil.SaveSound(_audio.fileName, _audio.sampleRate, resultSignal.ToList());
         }
     }
 }

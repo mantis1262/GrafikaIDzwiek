@@ -30,14 +30,31 @@ namespace Sounds.Helpers
                 result[i] = array.Skip(i * chunkSize).Take(chunkSize).ToArray();
             }
             return result;
-        }
-
-
-        public static double[] MovedSignal(double[] data, int hopSize)
+        } 
+        
+        public static double[][] ChunkArrayWithHop(float[] array, int chunkSize, int hopSize)
         {
-            double[] result = new double[data.Length + 2 * hopSize];
-            data.CopyTo(result, result.Length / 2 - data.Length / 2);
-            return result;
+            List<double[]> result = new List<double[]>();
+            int listIndex = 0;
+            int listInsideIndex = 0;
+            int steps = -1;
+            for (int i = 0; i < array.Length; i++)
+            {
+                result.Add(new double[chunkSize]);
+                result[listIndex][listInsideIndex] = array[i];    
+                if(listInsideIndex >= chunkSize - 1)
+                {
+                    listIndex = 0;
+                    steps += hopSize;
+                    i = steps;
+                }
+                else
+                {
+                    listInsideIndex++;
+                }
+
+            }
+            return result.ToArray();
         }
 
 
@@ -450,6 +467,16 @@ namespace Sounds.Helpers
                         }
                     }
                 }
+            }
+        }
+
+        public static void SaveSound(string fileName, int sampleRate, List<float> frequencies)
+        {
+            string resultFileName = "result_" + fileName;
+            WaveFormat waveFormat = new WaveFormat(sampleRate: sampleRate, channels: 1);
+            using (WaveFileWriter writer = new WaveFileWriter(resultFileName, waveFormat))
+            {
+                writer.WriteSamples(frequencies.ToArray(), 0, frequencies.Count);
             }
         }
     }
