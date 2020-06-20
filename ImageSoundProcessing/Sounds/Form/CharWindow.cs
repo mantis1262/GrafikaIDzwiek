@@ -113,7 +113,7 @@ namespace Sound
 
                 autoCorelation.Show();
 
-                SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequencies);
+                SoundUtil.SaveSound(_audio.fileName, _audio.sampleRate, _audio.chunkSize, frequencies);
                 MessageBox.Show(freqText, "Autocorrelation frequencies");
             }
         }
@@ -172,7 +172,7 @@ namespace Sound
 
                 Spectrum.Show();
 
-                SoundUtil.SaveSound(_audio.fileName, _audio.framesNumber, _audio.sampleRate, _audio.chunkSize, frequencies);
+                SoundUtil.SaveSound(_audio.fileName, _audio.sampleRate, _audio.chunkSize, frequencies);
                 MessageBox.Show(freqText, "Cepstrum frequencies");
             }
         }
