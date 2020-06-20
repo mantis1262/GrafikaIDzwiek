@@ -172,27 +172,24 @@ namespace Sounds.Helpers
 
      
 
-        public static double[] lowPassFilter(int chunkFrequency, double samplingFrequency, double[] windowData)
+        public static double[] lowPassFilter(int cutFrequency, double samplingFrequency, double[] windowData)
         {
 
             double[] result = new double[windowData.Length];
             windowData.CopyTo(result, 0);
             int resultLenght = result.Length;
-
+            double arg = (resultLenght - 1) / 2;
             double[] lowPassFilterArr = new double[resultLenght];
 
             for (int k = 0; k < result.Length; ++k)
             {
-                if (k == (resultLenght - 1) / 2)
+                if (k == arg)
                 {
-                    lowPassFilterArr[k] = 2 * chunkFrequency / samplingFrequency;
+                    lowPassFilterArr[k] = 2 * cutFrequency / samplingFrequency;
                 }
                 else
                 {
-                    lowPassFilterArr[k] = Math.Sin(
-                                           (2 * Math.PI * chunkFrequency / samplingFrequency) * (double)(k - (resultLenght - 1) / 2)) / 
-                                           (Math.PI * (double)(k - (resultLenght - 1) / 2)
-                                          );
+                    lowPassFilterArr[k] = Math.Sin( 2 * Math.PI * cutFrequency / samplingFrequency * (k - arg)) / (Math.PI * (k - arg));
                 }
                 result[k] *= lowPassFilterArr[k];
             }
@@ -430,7 +427,7 @@ namespace Sounds.Helpers
             return output;
         }
 
-        public static void SaveSound(string fileName, int totalFrames, int sampleRate, int chunkSize, List<int> frequencies)
+        public static void SaveSound(string fileName, int sampleRate, int chunkSize, List<int> frequencies)
         {
             string resultFileName = "result_" + fileName;
             WaveFormat waveFormat = new WaveFormat(sampleRate: sampleRate, channels: 1);

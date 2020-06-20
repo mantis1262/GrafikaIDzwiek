@@ -127,7 +127,7 @@ namespace Sounds
             }
 
 
-            float[] resultSignal = new float[_audio.dataNormalized.Length];
+            int[] resultSignal = new int[_audio.dataNormalized.Length];
             int totalStep = 0;
 
             foreach (float[] window in resultIFurier)
@@ -135,34 +135,13 @@ namespace Sounds
                 for (int i = 0; i < window.Length; i++)
                 {
                     if (i + totalStep < resultSignal.Length)
-                        resultSignal[i + totalStep] += window[i];
+                        resultSignal[i + totalStep] += (int)window[i];
                 }
 
                 totalStep += hopSize;
             }
 
-
-
-            #region filterChar
-            CharWindow resultSignalChar = new CharWindow();
-            resultSignalChar.setPropert();
-
-            resultSignalChar.Histogram.Series.Add("WindowCharm");
-            resultSignalChar.Text = "SignalChar";
-            resultSignalChar.Histogram.Series["WindowCharm"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            resultSignalChar.Histogram.Series["WindowCharm"].MarkerSize = 2;
-            resultSignalChar.Histogram.ChartAreas[0].AxisX.Title = "Index";
-            resultSignalChar.Histogram.ChartAreas[0].AxisY.Title = "signal value";
-
-            for (int i = 0; i < resultSignal.Count(); i++)
-            {
-                resultSignalChar.Histogram.Series["WindowCharm"].Points.AddXY(i, resultSignal[i]);
-            }
-
-            resultSignalChar.Show();
-            #endregion
-
-            SoundUtil.SaveSound(_audio.fileName, _audio.sampleRate, resultSignal.ToList());
+            SoundUtil.SaveSound(_audio.fileName, 44100, resultComplex.Count(), resultSignal.ToList());
 
         }
 
