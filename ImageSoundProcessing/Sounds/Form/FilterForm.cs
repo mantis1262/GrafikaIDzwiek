@@ -48,13 +48,13 @@ namespace Sounds
             switch (windowType.SelectedIndex)
             {
                 case 0:
-                    windowData = SoundUtil.RectangularFunc(windowSize);
+                    windowData = SoundUtil.RectangularFactors(windowSize);
                     break;
                 case 1:
-                    windowData = SoundUtil.HannFunc(windowSize);
+                    windowData = SoundUtil.HannFactors(windowSize);
                     break;
                 case 2:
-                    windowData = SoundUtil.HammingFunc(windowSize);
+                    windowData = SoundUtil.HammingFactors(windowSize);
                     break;
             }
 
@@ -77,13 +77,13 @@ namespace Sounds
             switch (windowType.SelectedIndex)
             {
                 case 0:
-                    windowData = SoundUtil.RectangularFunc(filterSize);
+                    windowData = SoundUtil.RectangularFactors(filterSize);
                     break;
                 case 1:
-                    windowData = SoundUtil.HannFunc(filterSize);
+                    windowData = SoundUtil.HannFactors(filterSize);
                     break;
                 case 2:
-                    windowData = SoundUtil.HammingFunc(filterSize);
+                    windowData = SoundUtil.HammingFactors(filterSize);
                     break;
             }
 
@@ -162,13 +162,13 @@ namespace Sounds
             switch (windowType.SelectedIndex)
             {
                 case 0:
-                    windowData = SoundUtil.RectangularFunc(windowSize);
+                    windowData = SoundUtil.RectangularFactors(windowSize);
                     break;
                 case 1:
-                    windowData = SoundUtil.HannFunc(windowSize);
+                    windowData = SoundUtil.HannFactors(windowSize);
                     break;
                 case 2:
-                    windowData = SoundUtil.HammingFunc(windowSize);
+                    windowData = SoundUtil.HammingFactors(windowSize);
                     break;
             }
 
@@ -191,13 +191,13 @@ namespace Sounds
             switch (windowType.SelectedIndex)
             {
                 case 0:
-                    windowData = SoundUtil.RectangularFunc(filterSize);
+                    windowData = SoundUtil.RectangularFactors(filterSize);
                     break;
                 case 1:
-                    windowData = SoundUtil.HannFunc(filterSize);
+                    windowData = SoundUtil.HannFactors(filterSize);
                     break;
                 case 2:
-                    windowData = SoundUtil.HammingFunc(filterSize);
+                    windowData = SoundUtil.HammingFactors(filterSize);
                     break;
             }
 

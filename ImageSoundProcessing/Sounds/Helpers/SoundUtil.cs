@@ -114,6 +114,11 @@ namespace Sounds.Helpers
             return powerOfTwo;
         }
 
+        public static int GetExpandedPow2(int length)
+        {
+            return (int)Math.Pow(2, (int)Math.Log(length, 2) + 1);
+        }
+
         public static int MaxFromLocalMaxList(IList<int> localMaxList, double[] data)
         {
             int localMaxIndex = 0;
@@ -157,6 +162,16 @@ namespace Sounds.Helpers
             return resultComplex;
         }
 
+        public static double[] SignalFromComplex(Complex[] data)
+        {
+            double[] result = new double[data.Length];
+            for (int i = 0; i < data.Length; i++)
+            {
+                result[i] = data[i].Real;
+            }
+            return result;
+        }
+
         public static Complex[] HammingWindow(Complex[] complexData)
         {
             int N = complexData.Length;
@@ -196,6 +211,25 @@ namespace Sounds.Helpers
             return result;
         }
 
+        public static double[] LowPassFilterFactors(double cutFreq, double sampleFreq, int filterLength)
+        {
+            double[] result = new double[filterLength];
+            var half = (filterLength - 1) / 2.0;
+            for (int i = 0; i < filterLength; i++)
+            {
+                if (i == half)
+                {
+                    result[i] = 2 * cutFreq / sampleFreq;
+                }
+                else
+                {
+                    result[i] = Math.Sin(2 * Math.PI * cutFreq / sampleFreq * (i - half)) / (Math.PI * (i - half));
+                }
+            }
+
+            return result;
+        }
+
         public static double[] Splot(double[] signalData, double[] impulseData)
         {
             double[] result = new double[signalData.Length];
@@ -214,34 +248,120 @@ namespace Sounds.Helpers
             return result;
         }
 
-        public static double[] HammingFunc(int windowSize)
+        public static float[] ConvertDoubleArrayToFloatArray(double[] array)
+        {
+            float[] floatArray = new float[array.Length];
+            for (int i = 0; i < array.Length; i++)
+            {
+                floatArray[i] = (float)array[i];
+            }
+            return floatArray;
+        }
+
+        public static double[] RectangularFactors(int windowSize)
         {
             double[] windowData = new double[windowSize];
-            for (int i = 0; i < windowData.Length; ++i)
+            for (int i = 0; i < windowSize; i++)
             {
-                windowData[i] = 0.5D - 0.46D * Math.Cos(2 * Math.PI * i / (windowData.Length - 1.0D));
+                windowData[i] = i < windowSize ? 1 : 0;
             }
             return windowData;
         }
 
-        public static double[] RectangularFunc(int windowSize)
+        public static double[] HammingFactors(int windowSize)
         {
             double[] windowData = new double[windowSize];
-            for (int i = 0; i < windowData.Length; ++i)
+            for (int i = 0; i < windowSize; i++)
             {
-                windowData[i] = 1;
+                windowData[i] = 0.53836 - 0.46164 * Math.Cos(2 * Math.PI * i / (windowSize - 1));
             }
             return windowData;
         }
 
-        public static double[] HannFunc(int windowSize)
+        public static double[] HannFactors(int windowSize)
         {
             double[] windowData = new double[windowSize];
-            for (int i = 0; i < windowData.Length; ++i)
+            for (int i = 0; i < windowSize; i++)
             {
-                windowData[i] = 0.5D * (1.0D - Math.Cos(2 * Math.PI * i / (windowData.Length - 1.0D))) * 2.0D;
+                windowData[i] = 0.5 * (1 - Math.Cos(2 * Math.PI * i / (windowSize - 1)));
             }
             return windowData;
+        }
+
+        public static double[] Factors(string type, int windowsLength)
+        {
+            switch (type)
+            {
+                case "rect":
+                    {
+                        return RectangularFactors(windowsLength);
+                    }
+                case "hamm":
+                    {
+                        return HammingFactors(windowsLength);
+                    }
+                case "hann":
+                    {
+                        return HannFactors(windowsLength);
+                    }
+                default: return new double[] { };
+            }
+        }
+
+        public static double[] RectangularWindowing(double[] data)
+        {
+            int n = data.Length;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = i < n ? data[i] : 0;
+            }
+
+            return data;
+        }
+
+        public static double[] HammingWindowing(double[] data)
+        {
+            int n = data.Length;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] *= 0.53836 - 0.46164 * Math.Cos(2 * Math.PI * i / (n - 1));
+            }
+
+            return data;
+        }
+
+        public static double[] HanningWindowing(double[] data)
+        {
+            int n = data.Length;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] *= 0.5 * (1 - Math.Cos(2 * Math.PI * i / (n - 1)));
+            }
+
+            return data;
+        }
+
+        public static double[] Windowing(double[] data, string type)
+        {
+            switch(type)
+            {
+                case "rect":
+                    {
+                        return RectangularWindowing(data);
+                    }
+                case "hamm":
+                    {
+                        return HammingWindowing(data);
+                    }
+                case "hann":
+                    {
+                        return HanningWindowing(data);
+                    }
+                default: return new double[] { };
+            }
         }
 
         public static double[] AddZerosCasual(int howMany, double[] data)

@@ -342,5 +342,114 @@ namespace Sound.Model
 
             return frequencies;
         }
+
+        public double[] TimeFiltration(int filterLength = 1025, double cutFreq = 550, string windowType = "hamm")
+        {
+            double[] result = new double[dataNormalized.Length + filterLength - 1];
+
+            double[] filterFactors = SoundUtil.LowPassFilterFactors(cutFreq, sampleRate, filterLength);
+            double[] filtered = SoundUtil.Windowing(filterFactors, windowType);
+
+            List<float> data = dataNormalized.ToList();
+            float[] zeros = new float[filterLength - 1];
+
+            data.InsertRange(0, zeros);
+            data.AddRange(zeros);
+
+            for (int i = filterLength - 1; i < data.Count; i++)
+            {
+                for (int j = 0; j < filtered.Length; j++)
+                {
+                    result[i - filterLength + 1] += data[i - j] * filtered[j];
+                }
+            }
+
+            return result;
+        }
+
+        public double[] FrequencyFiltration(int windowLength = 2049, int filterLength = 1025, double cutFreq = 550, int windowHopSize = 1024, string windowType = "hamm", string filterType = "casual", int? nParam = null)
+        {
+            int n = nParam ?? SoundUtil.GetExpandedPow2(windowLength + filterLength - 1);
+            var size = dataNormalized.Length + n - windowLength;
+            double[] result = new double[size];
+
+            var windows = new double[size / windowHopSize][];
+            var windowsComplex = new Complex[size / windowHopSize][];
+
+            for (int i = 0; i < windows.Length; i++)
+            {
+                windows[i] = new double[n];
+                windowsComplex[i] = new Complex[n];
+            }
+
+            var windowFactors = SoundUtil.Factors(windowType, windowLength);
+            for (int i = 0; i < windows.Length; i++)
+            {
+                for (int j = 0; j < windowLength; j++)
+                {
+                    if (i * windowHopSize + j < dataNormalized.Length)
+                    {
+                        windows[i][j] = windowFactors[j] * dataNormalized[i * windowHopSize + j];
+                    }
+                    else
+                    {
+                        windows[i][j] = 0;
+                    }
+                }
+                for (int j = windowLength; j < n; j++)
+                {
+                    windows[i][j] = 0;
+                }
+            }
+
+            double[] windowFilterFactors = SoundUtil.Factors(windowType, filterLength);
+            double[] filterFactors = SoundUtil.LowPassFilterFactors(cutFreq, sampleRate, filterLength);
+            double[] filtered = new double[n];
+            for (int i = 0; i < filterLength; i++)
+            {
+                filtered[i] = windowFilterFactors[i] * filterFactors[i];
+            }
+
+            for (int i = filterLength; i < n; i++)
+            {
+                filtered[i] = 0;
+            }
+
+            if (filterType == "notCasual")
+            {
+                var shiftNumberFilter = (filterLength - 1) / 2;
+
+                var shiftedFilter = filtered.Take(shiftNumberFilter);
+                var filteredTemp = filtered.Skip(shiftNumberFilter).ToList();
+                filteredTemp.AddRange(shiftedFilter);
+                filtered = filteredTemp.ToArray();
+            }
+
+            Complex[] complexSound = SoundUtil.SignalToComplex(filtered);
+            Complex[] filteredComplex = SoundUtil.FFT(complexSound);
+
+            for (int i = 0; i < windows.Length; i++)
+            {
+                windowsComplex[i] = SoundUtil.FFT(SoundUtil.SignalToComplex(windows[i]));
+                for (int j = 0; j < windowsComplex[i].Length; j++)
+                {
+                    windowsComplex[i][j] *= filteredComplex[j];
+                }
+                windows[i] = SoundUtil.SignalFromComplex(SoundUtil.IFFT(windowsComplex[i]));
+            }
+
+            for (int i = 0; i < windows.Length; i++)
+            {
+                for (int j = 0; j < windows[i].Length; j++)
+                {
+                    if (i * windowHopSize + j < dataNormalized.Length)
+                    {
+                        result[i * windowHopSize + j] += windows[i][j];
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 }
