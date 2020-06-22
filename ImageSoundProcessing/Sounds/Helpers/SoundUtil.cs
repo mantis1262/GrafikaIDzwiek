@@ -288,19 +288,19 @@ namespace Sounds.Helpers
             return windowData;
         }
 
-        public static double[] Factors(string type, int windowsLength)
+        public static double[] Factors(int type, int windowsLength)
         {
             switch (type)
             {
-                case "rect":
+                case 0:
                     {
                         return RectangularFactors(windowsLength);
                     }
-                case "hamm":
+                case 2:
                     {
                         return HammingFactors(windowsLength);
                     }
-                case "hann":
+                case 1:
                     {
                         return HannFactors(windowsLength);
                     }

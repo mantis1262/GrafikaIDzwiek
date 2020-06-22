@@ -343,7 +343,7 @@ namespace Sound.Model
             return frequencies;
         }
 
-        public double[] TimeFiltration(int filterLength = 1025, double cutFreq = 550, string windowType = "hamm")
+        public double[] TimeFiltration(int filterLength = 1025, double cutFreq = 550, int windowType = 2)
         {
             double[] result = new double[dataNormalized.Length + filterLength - 1];
 
@@ -367,11 +367,11 @@ namespace Sound.Model
             return result;
         }
 
-        public double[] FrequencyFiltration(int windowLength = 2049, int filterLength = 1025, double cutFreq = 550, int windowHopSize = 1024, string windowType = "hamm", string filterType = "casual", int? nParam = null)
+        public float[] FrequencyFiltration(int windowLength = 2049, int filterLength = 1025, double cutFreq = 550, int windowHopSize = 1024, int windowType = 2, string filterType = "casual", int? nParam = null)
         {
             int n = nParam ?? SoundUtil.GetExpandedPow2(windowLength + filterLength - 1);
             var size = dataNormalized.Length + n - windowLength;
-            double[] result = new double[size];
+            float[] result = new float[size];
 
             var windows = new double[size / windowHopSize][];
             var windowsComplex = new Complex[size / windowHopSize][];
@@ -444,7 +444,7 @@ namespace Sound.Model
                 {
                     if (i * windowHopSize + j < dataNormalized.Length)
                     {
-                        result[i * windowHopSize + j] += windows[i][j];
+                        result[i * windowHopSize + j] += (float)windows[i][j];
                     }
                 }
             }
