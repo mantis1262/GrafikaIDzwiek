@@ -344,19 +344,19 @@ namespace Sounds.Helpers
             return data;
         }
 
-        public static double[] Windowing(double[] data, string type)
+        public static double[] Windowing(double[] data, int type)
         {
             switch(type)
             {
-                case "rect":
+                case 0:
                     {
                         return RectangularWindowing(data);
                     }
-                case "hamm":
+                case 2:
                     {
                         return HammingWindowing(data);
                     }
-                case "hann":
+                case 1:
                     {
                         return HanningWindowing(data);
                     }
