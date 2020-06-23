@@ -161,7 +161,7 @@ namespace Sounds.Helpers
         public static double[] LowPassFilterFactors(double cutFreq, double sampleFreq, int filterLength)
         {
             double[] result = new double[filterLength];
-            var half = (filterLength - 1) / 2.0;
+            double half = (filterLength - 1) / 2.0;
             for (int i = 0; i < filterLength; i++)
             {
                 if (i == half)

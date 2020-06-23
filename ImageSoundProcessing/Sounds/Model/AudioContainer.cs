@@ -345,17 +345,23 @@ namespace Sound.Model
 
         public double[] TimeFiltration(int filterLength = 1025, double cutFreq = 550, int windowType = 2)
         {
+            // d³ugoœæ sygna³y wynikowego bêdzie wynosi³a K(iloœæ próbek) + L(d³ugoœæ odpowiedzi impulsowej) - 1
             double[] result = new double[dataNormalized.Length + filterLength - 1];
 
+            // obliczenie wspó³czynników filtra
             double[] filterFactors = SoundUtil.LowPassFilterFactors(cutFreq, sampleRate, filterLength);
+            
+            // wymno¿enie wspó³czynników przez funkcjê okna
             double[] filtered = SoundUtil.Windowing(filterFactors, windowType);
 
             List<float> data = dataNormalized.ToList();
             float[] zeros = new float[filterLength - 1];
 
+            // uzupe³nienie okna zerami na pocz¹tku i koñcu
             data.InsertRange(0, zeros);
             data.AddRange(zeros);
 
+            // wykonanie operacji splotu 
             for (int i = filterLength - 1; i < data.Count; i++)
             {
                 for (int j = 0; j < filtered.Length; j++)
@@ -369,12 +375,16 @@ namespace Sound.Model
 
         public float[] FrequencyFiltration(int windowLength = 2049, int filterLength = 1025, double cutFreq = 550, int windowHopSize = 1024, int windowType = 2, string filterType = "casual", int? nParam = null)
         {
+            // rozmiar transformacji DFT
             int n = nParam ?? SoundUtil.GetExpandedPow2(windowLength + filterLength - 1);
-            var size = dataNormalized.Length + n - windowLength;
+            
+            // d³ugoœæ sygna³u wynikowego
+            int size = dataNormalized.Length + n - windowLength;
             float[] result = new float[size];
 
-            var windows = new double[size / windowHopSize][];
-            var windowsComplex = new Complex[size / windowHopSize][];
+            // okna
+            double[][] windows = new double[size / windowHopSize][];
+            Complex[][] windowsComplex = new Complex[size / windowHopSize][];
 
             for (int i = 0; i < windows.Length; i++)
             {
@@ -382,9 +392,12 @@ namespace Sound.Model
                 windowsComplex[i] = new Complex[n];
             }
 
-            var windowFactors = SoundUtil.Factors(windowType, windowLength);
+            // wyliczenie wspó³czynników okna
+            double[] windowFactors = SoundUtil.Factors(windowType, windowLength);
+
             for (int i = 0; i < windows.Length; i++)
             {
+                // wymno¿enie wspó³czynników filtra przez wartoœci sygna³u 
                 for (int j = 0; j < windowLength; j++)
                 {
                     if (i * windowHopSize + j < dataNormalized.Length)
@@ -396,20 +409,28 @@ namespace Sound.Model
                         windows[i][j] = 0;
                     }
                 }
+
+                // uzupe³nienie pozosta³ych miejsc zerami
                 for (int j = windowLength; j < n; j++)
                 {
                     windows[i][j] = 0;
                 }
             }
 
+            // wyliczenie wspó³czynników okna
             double[] windowFilterFactors = SoundUtil.Factors(windowType, filterLength);
+
+            // wyliczenie wspó³czynników filtru
             double[] filterFactors = SoundUtil.LowPassFilterFactors(cutFreq, sampleRate, filterLength);
             double[] filtered = new double[n];
+
+            // wymno¿enie wspó³czynników okna i filtru
             for (int i = 0; i < filterLength; i++)
             {
                 filtered[i] = windowFilterFactors[i] * filterFactors[i];
             }
 
+            // uzupe³nienie pozosta³ych miejsc zerami
             for (int i = filterLength; i < n; i++)
             {
                 filtered[i] = 0;
@@ -417,27 +438,34 @@ namespace Sound.Model
 
             if (filterType == "notCasual")
             {
-                var shiftNumberFilter = (filterLength - 1) / 2;
-
-                var shiftedFilter = filtered.Take(shiftNumberFilter);
-                var filteredTemp = filtered.Skip(shiftNumberFilter).ToList();
+                // dla filtra nieprzyczynowego przesuwamy po³owê wartoœci filtra na jego koniec
+                int shiftNumberFilter = (filterLength - 1) / 2;
+                IEnumerable<double> shiftedFilter = filtered.Take(shiftNumberFilter);
+                List<double> filteredTemp = filtered.Skip(shiftNumberFilter).ToList();
                 filteredTemp.AddRange(shiftedFilter);
                 filtered = filteredTemp.ToArray();
             }
 
+            // zmiana przefiltrowanych wspó³czynników na liczby zespolone i wykonanie FFT
             Complex[] complexSound = SoundUtil.SignalToComplex(filtered);
             Complex[] filteredComplex = SoundUtil.FFT(complexSound);
 
             for (int i = 0; i < windows.Length; i++)
             {
+                // zmiana wartoœci sygna³u okna na liczby zespolone i wykonanie FFT
                 windowsComplex[i] = SoundUtil.FFT(SoundUtil.SignalToComplex(windows[i]));
+
+                // wymno¿enie wartoœci sygna³u okna ze wspó³czynnikami
                 for (int j = 0; j < windowsComplex[i].Length; j++)
                 {
                     windowsComplex[i][j] *= filteredComplex[j];
                 }
+
+                // wykonanie IFFT na oknie i zmiana na sygna³ wyjœciowy
                 windows[i] = SoundUtil.SignalFromComplex(SoundUtil.IFFT(windowsComplex[i]));
             }
 
+            // dodanie wyniku do sygna³u wyjœciowego
             for (int i = 0; i < windows.Length; i++)
             {
                 for (int j = 0; j < windows[i].Length; j++)
