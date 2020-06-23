@@ -183,34 +183,6 @@ namespace Sounds.Helpers
             return complexResult;
         }
 
-
-
-     
-
-        public static double[] lowPassFilter(int cutFrequency, double samplingFrequency, double[] windowData)
-        {
-
-            double[] result = new double[windowData.Length];
-            windowData.CopyTo(result, 0);
-            int resultLenght = result.Length;
-            double arg = (resultLenght - 1) / 2;
-            double[] lowPassFilterArr = new double[resultLenght];
-
-            for (int k = 0; k < result.Length; ++k)
-            {
-                if (k == arg)
-                {
-                    lowPassFilterArr[k] = 2 * cutFrequency / samplingFrequency;
-                }
-                else
-                {
-                    lowPassFilterArr[k] = Math.Sin( 2 * Math.PI * cutFrequency / samplingFrequency * (k - arg)) / (Math.PI * (k - arg));
-                }
-                result[k] *= lowPassFilterArr[k];
-            }
-            return result;
-        }
-
         public static double[] LowPassFilterFactors(double cutFreq, double sampleFreq, int filterLength)
         {
             double[] result = new double[filterLength];
@@ -230,23 +202,6 @@ namespace Sounds.Helpers
             return result;
         }
 
-        public static double[] Splot(double[] signalData, double[] impulseData)
-        {
-            double[] result = new double[signalData.Length];
-            for (int n = 0; n < signalData.Length; n++)
-            {
-                result[n] = 0;
-                for (int k = 0; k < impulseData.Length; k++)
-                {
-                    if (n - k < 0)
-                        continue;
-                    if (n - k > signalData.Length)
-                        continue;
-                    result[n] += signalData[n - k] * impulseData[k]; 
-                }
-            }
-            return result;
-        }
 
         public static float[] ConvertDoubleArrayToFloatArray(double[] array)
         {
@@ -364,26 +319,6 @@ namespace Sounds.Helpers
             }
         }
 
-        public static double[] AddZerosCasual(int howMany, double[] data)
-        {
-            
-            double[] result = new double[MakePowerOf2(data.Length + howMany)];
-            data.CopyTo(result, 0);
-            return result;
-        }
-        public static double[] AddZerosNotCasual(int howMany, double[] data)
-        {
-            double[] result = new double[MakePowerOf2(data.Length + howMany)];
-            for (int i = 0; i<data.Length; i++)
-            {
-                if (i < data.Length / 2)
-                    result[result.Length - data.Length / 2 + i] = data[i];
-                else
-                    result[i - data.Length / 2] = data[i];
-            }
-            return result;
-        }
-
         public static Complex[] FFT(Complex[] input)
         {
             int N = input.Length;
@@ -423,130 +358,7 @@ namespace Sounds.Helpers
             return result;
         }
 
-        public static Complex[] FFT2(Complex[] input, int R)
-        {
-            int N = input.Length;
-            float omega = (float)(-2.0 * Math.PI / N);
-            Complex[] result = new Complex[N];
-
-            if (N == 1)
-            {
-                return new Complex[] { input[0] };
-            }
-
-            if (N % 2 != 0)
-            {
-                throw new ArgumentException("N has to be the power of 2.");
-            }
-
-            Complex[] evenInput = new Complex[N / 2];
-            Complex[] oddInput = new Complex[N / 2];
-
-            for (int i = 0; i < N / 2; i++)
-            {
-                if (2 * i + R < 0 || 2 * i + R > N)
-                {
-                    evenInput[i] = new Complex(0, 0);
-                    oddInput[i] = new Complex(0, 0);
-                }
-                else
-                {
-
-                    evenInput[i] = input[2 * i + R];
-                    oddInput[i] = input[2 * i + 1 + R];
-                }
-            }
-
-            Complex[] even = FFT(evenInput);
-            Complex[] odd = FFT(oddInput);
-
-            for (int k = 0; k < N / 2; k++)
-            {
-                int phase = k;
-                odd[k] *= Complex.FromPolar(1, omega * phase);
-            }
-
-            for (int k = 0; k < N / 2; k++)
-            {
-                result[k] = even[k] + odd[k];
-                result[k + N / 2] = even[k] - odd[k];
-            }
-
-            return result;
-        }
-
-        public static double[] STFT(int R, double[] wnd, double[] data)
-        {
-            int N = data.Length;
-            Complex [] input = SoundUtil.SignalToComplex(data);
-            Complex [] output = new Complex[N];
-            double [] amplitude = new double[N];
-            double [] frequencies = new double[N / 2];
-
-            for (int k = 0; k < N; ++k)
-            {
-                double sumReal = 0.0D;
-                double sumImag = 0.0D;
-                for (int n = 0; n < N; ++n)
-                {
-                    for (int m = 0; m < wnd.Length; ++m)
-                    {
-                        if (n - m + R < 0 || n - m + R >= N)
-                        {
-                            sumReal += 0.0D;
-                            sumImag += 0.0D;
-                        }
-                        else
-                        {
-                            double angle = -2 * Math.PI * (double)n * (double)k / (double)N;
-                            sumReal += input[n - m + R].Real * wnd[m] * Math.Cos(angle);
-                            sumImag += input[n - m + R].Real * wnd[m] * Math.Sin(angle);
-                        }
-                    }
-                }
-                output[k] = new Complex((float)(sumReal * 2.0f / N), (float)(sumImag * 2.0f / N));
-
-                if (k < N / 2)
-                {
-                    frequencies[k] = (double)(N * k);
-                }
-            }
-            for (int i = 0; i < output.Length; ++i)
-            {
-                amplitude[i] = output[i].Modulus();
-            }
-
-            return frequencies;
-            
-        }
-
-
-        public static Complex[] ISTFT(double[] windowData, double[] stft)
-        {
-            int N = stft.Length;
-            Complex[] input = new Complex[N];
-            Complex[] output = new Complex[N];
-            for(int i = 0; i< N; i++)
-            {
-                input[i] = new Complex(0, 1);
-            }
-            int samplesFrequency = N;
-            for (int n = 0; n < N; ++n)
-            {
-                double sumReal = 0.0D;
-                foreach (double v in windowData)
-                {
-                    for (int k = 0; k < samplesFrequency; ++k)
-                    {
-                        double angle = 2 * Math.PI * k * n / N;
-                        sumReal += stft[k] * Math.Sin(angle) + input[k].Imaginary * Math.Cos(angle);
-                    }
-                    output[n] =new Complex((float)(100.0f * sumReal / (N * v)),0);
-                }
-            }
-            return output;
-        }
-
+      
         public static void SaveSound(string fileName, int sampleRate, int chunkSize, List<int> frequencies)
         {
             string resultFileName = "result_" + fileName;
