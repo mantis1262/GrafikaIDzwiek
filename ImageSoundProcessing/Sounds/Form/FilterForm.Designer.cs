@@ -39,6 +39,8 @@
             this.R = new System.Windows.Forms.TextBox();
             this.L = new System.Windows.Forms.TextBox();
             this.Fc = new System.Windows.Forms.TextBox();
+            this.TimeFilter = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // windowType
@@ -106,9 +108,9 @@
             // causal
             // 
             this.causal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.causal.Location = new System.Drawing.Point(346, 13);
+            this.causal.Location = new System.Drawing.Point(544, 129);
             this.causal.Name = "causal";
-            this.causal.Size = new System.Drawing.Size(132, 66);
+            this.causal.Size = new System.Drawing.Size(162, 82);
             this.causal.TabIndex = 8;
             this.causal.Text = "causal ";
             this.causal.UseVisualStyleBackColor = true;
@@ -150,11 +152,34 @@
             this.Fc.Size = new System.Drawing.Size(100, 26);
             this.Fc.TabIndex = 12;
             // 
+            // TimeFilter
+            // 
+            this.TimeFilter.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.TimeFilter.Location = new System.Drawing.Point(34, 304);
+            this.TimeFilter.Name = "TimeFilter";
+            this.TimeFilter.Size = new System.Drawing.Size(239, 86);
+            this.TimeFilter.TabIndex = 13;
+            this.TimeFilter.Text = "TimeFiltration";
+            this.TimeFilter.UseVisualStyleBackColor = true;
+            this.TimeFilter.Click += new System.EventHandler(this.TimeFilter_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label4.Location = new System.Drawing.Point(369, 98);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(140, 20);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Frequency domain";
+            // 
             // FilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.TimeFilter);
             this.Controls.Add(this.Fc);
             this.Controls.Add(this.L);
             this.Controls.Add(this.R);
@@ -186,5 +211,7 @@
         private System.Windows.Forms.TextBox R;
         private System.Windows.Forms.TextBox L;
         private System.Windows.Forms.TextBox Fc;
+        private System.Windows.Forms.Button TimeFilter;
+        private System.Windows.Forms.Label label4;
     }
 }

@@ -57,31 +57,6 @@ namespace Sounds.Helpers
             return result.ToArray();
         }
 
-
-        public static Complex[] IFFT(Complex[] input)
-        {
-            int N = input.Length;
-            Complex[] result = new Complex[N];
-
-            // take conjugate
-            for (int i = 0; i < N; i++)
-            {
-                result[i] = input[i].Conjugate();
-            }
-
-            // compute forward FFT
-            result = FFT(result);
-
-            // take conjugate again
-            for (int i = 0; i < N; i++)
-            {
-                result[i] = result[i].Conjugate();
-            }
-
-            return result;
-        }
-
-
         public static float[][] ChunkArrayPowerOf2(float[] array, int chunkSize)
         {
             int arrayLength = array.Length;
@@ -213,6 +188,7 @@ namespace Sounds.Helpers
             return floatArray;
         }
 
+        #region WindowFactors
         public static double[] RectangularFactors(int windowSize)
         {
             double[] windowData = new double[windowSize];
@@ -263,6 +239,8 @@ namespace Sounds.Helpers
             }
         }
 
+        #endregion
+        #region WindowSignal
         public static double[] RectangularWindowing(double[] data)
         {
             int n = data.Length;
@@ -319,6 +297,8 @@ namespace Sounds.Helpers
             }
         }
 
+        #endregion
+        #region FFTRegion
         public static Complex[] FFT(Complex[] input)
         {
             int N = input.Length;
@@ -358,7 +338,31 @@ namespace Sounds.Helpers
             return result;
         }
 
-      
+        public static Complex[] IFFT(Complex[] input)
+        {
+            int N = input.Length;
+            Complex[] result = new Complex[N];
+
+            // take conjugate
+            for (int i = 0; i < N; i++)
+            {
+                result[i] = input[i].Conjugate();
+            }
+
+            // compute forward FFT
+            result = FFT(result);
+
+            // take conjugate again
+            for (int i = 0; i < N; i++)
+            {
+                result[i] = result[i].Conjugate();
+            }
+
+            return result;
+        }
+
+        #endregion
+
         public static void SaveSound(string fileName, int sampleRate, int chunkSize, List<int> frequencies)
         {
             string resultFileName = "result_" + fileName;
@@ -405,7 +409,8 @@ namespace Sounds.Helpers
             WaveFormat waveFormat = new WaveFormat(sampleRate: sampleRate, channels: 1);
             using (WaveFileWriter writer = new WaveFileWriter(resultFileName, waveFormat))
             {
-                writer.WriteSamples(frequencies.ToArray(), 0, frequencies.Count);
+                foreach(float sample in frequencies)
+                  writer.WriteSample(sample);
             }
         }
     }
