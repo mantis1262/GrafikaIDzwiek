@@ -42,8 +42,12 @@ namespace Sounds
             int.TryParse(this.R.Text, out hopSize);
             int.TryParse(this.L.Text, out filterSize);
             int.TryParse(this.Fc.Text, out fc);
+            Stopwatch time = new Stopwatch();
+            time.Start();
+            float[] result = _audio.FrequencyFiltration(windowSize, filterSize, fc, hopSize, windowType.SelectedIndex, "casual");
+            time.Stop();
+            MessageBox.Show(time.Elapsed.ToString());
 
-           float[] result = _audio.FrequencyFiltration(windowSize, filterSize, fc, hopSize, windowType.SelectedIndex, "casual");
 
             #region filterChar
             CharWindow resultSignalChar = new CharWindow();
@@ -64,7 +68,7 @@ namespace Sounds
             resultSignalChar.Show();
             #endregion
 
-            //SoundUtil.SaveSound(_audio.fileName, 44100, resultComplex.Count(), resultSignal.ToList());
+            SoundUtil.SaveSound(_audio.fileName, result.ToList());
 
         }
 
@@ -80,7 +84,12 @@ namespace Sounds
             int.TryParse(this.L.Text, out filterSize);
             int.TryParse(this.Fc.Text, out fc);
 
+            Stopwatch time = new Stopwatch();
+            time.Start();
             float[] result = _audio.FrequencyFiltration(windowSize, filterSize, fc, hopSize, windowType.SelectedIndex, "notCasual");
+            time.Stop();
+            MessageBox.Show(time.Elapsed.ToString());
+
 
             #region filterChar
             CharWindow resultSignalChar = new CharWindow();
@@ -112,7 +121,12 @@ namespace Sounds
             int.TryParse(this.L.Text, out filterSize);
             int.TryParse(this.Fc.Text, out fc);
 
-           double[] result = _audio.TimeFiltration(filterSize, fc, windowType.SelectedIndex);
+            Stopwatch time = new Stopwatch();
+            time.Start();
+            double[] result = _audio.TimeFiltration(filterSize, fc, windowType.SelectedIndex);
+            time.Stop();
+            MessageBox.Show(time.Elapsed.ToString());
+
 
             #region filterChar
             CharWindow resultSignalChar = new CharWindow();

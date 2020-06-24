@@ -403,11 +403,12 @@ namespace Sounds.Helpers
             }
         }
 
-        public static void SaveSound(string fileName, int sampleRate, List<float> frequencies)
+        public static void SaveSound(string fileName, List<float> frequencies)
         {
             string resultFileName = "result_" + fileName;
-            WaveFormat waveFormat = new WaveFormat(sampleRate: sampleRate, channels: 1);
+            WaveFormat waveFormat = new WaveFormat();
             using (WaveFileWriter writer = new WaveFileWriter(resultFileName, waveFormat))
+
             {
                 foreach(float sample in frequencies)
                   writer.WriteSample(sample);

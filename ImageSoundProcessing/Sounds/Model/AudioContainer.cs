@@ -39,6 +39,7 @@ namespace Sound.Model
                 int read = reader.Read(buffer, 0, buffer.Length);
                 sampleBuffer = new short[read / 2];
                 Buffer.BlockCopy(buffer, 0, sampleBuffer, 0, read);
+                
             }
 
             int[] result = new int[sampleBuffer.Length];
@@ -373,10 +374,10 @@ namespace Sound.Model
             return result;
         }
 
-        public float[] FrequencyFiltration(int windowLength = 2049, int filterLength = 1025, double cutFreq = 550, int windowHopSize = 1024, int windowType = 2, string filterType = "casual", int? nParam = null)
+        public float[] FrequencyFiltration(int windowLength, int filterLength, double cutFreq, int windowHopSize, int windowType, string filterType)
         {
             // rozmiar transformacji DFT
-            int n = nParam ?? SoundUtil.GetExpandedPow2(windowLength + filterLength - 1);
+            int n = SoundUtil.GetExpandedPow2(windowLength + filterLength - 1);
             
             // d³ugoœæ sygna³u wynikowego
             int size = dataNormalized.Length + n - windowLength;
