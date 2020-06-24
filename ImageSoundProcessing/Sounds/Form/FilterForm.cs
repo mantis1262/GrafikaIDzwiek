@@ -68,7 +68,7 @@ namespace Sounds
             resultSignalChar.Show();
             #endregion
 
-            SoundUtil.SaveSound(_audio.fileName, result.ToList());
+            //SoundUtil.SaveSound(_audio.fileName, 44100, resultComplex.Count(), resultSignal.ToList());
 
         }
 
@@ -109,8 +109,26 @@ namespace Sounds
 
             resultSignalChar.Show();
             #endregion
+            #region filterChar
+            CharWindow resultSignalChar = new CharWindow();
+            resultSignalChar.setPropert();
 
-            //SoundUtil.SaveSound(_audio.fileName, 44100, result.ToList());
+            resultSignalChar.Histogram.Series.Add("WindowCharm");
+            resultSignalChar.Text = "SignalChar";
+            resultSignalChar.Histogram.Series["WindowCharm"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            resultSignalChar.Histogram.Series["WindowCharm"].MarkerSize = 2;
+            resultSignalChar.Histogram.ChartAreas[0].AxisX.Title = "Index";
+            resultSignalChar.Histogram.ChartAreas[0].AxisY.Title = "signal value";
+
+            for (int i = 0; i < result.Count(); i++)
+            {
+                resultSignalChar.Histogram.Series["WindowCharm"].Points.AddXY(i, result[i]);
+            }
+
+            resultSignalChar.Show();
+            #endregion
+
+            SoundUtil.SaveSound("freqNotCasualFilter", _audio.fileName, _audio.sampleRate, result);
         }
 
         private void TimeFilter_Click(object sender, EventArgs e)
