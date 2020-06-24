@@ -30,31 +30,6 @@ namespace Sounds.Helpers
                 result[i] = array.Skip(i * chunkSize).Take(chunkSize).ToArray();
             }
             return result;
-        } 
-        
-        public static double[][] ChunkArrayWithHop(float[] array, int chunkSize, int hopSize)
-        {
-            List<double[]> result = new List<double[]>();
-            int listIndex = 0;
-            int listInsideIndex = 0;
-            int steps = -1;
-            for (int i = 0; i < array.Length; i++)
-            {
-                result.Add(new double[chunkSize]);
-                result[listIndex][listInsideIndex] = array[i];    
-                if(listInsideIndex >= chunkSize - 1)
-                {
-                    listIndex = 0;
-                    steps += hopSize;
-                    i = steps;
-                }
-                else
-                {
-                    listInsideIndex++;
-                }
-
-            }
-            return result.ToArray();
         }
 
         public static float[][] ChunkArrayPowerOf2(float[] array, int chunkSize)
@@ -403,15 +378,14 @@ namespace Sounds.Helpers
             }
         }
 
-        public static void SaveSound(string fileName, List<float> frequencies)
+        public static void SaveSound(string prefix, string fileName, int sampleRate, float[] samples)
         {
-            string resultFileName = "result_" + fileName;
-            WaveFormat waveFormat = new WaveFormat();
+            string resultFileName = "result_" + prefix + "_" + fileName;
+            WaveFormat waveFormat = new WaveFormat(sampleRate: sampleRate, channels: 1);
             using (WaveFileWriter writer = new WaveFileWriter(resultFileName, waveFormat))
 
             {
-                foreach(float sample in frequencies)
-                  writer.WriteSample(sample);
+                writer.WriteSamples(samples, 0, samples.Length);
             }
         }
     }

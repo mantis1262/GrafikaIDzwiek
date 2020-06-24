@@ -68,7 +68,7 @@ namespace Sounds
             resultSignalChar.Show();
             #endregion
 
-            SoundUtil.SaveSound(_audio.fileName, result.ToList());
+            SoundUtil.SaveSound("freqCasualFilter", _audio.fileName, _audio.sampleRate, result);
 
         }
 
@@ -110,7 +110,7 @@ namespace Sounds
             resultSignalChar.Show();
             #endregion
 
-            //SoundUtil.SaveSound(_audio.fileName, 44100, result.ToList());
+            SoundUtil.SaveSound("freqNotCasualFilter", _audio.fileName, _audio.sampleRate, result);
         }
 
         private void TimeFilter_Click(object sender, EventArgs e)
@@ -147,6 +147,7 @@ namespace Sounds
             resultSignalChar.Show();
             #endregion
 
+            SoundUtil.SaveSound("timeFilter", _audio.fileName, _audio.sampleRate, SoundUtil.ConvertDoubleArrayToFloatArray(result));
         }
     }
 }
