@@ -46,7 +46,7 @@ namespace Sounds
             time.Start();
             float[] result = _audio.FrequencyFiltration(windowSize, filterSize, fc, hopSize, windowType.SelectedIndex, "casual");
             time.Stop();
-            MessageBox.Show(time.Elapsed.ToString());
+            MessageBox.Show(time.ElapsedMilliseconds.ToString() + " ms");
 
 
             #region filterChar
@@ -88,7 +88,7 @@ namespace Sounds
             time.Start();
             float[] result = _audio.FrequencyFiltration(windowSize, filterSize, fc, hopSize, windowType.SelectedIndex, "notCasual");
             time.Stop();
-            MessageBox.Show(time.Elapsed.ToString());
+            MessageBox.Show(time.ElapsedMilliseconds.ToString() + " ms");
 
 
             #region filterChar
@@ -125,7 +125,7 @@ namespace Sounds
             time.Start();
             double[] result = _audio.TimeFiltration(filterSize, fc, windowType.SelectedIndex);
             time.Stop();
-            MessageBox.Show(time.Elapsed.ToString());
+            MessageBox.Show(time.ElapsedMilliseconds.ToString() + " ms");
 
 
             #region filterChar
