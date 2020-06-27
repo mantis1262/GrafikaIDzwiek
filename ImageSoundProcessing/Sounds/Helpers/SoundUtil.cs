@@ -30,57 +30,7 @@ namespace Sounds.Helpers
                 result[i] = array.Skip(i * chunkSize).Take(chunkSize).ToArray();
             }
             return result;
-        } 
-        
-        public static double[][] ChunkArrayWithHop(float[] array, int chunkSize, int hopSize)
-        {
-            List<double[]> result = new List<double[]>();
-            int listIndex = 0;
-            int listInsideIndex = 0;
-            int steps = -1;
-            for (int i = 0; i < array.Length; i++)
-            {
-                result.Add(new double[chunkSize]);
-                result[listIndex][listInsideIndex] = array[i];    
-                if(listInsideIndex >= chunkSize - 1)
-                {
-                    listIndex = 0;
-                    steps += hopSize;
-                    i = steps;
-                }
-                else
-                {
-                    listInsideIndex++;
-                }
-
-            }
-            return result.ToArray();
         }
-
-
-        public static Complex[] IFFT(Complex[] input)
-        {
-            int N = input.Length;
-            Complex[] result = new Complex[N];
-
-            // take conjugate
-            for (int i = 0; i < N; i++)
-            {
-                result[i] = input[i].Conjugate();
-            }
-
-            // compute forward FFT
-            result = FFT(result);
-
-            // take conjugate again
-            for (int i = 0; i < N; i++)
-            {
-                result[i] = result[i].Conjugate();
-            }
-
-            return result;
-        }
-
 
         public static float[][] ChunkArrayPowerOf2(float[] array, int chunkSize)
         {
@@ -112,6 +62,11 @@ namespace Sounds.Helpers
             }
 
             return powerOfTwo;
+        }
+
+        public static int GetExpandedPow2(int length)
+        {
+            return (int)Math.Pow(2, (int)Math.Log(length, 2) + 1);
         }
 
         public static int MaxFromLocalMaxList(IList<int> localMaxList, double[] data)
@@ -157,6 +112,16 @@ namespace Sounds.Helpers
             return resultComplex;
         }
 
+        public static double[] SignalFromComplex(Complex[] data)
+        {
+            double[] result = new double[data.Length];
+            for (int i = 0; i < data.Length; i++)
+            {
+                result[i] = data[i].Real;
+            }
+            return result;
+        }
+
         public static Complex[] HammingWindow(Complex[] complexData)
         {
             int N = complexData.Length;
@@ -168,102 +133,147 @@ namespace Sounds.Helpers
             return complexResult;
         }
 
-
-
-     
-
-        public static double[] lowPassFilter(int cutFrequency, double samplingFrequency, double[] windowData)
+        public static double[] LowPassFilterFactors(double cutFreq, double sampleFreq, int filterLength)
         {
-
-            double[] result = new double[windowData.Length];
-            windowData.CopyTo(result, 0);
-            int resultLenght = result.Length;
-            double arg = (resultLenght - 1) / 2;
-            double[] lowPassFilterArr = new double[resultLenght];
-
-            for (int k = 0; k < result.Length; ++k)
+            double[] result = new double[filterLength];
+            double half = (filterLength - 1) / 2.0;
+            for (int i = 0; i < filterLength; i++)
             {
-                if (k == arg)
+                if (i == half)
                 {
-                    lowPassFilterArr[k] = 2 * cutFrequency / samplingFrequency;
+                    result[i] = 2 * cutFreq / sampleFreq;
                 }
                 else
                 {
-                    lowPassFilterArr[k] = Math.Sin( 2 * Math.PI * cutFrequency / samplingFrequency * (k - arg)) / (Math.PI * (k - arg));
-                }
-                result[k] *= lowPassFilterArr[k];
-            }
-            return result;
-        }
-
-        public static double[] Splot(double[] signalData, double[] impulseData)
-        {
-            double[] result = new double[signalData.Length];
-            for (int n = 0; n < signalData.Length; n++)
-            {
-                result[n] = 0;
-                for (int k = 0; k < impulseData.Length; k++)
-                {
-                    if (n - k < 0)
-                        continue;
-                    if (n - k > signalData.Length)
-                        continue;
-                    result[n] += signalData[n - k] * impulseData[k]; 
+                    result[i] = Math.Sin(2 * Math.PI * cutFreq / sampleFreq * (i - half)) / (Math.PI * (i - half));
                 }
             }
+
             return result;
         }
 
-        public static double[] HammingFunc(int windowSize)
+
+        public static float[] ConvertDoubleArrayToFloatArray(double[] array)
+        {
+            float[] floatArray = new float[array.Length];
+            for (int i = 0; i < array.Length; i++)
+            {
+                floatArray[i] = (float)array[i];
+            }
+            return floatArray;
+        }
+
+        #region WindowFactors
+        public static double[] RectangularFactors(int windowSize)
         {
             double[] windowData = new double[windowSize];
-            for (int i = 0; i < windowData.Length; ++i)
+            for (int i = 0; i < windowSize; i++)
             {
-                windowData[i] = 0.5D - 0.46D * Math.Cos(2 * Math.PI * i / (windowData.Length - 1.0D));
+                windowData[i] = i < windowSize ? 1 : 0;
             }
             return windowData;
         }
 
-        public static double[] RectangularFunc(int windowSize)
+        public static double[] HammingFactors(int windowSize)
         {
             double[] windowData = new double[windowSize];
-            for (int i = 0; i < windowData.Length; ++i)
+            for (int i = 0; i < windowSize; i++)
             {
-                windowData[i] = 1;
+                windowData[i] = 0.53836 - 0.46164 * Math.Cos(2 * Math.PI * i / (windowSize - 1));
             }
             return windowData;
         }
 
-        public static double[] HannFunc(int windowSize)
+        public static double[] HannFactors(int windowSize)
         {
             double[] windowData = new double[windowSize];
-            for (int i = 0; i < windowData.Length; ++i)
+            for (int i = 0; i < windowSize; i++)
             {
-                windowData[i] = 0.5D * (1.0D - Math.Cos(2 * Math.PI * i / (windowData.Length - 1.0D))) * 2.0D;
+                windowData[i] = 0.5 * (1 - Math.Cos(2 * Math.PI * i / (windowSize - 1)));
             }
             return windowData;
         }
 
-        public static double[] AddZerosCasual(int howMany, double[] data)
+        public static double[] Factors(int type, int windowsLength)
         {
-            
-            double[] result = new double[MakePowerOf2(data.Length + howMany)];
-            data.CopyTo(result, 0);
-            return result;
-        }
-        public static double[] AddZerosNotCasual(int howMany, double[] data)
-        {
-            double[] result = new double[MakePowerOf2(data.Length + howMany)];
-            for (int i = 0; i<data.Length; i++)
+            switch (type)
             {
-                if (i < data.Length / 2)
-                    result[result.Length - data.Length / 2 + i] = data[i];
-                else
-                    result[i - data.Length / 2] = data[i];
+                case 0:
+                    {
+                        return RectangularFactors(windowsLength);
+                    }
+                case 2:
+                    {
+                        return HammingFactors(windowsLength);
+                    }
+                case 1:
+                    {
+                        return HannFactors(windowsLength);
+                    }
+                default: return new double[] { };
             }
-            return result;
         }
 
+        #endregion
+        #region WindowSignal
+        public static double[] RectangularWindowing(double[] data)
+        {
+            int n = data.Length;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = i < n ? data[i] : 0;
+            }
+
+            return data;
+        }
+
+        public static double[] HammingWindowing(double[] data)
+        {
+            int n = data.Length;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] *= 0.53836 - 0.46164 * Math.Cos(2 * Math.PI * i / (n - 1));
+            }
+
+            return data;
+        }
+
+        public static double[] HanningWindowing(double[] data)
+        {
+            int n = data.Length;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] *= 0.5 * (1 - Math.Cos(2 * Math.PI * i / (n - 1)));
+            }
+
+            return data;
+        }
+
+        public static double[] Windowing(double[] data, int type)
+        {
+            switch(type)
+            {
+                case 0:
+                    {
+                        return RectangularWindowing(data);
+                    }
+                case 2:
+                    {
+                        return HammingWindowing(data);
+                    }
+                case 1:
+                    {
+                        return HanningWindowing(data);
+                    }
+                default: return new double[] { };
+            }
+        }
+
+        #endregion
+        #region FFTRegion
         public static Complex[] FFT(Complex[] input)
         {
             int N = input.Length;
@@ -303,129 +313,30 @@ namespace Sounds.Helpers
             return result;
         }
 
-        public static Complex[] FFT2(Complex[] input, int R)
+        public static Complex[] IFFT(Complex[] input)
         {
             int N = input.Length;
-            float omega = (float)(-2.0 * Math.PI / N);
             Complex[] result = new Complex[N];
 
-            if (N == 1)
+            // take conjugate
+            for (int i = 0; i < N; i++)
             {
-                return new Complex[] { input[0] };
+                result[i] = input[i].Conjugate();
             }
 
-            if (N % 2 != 0)
+            // compute forward FFT
+            result = FFT(result);
+
+            // take conjugate again
+            for (int i = 0; i < N; i++)
             {
-                throw new ArgumentException("N has to be the power of 2.");
-            }
-
-            Complex[] evenInput = new Complex[N / 2];
-            Complex[] oddInput = new Complex[N / 2];
-
-            for (int i = 0; i < N / 2; i++)
-            {
-                if (2 * i + R < 0 || 2 * i + R > N)
-                {
-                    evenInput[i] = new Complex(0, 0);
-                    oddInput[i] = new Complex(0, 0);
-                }
-                else
-                {
-
-                    evenInput[i] = input[2 * i + R];
-                    oddInput[i] = input[2 * i + 1 + R];
-                }
-            }
-
-            Complex[] even = FFT(evenInput);
-            Complex[] odd = FFT(oddInput);
-
-            for (int k = 0; k < N / 2; k++)
-            {
-                int phase = k;
-                odd[k] *= Complex.FromPolar(1, omega * phase);
-            }
-
-            for (int k = 0; k < N / 2; k++)
-            {
-                result[k] = even[k] + odd[k];
-                result[k + N / 2] = even[k] - odd[k];
+                result[i] = result[i].Conjugate();
             }
 
             return result;
         }
 
-        public static double[] STFT(int R, double[] wnd, double[] data)
-        {
-            int N = data.Length;
-            Complex [] input = SoundUtil.SignalToComplex(data);
-            Complex [] output = new Complex[N];
-            double [] amplitude = new double[N];
-            double [] frequencies = new double[N / 2];
-
-            for (int k = 0; k < N; ++k)
-            {
-                double sumReal = 0.0D;
-                double sumImag = 0.0D;
-                for (int n = 0; n < N; ++n)
-                {
-                    for (int m = 0; m < wnd.Length; ++m)
-                    {
-                        if (n - m + R < 0 || n - m + R >= N)
-                        {
-                            sumReal += 0.0D;
-                            sumImag += 0.0D;
-                        }
-                        else
-                        {
-                            double angle = -2 * Math.PI * (double)n * (double)k / (double)N;
-                            sumReal += input[n - m + R].Real * wnd[m] * Math.Cos(angle);
-                            sumImag += input[n - m + R].Real * wnd[m] * Math.Sin(angle);
-                        }
-                    }
-                }
-                output[k] = new Complex((float)(sumReal * 2.0f / N), (float)(sumImag * 2.0f / N));
-
-                if (k < N / 2)
-                {
-                    frequencies[k] = (double)(N * k);
-                }
-            }
-            for (int i = 0; i < output.Length; ++i)
-            {
-                amplitude[i] = output[i].Modulus();
-            }
-
-            return frequencies;
-            
-        }
-
-
-        public static Complex[] ISTFT(double[] windowData, double[] stft)
-        {
-            int N = stft.Length;
-            Complex[] input = new Complex[N];
-            Complex[] output = new Complex[N];
-            for(int i = 0; i< N; i++)
-            {
-                input[i] = new Complex(0, 1);
-            }
-            int samplesFrequency = N;
-            for (int n = 0; n < N; ++n)
-            {
-                double sumReal = 0.0D;
-                foreach (double v in windowData)
-                {
-                    for (int k = 0; k < samplesFrequency; ++k)
-                    {
-                        double angle = 2 * Math.PI * k * n / N;
-                        sumReal += stft[k] * Math.Sin(angle) + input[k].Imaginary * Math.Cos(angle);
-                    }
-                    output[n] =new Complex((float)(100.0f * sumReal / (N * v)),0);
-                }
-            }
-            return output;
-        }
+        #endregion
 
         public static void SaveSound(string fileName, int sampleRate, int chunkSize, List<int> frequencies)
         {
@@ -467,13 +378,14 @@ namespace Sounds.Helpers
             }
         }
 
-        public static void SaveSound(string fileName, int sampleRate, List<float> frequencies)
+        public static void SaveSound(string prefix, string fileName, int sampleRate, float[] samples)
         {
-            string resultFileName = "result_" + fileName;
+            string resultFileName = "result_" + prefix + "_" + fileName;
             WaveFormat waveFormat = new WaveFormat(sampleRate: sampleRate, channels: 1);
             using (WaveFileWriter writer = new WaveFileWriter(resultFileName, waveFormat))
+
             {
-                writer.WriteSamples(frequencies.ToArray(), 0, frequencies.Count);
+                writer.WriteSamples(samples, 0, samples.Length);
             }
         }
     }
