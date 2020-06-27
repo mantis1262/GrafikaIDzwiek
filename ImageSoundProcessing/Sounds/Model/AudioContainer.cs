@@ -346,7 +346,7 @@ namespace Sound.Model
 
         public double[] TimeFiltration(int filterLength = 1025, double cutFreq = 550, int windowType = 2)
         {
-            // d³ugoœæ sygna³y wynikowego bêdzie wynosi³a K(iloœæ próbek) + L(d³ugoœæ odpowiedzi impulsowej) - 1
+            // d³ugoœæ sygna³u wynikowego bêdzie wynosi³a K(iloœæ próbek) + L(d³ugoœæ odpowiedzi impulsowej) - 1
             double[] result = new double[dataNormalized.Length + filterLength - 1];
 
             // obliczenie wspó³czynników filtra
@@ -398,7 +398,7 @@ namespace Sound.Model
 
             for (int i = 0; i < windows.Length; i++)
             {
-                // wymno¿enie wspó³czynników filtra przez wartoœci sygna³u 
+                // wymno¿enie wspó³czynników okna przez wartoœci sygna³u 
                 for (int j = 0; j < windowLength; j++)
                 {
                     if (i * windowHopSize + j < dataNormalized.Length)
